@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+    id 'application'
+    // ide
+    id 'idea'
+    id 'eclipse'
+    // test coverage
+    id 'jacoco'
+}
+
+version = '1.0.0'
+mainClassName = 'nl.esciencecenter.xenon.cli.Main'
+applicationName = 'xenon'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.beust:jcommander:1.48'
+    compile 'nl.esciencecenter.xenon:xenon:1.1.0'
+    compile 'org.slf4j:slf4j-api:1.7.21'
+
+    testCompile 'junit:junit:4.12'
+}
