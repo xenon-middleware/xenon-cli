@@ -1,5 +1,17 @@
 # Xenon Command Line Interface
 
+# Install
+
+For now it must be build, see Build chapter below.
+
+# Usage
+
+```
+xenon --adaptor local --json list /etc
+xenon --adaptor ssh --json list --location localhost /etc
+xenon --adaptor ssh --json upload --source /etc/passwd --location localhost --path /tmp/copy-of-passwd 
+```
+
 # Build
 
 ```
@@ -19,9 +31,9 @@ docker build -t nlesc/xenon-cli .
 
 ## Common Workflow Language
 
-Run Xenon CLI using a cwl-runner or as tool in a Common Workflow Language workflow.
+Run Xenon CLI using a cwl-runner or as a tool in a Common Workflow Language workflow.
 
-Requires `nlesc/xenon-cli` Docker image.
+Requires `nlesc/xenon-cli` Docker image to be available locally.
 
 Example to list contents of `/etc` directory via a ssh to localhost connection with cwl-runner:
 ```
