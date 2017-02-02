@@ -18,14 +18,15 @@ public class Main {
     @Parameter(names = "--help", help = true)
     private boolean help;
 
-    @Parameter(names="--adaptor", description="Xenon adaptor to use", required=true)
-    private String adaptor;
+    @Parameter(names="--scheme", description="Xenon scheme to use")
+    private String scheme;
 
     @Parameter(names="--json", description="Output in json format")
     private boolean json = false;
 
     private ListCommand listCommand = new ListCommand();
     private UploadCommand uploadCommand = new UploadCommand();
+    private SchemesCommand schemesCommand = new SchemesCommand();
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
@@ -36,12 +37,14 @@ public class Main {
         } catch (ParameterException ex) {
             System.err.println(ex.getMessage());
             commander.usage();
+            System.exit(1);
         }
     }
 
     private JCommander buildCommander() {
         JCommander commander = new JCommander(this);
         commander.setProgramName(PROGRAM_NAME);
+        commander.addCommand("schemes", schemesCommand);
         commander.addCommand("list", listCommand);
         commander.addCommand("upload", uploadCommand);
         return commander;
@@ -61,10 +64,12 @@ public class Main {
         Files files = xenon.files();
         switch (command) {
             case "list":
-                listCommand.run(files, adaptor, json);
+                listCommand.run(files, scheme, json);
                 break;
             case "upload":
-                uploadCommand.run(files, adaptor, json);
+                uploadCommand.run(files, scheme, json);
+            case "schemes":
+                schemesCommand.run(xenon);
         }
         XenonFactory.endXenon(xenon);
     }

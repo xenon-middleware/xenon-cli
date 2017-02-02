@@ -24,9 +24,9 @@ public class UploadCommand {
     @Parameter(names="--path", description="Target path", required=true)
     public String path = null;
 
-    public void run(Files files, String adaptor, boolean json) throws XenonException {
+    public void run(Files files, String scheme, boolean json) throws XenonException {
         FileSystem sourceFS = files.newFileSystem("local", null, null, null);
-        FileSystem targetFS = files.newFileSystem(adaptor, location,null, null);
+        FileSystem targetFS = files.newFileSystem(scheme, location,null, null);
 
         Path sourcePath = files.newPath(sourceFS, new RelativePath(source));
         Path targetPath = files.newPath(targetFS, new RelativePath(path));
@@ -35,6 +35,7 @@ public class UploadCommand {
 
         files.close(sourceFS);
         files.close(targetFS);
+
         if (json) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             UploadOutput uploadOutput = new UploadOutput();

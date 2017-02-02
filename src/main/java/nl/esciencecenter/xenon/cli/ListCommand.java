@@ -44,8 +44,8 @@ public class ListCommand {
         }
     }
 
-    private ArrayList<String> listObjects(Files files, String adaptor) throws XenonException {
-        FileSystem fs = files.newFileSystem(adaptor, location, null, null);
+    private ArrayList<String> listObjects(Files files, String scheme) throws XenonException {
+        FileSystem fs = files.newFileSystem(scheme, location, null, null);
         ArrayList<String> objects = new ArrayList<>();
         for (String pathIn : paths) {
             Path path = files.newPath(fs, new RelativePath(pathIn));

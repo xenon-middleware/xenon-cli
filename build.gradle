@@ -6,6 +6,9 @@ plugins {
     id 'eclipse'
     // test coverage
     id 'jacoco'
+    // docker build & push
+    id 'maven-publish'
+    id 'com.palantir.docker' version '0.11.0'
 }
 
 version = '1.0.0'
@@ -19,9 +22,15 @@ repositories {
 
 dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.beust:jcommander:1.48'
+    compile 'com.beust:jcommander:1.62'
     compile 'nl.esciencecenter.xenon:xenon:1.1.0'
     compile 'org.slf4j:slf4j-api:1.7.21'
 
     testCompile 'junit:junit:4.12'
+}
+
+docker {
+    name 'nlesc/xenon-cli'
+    dependsOn tasks.installDist
+    files tasks.installDist.outputs
 }

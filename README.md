@@ -22,11 +22,18 @@ Generates application tar/zip in `build/distributions/` directory.
 
 ## Docker
 
-To use Xenon CLI from a Docker image. 
+Run Xenon CLI as a Docker container.
+
 The Docker image can be build with
 ```
-./gradlew installDist
-docker build -t nlesc/xenon-cli .
+./gradlew docker
+```
+
+Generates a `nlesc/xenon-cli` Docker image.
+
+To use local files use volume mounting (watch out as the path should be relative to mount point):
+```
+docker run -ti --rm nlesc/xenon-cli --user $USER -v $PWD:/work --adaptor ssh upload --source /work/somefile.txt --location localhost --path /tmp/copy-of-somefile.txt 
 ```
 
 ## Common Workflow Language
