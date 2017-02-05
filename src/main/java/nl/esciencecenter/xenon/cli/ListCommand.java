@@ -1,67 +1,63 @@
 package nl.esciencecenter.xenon.cli;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+import net.sourceforge.argparse4j.inf.Subparsers;
+import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.files.DirectoryStream;
-import nl.esciencecenter.xenon.files.FileAttributes;
-import nl.esciencecenter.xenon.files.FileSystem;
-import nl.esciencecenter.xenon.files.Files;
-import nl.esciencecenter.xenon.files.Path;
-import nl.esciencecenter.xenon.files.RelativePath;
+import nl.esciencecenter.xenon.credentials.Credential;
+import nl.esciencecenter.xenon.files.*;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class ListCommand extends XenonCommand {
 
-@Parameters(commandDescription="List of objects")
-public class ListCommand {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private ListOutput listObjects(Files files, String scheme, String location, String pathIn, Credential credential) throws XenonException {
+        FileSystem fs = files.newFileSystem(scheme, location, credential, null);
 
-    @Parameter(names="--location", description="List information about location")
-    public String location = null;
-
-    @Parameter(description="List information about path", required=true)
-    public List<String> paths;
-
-    public void run(Files files, String adaptor, boolean json) throws XenonException {
-        ArrayList<String> objects = listObjects(files, adaptor);
-        printObjects(json, objects);
-    }
-
-    private void printObjects(boolean json, ArrayList<String> objects) {
-        if (json) {
-            ListOutput listOutput = new ListOutput();
-            listOutput.objects = objects;
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            System.out.print(gson.toJson(listOutput));
-        } else {
-            objects.forEach(System.out::println);
-        }
-    }
-
-    private ArrayList<String> listObjects(Files files, String scheme) throws XenonException {
-        FileSystem fs = files.newFileSystem(scheme, location, null, null);
-        ArrayList<String> objects = new ArrayList<>();
-        for (String pathIn : paths) {
-            Path path = files.newPath(fs, new RelativePath(pathIn));
-            FileAttributes att = files.getAttributes(path);
-            if (att.isDirectory()) {
-                DirectoryStream<Path> stream = files.newDirectoryStream(path);
-                for (Path p : stream) {
-                    objects.add(p.getRelativePath().getFileNameAsString());
+        ListOutput listing = new ListOutput();
+        Path path = files.newPath(fs, new RelativePath(pathIn));
+        FileAttributes att = files.getAttributes(path);
+        if (att.isDirectory()) {
+            DirectoryStream<PathAttributesPair> stream = files.newAttributesDirectoryStream(path);
+            for (PathAttributesPair p : stream) {
+                String filename = p.path().getRelativePath().getFileNameAsString();
+                listing.objects.add(filename);
+                if (p.attributes().isDirectory()) {
+                    listing.directories.add(filename);
+                } else {
+                    listing.files.add(filename);
                 }
-            } else if (att.isRegularFile()) {
-                LOGGER.error(pathIn + " is a file.");
-            } else {
-                LOGGER.error("Directory " + pathIn + " does not exist or is not a directory.");
             }
+        } else {
+            String fn = path.getRelativePath().getFileNameAsString();
+            listing.objects.add(fn);
+            listing.files.add(fn);
         }
         files.close(fs);
-        return objects;
+        return listing;
+    }
+
+    public Subparser buildArgumentParser(Subparsers subparsers) {
+        Subparser subparser = subparsers.addParser("list")
+                .setDefault("subcommand", this)
+                .help("List objects at path of location")
+                .description("List objects at path of location");
+        subparser.addArgument("location")
+                .help("Location, " + getSupportedLocationHelp())
+                .nargs("?")
+                .setDefault("/");
+        subparser.addArgument("path").help("Path").required(true);
+        return subparser;
+    }
+
+    public void run(Namespace res, Xenon xenon) throws XenonException {
+        String scheme = res.getString("scheme");
+        String location = res.getString("location");
+        String path = res.getString("path");
+        Files files = xenon.files();
+        Credential credential = buildCredential(res, xenon);
+        ListOutput listing = listObjects(files, scheme, location, path, credential);
+
+        Boolean json = res.getBoolean("json");
+        this.print(listing, json);
     }
 }

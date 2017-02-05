@@ -8,38 +8,38 @@ import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.files.Files;
 
-public class UploadCommand extends CopyCommand {
+public class DownloadCommand extends CopyCommand {
 
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
-        Subparser subparser = subparsers.addParser("upload")
+        Subparser subparser = subparsers.addParser("download")
                 .setDefault("subcommand", this)
-                .help("Upload local file to target")
-                .description("Upload local file to target");
-        subparser.addArgument("sourcePath").help("Source path").required(true);
-        subparser.addArgument("targetLocation")
-                .help("Target location, " + getSupportedLocationHelp())
+                .help("Download source file to local file")
+                .description("Download source file to local file");
+        subparser.addArgument("sourceLocation")
+                .help("Source location, " + getSupportedLocationHelp())
                 .setDefault("/");
+        subparser.addArgument("sourcePath").help("Source path").required(true);
         subparser.addArgument("targetPath").help("Target path").required(true);
         return subparser;
     }
 
     @Override
     public void run(Namespace res, Xenon xenon) throws XenonException {
+        String sourceScheme = res.getString("scheme");
+        String sourceLocation = res.getString("sourceLocation");
         String sourcePath = res.getString("sourcePath");
-        String targetScheme = res.getString("scheme");
-        String targetLocation = res.getString("targetLocation");
+        Credential sourceCredential = buildCredential(res, xenon);
         String targetPath = res.getString("targetPath");
-        Credential targetCredential = buildCredential(res, xenon);
 
-        CopyInput source = new CopyInput("local", null, sourcePath, null);
-        CopyInput target = new CopyInput(targetScheme, targetLocation, targetPath, targetCredential);
+        CopyInput source = new CopyInput(sourceScheme, sourceLocation, sourcePath, sourceCredential);
+        CopyInput target = new CopyInput("local", null, targetPath, null);
 
         Files files = xenon.files();
         this.copy(files, source, target);
 
-        UploadOutput uploadOutput = new UploadOutput(source, target);
         Boolean json = res.getBoolean("json");
-        this.print(uploadOutput, json);
+        DownloadOutput downloadOutput = new DownloadOutput(source, target);
+        this.print(downloadOutput, json);
     }
 }

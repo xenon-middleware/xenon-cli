@@ -14,6 +14,8 @@ plugins {
 version = '1.0.0'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -22,7 +24,7 @@ repositories {
 
 dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
-    compile 'com.beust:jcommander:1.62'
+    compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
     compile 'nl.esciencecenter.xenon:xenon:1.1.0'
     compile 'org.slf4j:slf4j-api:1.7.21'
 
