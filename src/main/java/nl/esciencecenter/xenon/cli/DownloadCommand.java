@@ -1,19 +1,20 @@
 package nl.esciencecenter.xenon.cli;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-import net.sourceforge.argparse4j.inf.Subparsers;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.files.Files;
+
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+import net.sourceforge.argparse4j.inf.Subparsers;
 
 public class DownloadCommand extends CopyCommand {
 
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("download")
-                .setDefault("subcommand", this)
+                .setDefault("operation", this)
                 .help("Download source file to local file")
                 .description("Download source file to local file");
         subparser.addArgument("sourceLocation")

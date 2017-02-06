@@ -1,19 +1,20 @@
 package nl.esciencecenter.xenon.cli;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-import net.sourceforge.argparse4j.inf.Subparsers;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.files.Files;
+
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+import net.sourceforge.argparse4j.inf.Subparsers;
 
 public class UploadCommand extends CopyCommand {
 
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("upload")
-                .setDefault("subcommand", this)
+                .setDefault("operation", this)
                 .help("Upload local file to target")
                 .description("Upload local file to target");
         subparser.addArgument("sourcePath").help("Source path").required(true);

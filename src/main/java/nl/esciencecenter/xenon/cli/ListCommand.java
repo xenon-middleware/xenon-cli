@@ -1,12 +1,19 @@
 package nl.esciencecenter.xenon.cli;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-import net.sourceforge.argparse4j.inf.Subparsers;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.files.*;
+import nl.esciencecenter.xenon.files.DirectoryStream;
+import nl.esciencecenter.xenon.files.FileAttributes;
+import nl.esciencecenter.xenon.files.FileSystem;
+import nl.esciencecenter.xenon.files.Files;
+import nl.esciencecenter.xenon.files.Path;
+import nl.esciencecenter.xenon.files.PathAttributesPair;
+import nl.esciencecenter.xenon.files.RelativePath;
+
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+import net.sourceforge.argparse4j.inf.Subparsers;
 
 public class ListCommand extends XenonCommand {
 
@@ -38,7 +45,7 @@ public class ListCommand extends XenonCommand {
 
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("list")
-                .setDefault("subcommand", this)
+                .setDefault("operation", this)
                 .help("List objects at path of location")
                 .description("List objects at path of location");
         subparser.addArgument("location")

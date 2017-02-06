@@ -1,14 +1,28 @@
 package nl.esciencecenter.xenon.cli;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import nl.esciencecenter.xenon.AdaptorStatus;
+import nl.esciencecenter.xenon.Xenon;
+import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.XenonFactory;
+import nl.esciencecenter.xenon.XenonPropertyDescription;
+
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.*;
-import nl.esciencecenter.xenon.*;
+import net.sourceforge.argparse4j.inf.ArgumentGroup;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+import net.sourceforge.argparse4j.inf.Subparsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class Main {
     private static final String PROGRAM_NAME = "xenon";
@@ -39,36 +53,74 @@ public class Main {
     }
 
     public ArgumentParser buildArgumentParser() throws XenonException {
-        ArgumentParser parser = ArgumentParsers.newArgumentParser(PROGRAM_NAME)
+        ArgumentParser parser = ArgumentParsers.newArgumentParser(PROGRAM_NAME, true, "-", "@")
                 .defaultHelp(true)
                 .description("Files and Jobs operations with Xenon")
                 .version(PROGRAM_VERSION);
         parser.addArgument("--version").action(Arguments.version());
-
-        parser.addArgument("--scheme").choices(getSchemeNames())
-                .setDefault(getDefaultSchemeName())
-                .help("Xenon scheme to use for subcommands");
-        parser.addArgument("--json").action(Arguments.storeTrue()).setConst(false).help("Output in JSON format");
-
-        ArgumentGroup propGroup = parser.addArgumentGroup("optional adaptor properties");
-        propGroup.addArgument("--prop")
-                .action(Arguments.append())
-                .metavar("KEY=VALUE")
-                .help("Xenon adaptor properties, " + getSupportedPropertiesHelp())
-                .dest("props");
-
+        parser.addArgument("--format").choices("cwljson").help("Output in JSON format");
+        addSchemeSubParsers(parser);
         addCredentialArguments(parser);
-
-        Subparsers subparsers = parser.addSubparsers().title("subcommands");
-        ICommand[] subcommands = {
-                new ListCommand(),
-                new UploadCommand(),
-                new DownloadCommand(),
-        };
-        for (ICommand subcommand: subcommands) {
-            subcommand.buildArgumentParser(subparsers);
-        }
         return parser;
+    }
+
+    private void addSchemeSubParsers(ArgumentParser parser) {
+        Subparsers subparsers = parser.addSubparsers().title("scheme");
+        AdaptorStatus[] adaptors = getAdaptorStatuses();
+
+        // TODO make filesSchemes+jobsSchemes dynamic after https://github.com/NLeSC/Xenon/issues/400 is fixed
+        List<String> filesSchemes = Arrays.asList("file", "sftp", "ftp");
+        List<String> jobsSchemes = Arrays.asList("local", "ssh", "ge", "sge", "slurm", "torque");
+        List<String> onlineSchemes = Arrays.asList("file", "local", "ssh", "sftp");
+        List<String> localSchemes = Arrays.asList("file", "local");
+
+        for (AdaptorStatus adaptor: adaptors) {
+            for (String scheme: adaptor.getSupportedSchemes()) {
+                Subparser schemeParser = subparsers.addParser(scheme)
+                    .help(adaptor.getDescription())
+                    .description(adaptor.getDescription())
+                    .setDefault("scheme", scheme);
+                if (!localSchemes.contains(scheme)) {
+                    // --location
+                }
+                schemeParser.addArgument("--prop")
+                    .action(Arguments.append())
+                    .metavar("KEY=VALUE")
+                    .help("Xenon adaptor properties, " + getSupportedPropertiesHelp(adaptor))
+                    .dest("props");
+                Subparsers commandsParser = schemeParser.addSubparsers().title("subcommands");
+                if (filesSchemes.contains(scheme)) {
+                    if (!localSchemes.contains(scheme)) {
+                        // upload
+                        new UploadCommand().buildArgumentParser(commandsParser);
+                        // download
+                        new DownloadCommand().buildArgumentParser(commandsParser);
+                    }
+                    // copy
+                    // remove
+                    // list
+                    new ListCommand().buildArgumentParser(commandsParser);
+                } else if (jobsSchemes.contains(scheme)) {
+                    if (!onlineSchemes.contains(scheme)) {
+                        // submit
+                        // list
+                        // remove
+                        // queues
+                    }
+                    // exec
+                }
+            }
+        }
+    }
+
+    private String getSupportedPropertiesHelp(AdaptorStatus adaptor) {
+        String sep = System.getProperty("line.separator");
+        List<String> helps = Arrays.stream(adaptor.getSupportedProperties()).map(
+                (property) -> "- " + property.getName() + "=" + property.getDefaultValue() + " ("+ property.getDescription() + ", type:" + property.getType() + ") "
+            ).collect(Collectors.toList());
+
+        helps.add(0, "Supported properties:");
+        return String.join(sep, helps);
     }
 
     private void addCredentialArguments(ArgumentParser parser) {
@@ -84,11 +136,22 @@ public class Main {
 
     private List<String> getSchemeNames() throws XenonException {
         ArrayList<String> schemeNames = new ArrayList<String>();
-        Xenon xenon = XenonFactory.newXenon(null);
-        AdaptorStatus[] adaptors = xenon.getAdaptorStatuses();
-        XenonFactory.endXenon(xenon);
+        AdaptorStatus[] adaptors = getAdaptorStatuses();
         Arrays.stream(adaptors).forEach((adaptor) -> Collections.addAll(schemeNames, adaptor.getSupportedSchemes()));
         return schemeNames;
+    }
+
+    private AdaptorStatus[] getAdaptorStatuses() {
+        AdaptorStatus[] adaptors = {};
+        try {
+            Xenon xenon = XenonFactory.newXenon(null);
+            adaptors = xenon.getAdaptorStatuses();
+            XenonFactory.endXenon(xenon);
+            return adaptors;
+        } catch (XenonException e) {
+            e.printStackTrace();
+        }
+        return adaptors;
     }
 
     private List<XenonPropertyDescription> getSupportedProperties() {
