@@ -44,5 +44,8 @@ Requires `nlesc/xenon-cli` Docker image to be available locally.
 
 Example to list contents of `/etc` directory via a ssh to localhost connection with cwl-runner:
 ```
-cwl-runner xenon-ls.cwl --adaptor local --location localhost --path /etc
+./xenon-ls.cwl --scheme ssh --location <user>@<host> --path $PWD --certfile ~/.ssh/id_rsa
+./xenon-upload.cwl --scheme ssh --source $PWD/README.md --location <user>@<host> --path /tmp/copy-of-README.md --certfile ~/.ssh/id_rsa
+./xenon-download.cwl --scheme ssh --location <user>@<host> --path /tmp/copy-of-README.md --target /tmp/another-copy-of-README.md --certfile ~/.ssh/id_rsa
 ```
+(Replace `<user>@<host>` with actual username and hostname)

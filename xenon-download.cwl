@@ -1,14 +1,14 @@
 #!/usr/bin/env cwl-runner
 cwlVersion: v1.0
 class: CommandLineTool
-doc: List objects on remote storage
+doc: Download file from remote storage
 requirements:
 - class: DockerRequirement
   # xenon-cli Docker container needs to be manually build before
   dockerImageId: nlesc/xenon-cli
 arguments:
 - --json
-- list
+- download
 inputs:
   scheme:
     type: string
@@ -28,17 +28,13 @@ inputs:
     type: string
     inputBinding:
       position: 2
+  target:
+    type: string
+    inputBinding:
+      position: 3
 outputs:
-  objects:
-    type:
-      type: array
-      items: string
-  files:
-    type:
-      type: array
-      items: string
-  directories:
-    type:
-      type: array
-      items: string
-stdout: cwl.output.json
+  target:
+    type: File
+    outputBinding:
+      glob: $(inputs.target)
+# stdout: cwl.output.json
