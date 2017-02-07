@@ -7,9 +7,12 @@ For now it must be build, see Build chapter below.
 # Usage
 
 ```
-xenon --adaptor local --json list /etc
-xenon --adaptor ssh --json list --location localhost /etc
-xenon --adaptor ssh --json upload --source /etc/passwd --location localhost --path /tmp/copy-of-passwd 
+xenon file list /etc
+xenon sftp --location localhost list /etc
+xenon sftp --location localhost upload /etc/passwd /tmp/copy-of-passwd
+xenon ssh --location localhost exec /bin/hostname
+echo "sleep 30;echo Hello" | xenon sftp --location localhost upload - /tmp/myjob.sh
+xenon slurm --location localhost submit /bin/sh /tmp/myjob.sh
 ```
 
 # Build
