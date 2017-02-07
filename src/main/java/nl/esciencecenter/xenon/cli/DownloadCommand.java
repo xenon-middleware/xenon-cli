@@ -48,8 +48,10 @@ public class DownloadCommand extends CopyCommand {
         Files files = xenon.files();
         this.copy(files, source, target, recursive, copymode);
 
-        DownloadOutput downloadOutput = new DownloadOutput(source, target);
-        String format = res.getString("format");
-        this.print(downloadOutput, format);
+        if (!target.stream) {
+            DownloadOutput downloadOutput = new DownloadOutput(source, target);
+            String format = res.getString("format");
+            this.print(downloadOutput, format);
+        }
     }
 }

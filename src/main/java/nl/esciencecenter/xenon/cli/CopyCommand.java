@@ -122,8 +122,10 @@ public class CopyCommand extends XenonCommand {
         Files files = xenon.files();
         this.copy(files, source, target, recursive, copymode);
 
-        CopyOutPut copyOutput = new CopyOutPut(source, target);
-        String format = res.getString("format");
-        this.print(copyOutput, format);
+        if (!target.stream) {
+            CopyOutPut copyOutput = new CopyOutPut(source, target);
+            String format = res.getString("format");
+            this.print(copyOutput, format);
+        }
     }
 }
