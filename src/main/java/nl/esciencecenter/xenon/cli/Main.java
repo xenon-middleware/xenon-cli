@@ -1,5 +1,6 @@
 package nl.esciencecenter.xenon.cli;
 
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.parseArgumentListAsMap;
 
 import java.util.Arrays;
@@ -72,7 +73,8 @@ public class Main {
                     .description(adaptor.getDescription())
                     .setDefault("scheme", scheme);
                 // --location
-                Argument locationArgument = schemeParser.addArgument("--location").help("Location, " + getSupportedLocationHelp(adaptor));
+                String supportedLocationHelp = getSupportedLocationHelp(adaptor);
+                Argument locationArgument = schemeParser.addArgument("--location").help("Location, " + supportedLocationHelp);
                 if (sshSchemes.contains(scheme)) {
                     locationArgument.required(true);
                 }
@@ -91,7 +93,7 @@ public class Main {
                         new DownloadCommand().buildArgumentParser(commandsParser);
                     }
                     // copy
-                    new CopyCommand().buildArgumentParser(commandsParser);
+                    new CopyCommand().buildArgumentParser(commandsParser, supportedLocationHelp, localSchemes.contains(scheme));
                     // remove
                     new RemoveFileCommand().buildArgumentParser(commandsParser);
                     // list
@@ -112,13 +114,6 @@ public class Main {
                 }
             }
         }
-    }
-
-    private String getSupportedLocationHelp(AdaptorStatus adaptor) {
-        List<String> helps = Arrays.stream(adaptor.getSupportedLocations()).map((location) -> "- " + location).collect(Collectors.toList());
-        helps.add(0, "Supported locations:");
-        String sep = System.getProperty("line.separator");
-        return String.join(sep, helps);
     }
 
     private String getSupportedPropertiesHelp(AdaptorStatus adaptor) {

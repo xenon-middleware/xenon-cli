@@ -21,7 +21,10 @@ public class UploadCommand extends CopyCommand {
                 .setDefault("command", this)
                 .help("Upload local file to target")
                 .description("Upload local file to target");
-        subparser.addArgument("source").help("Local source path").required(true);
+        subparser.addArgument("source")
+            .type(Arguments.fileType().acceptSystemIn().verifyCanRead())
+            .help("Local source path, use '-' for stdin")
+            .required(true);
         subparser.addArgument("target").help("Target path").required(true);
         subparser.addArgument("--recursive").help("Upload directories recursively").action(Arguments.storeTrue());
         addCopyModeArguments(subparser);

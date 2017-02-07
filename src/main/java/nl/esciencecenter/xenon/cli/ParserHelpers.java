@@ -1,9 +1,12 @@
 package nl.esciencecenter.xenon.cli;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import nl.esciencecenter.xenon.AdaptorStatus;
 import nl.esciencecenter.xenon.files.CopyOption;
 import nl.esciencecenter.xenon.jobs.JobDescription;
 
@@ -89,5 +92,12 @@ public class ParserHelpers {
             description.setWorkingDirectory(workingDirectory);
         }
         return description;
+    }
+
+    public static String getSupportedLocationHelp(AdaptorStatus adaptor) {
+        List<String> helps = Arrays.stream(adaptor.getSupportedLocations()).map((location) -> "- " + location).collect(Collectors.toList());
+        helps.add(0, "Supported locations:");
+        String sep = System.getProperty("line.separator");
+        return String.join(sep, helps);
     }
 }
