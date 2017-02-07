@@ -1,22 +1,24 @@
 package nl.esciencecenter.xenon.cli;
 
-import java.util.ArrayList;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.parseArgumentListAsMap;
+
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import net.sourceforge.argparse4j.inf.*;
 import nl.esciencecenter.xenon.AdaptorStatus;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonFactory;
-import nl.esciencecenter.xenon.XenonPropertyDescription;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.Argument;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+import net.sourceforge.argparse4j.inf.Subparsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,15 +39,7 @@ public class Main {
     }
 
     public static Map<String,String> buildXenonProperties(Namespace res) {
-        List<String> propsIn = res.getList("props");
-        Map<String, String> propsOut = new HashMap<>();
-        if (propsIn != null) {
-            for (String prop : propsIn) {
-                String[] keyval = prop.split("=", 2);
-                propsOut.put(keyval[0], keyval[1]);
-            }
-        }
-        return propsOut;
+        return parseArgumentListAsMap(res.getList("props"));
     }
 
     public ArgumentParser buildArgumentParser() throws XenonException {
@@ -56,7 +50,7 @@ public class Main {
         parser.addArgument("--version").action(Arguments.version());
         parser.addArgument("--format").choices("cwljson").help("Output in JSON format");
         addSchemeSubParsers(parser);
-        addCredentialArguments(parser);
+        ParserHelpers.addCredentialArguments(parser);
         return parser;
     }
 
@@ -82,6 +76,7 @@ public class Main {
                 if (sshSchemes.contains(scheme)) {
                     locationArgument.required(true);
                 }
+                // --prop
                 schemeParser.addArgument("--prop")
                     .action(Arguments.append())
                     .metavar("KEY=VALUE")
@@ -96,17 +91,24 @@ public class Main {
                         new DownloadCommand().buildArgumentParser(commandsParser);
                     }
                     // copy
+                    new CopyCommand().buildArgumentParser(commandsParser);
                     // remove
+                    new RemoveFileCommand().buildArgumentParser(commandsParser);
                     // list
-                    new ListCommand().buildArgumentParser(commandsParser);
+                    new ListFilesCommand().buildArgumentParser(commandsParser);
                 } else if (jobsSchemes.contains(scheme)) {
                     if (!onlineSchemes.contains(scheme)) {
                         // submit
+                        new SubmitCommand().buildArgumentParser(commandsParser);
                         // list
+                        new ListJobsCommand().buildArgumentParser(commandsParser);
                         // remove
+                        new RemoveJobCommand().buildArgumentParser(commandsParser);
                         // queues
+                        new QueuesCommand().buildArgumentParser(commandsParser);
                     }
                     // exec
+                    new ExecCommand().buildArgumentParser(commandsParser);
                 }
             }
         }
@@ -127,13 +129,6 @@ public class Main {
 
         helps.add(0, "Supported properties:");
         return String.join(sep, helps);
-    }
-
-    private void addCredentialArguments(ArgumentParser parser) {
-        ArgumentGroup credGroup = parser.addArgumentGroup("optional credential arguments");
-        credGroup.addArgument("--username").help("Username");
-        credGroup.addArgument("--password").help("Password or passphrase");
-        credGroup.addArgument("--certfile").help("Certificate file");
     }
 
     private AdaptorStatus[] getAdaptorStatuses() {

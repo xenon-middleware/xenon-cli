@@ -15,12 +15,12 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 
-public class ListCommand extends XenonCommand {
+public class ListFilesCommand extends XenonCommand {
 
-    private ListOutput listObjects(Files files, String scheme, String location, String pathIn, Credential credential) throws XenonException {
+    private ListFilesOutput listObjects(Files files, String scheme, String location, String pathIn, Credential credential) throws XenonException {
         FileSystem fs = files.newFileSystem(scheme, location, credential, null);
 
-        ListOutput listing = new ListOutput();
+        ListFilesOutput listing = new ListFilesOutput();
         Path path = files.newPath(fs, new RelativePath(pathIn));
         FileAttributes att = files.getAttributes(path);
         if (att.isDirectory()) {
@@ -58,7 +58,7 @@ public class ListCommand extends XenonCommand {
         String path = res.getString("path");
         Files files = xenon.files();
         Credential credential = buildCredential(res, xenon);
-        ListOutput listing = listObjects(files, scheme, location, path, credential);
+        ListFilesOutput listing = listObjects(files, scheme, location, path, credential);
 
         String format = res.getString("format");
         this.print(listing, format);

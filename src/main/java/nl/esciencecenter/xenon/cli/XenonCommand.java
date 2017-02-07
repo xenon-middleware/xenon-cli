@@ -1,20 +1,25 @@
 package nl.esciencecenter.xenon.cli;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.credentials.Credentials;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.sourceforge.argparse4j.inf.Namespace;
+
 public abstract class XenonCommand implements ICommand {
 
     protected Credential buildCredential(Namespace res, Xenon xenon) throws XenonException {
+        return buildCredential(res, xenon, "");
+    }
+
+    protected Credential buildCredential(Namespace res, Xenon xenon, String prefix)  throws XenonException {
         String scheme = res.getString("scheme");
-        String username = res.getString("username");
-        String passwordAsString = res.getString("password");
-        String certfile = res.getString("certfile");
+        String username = res.getString(prefix + "username");
+        String passwordAsString = res.getString(prefix + "password");
+        String certfile = res.getString(prefix + "certfile");
         char[] password = null;
         if (passwordAsString != null) {
             password = passwordAsString.toCharArray();

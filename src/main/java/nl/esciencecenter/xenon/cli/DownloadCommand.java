@@ -17,8 +17,8 @@ public class DownloadCommand extends CopyCommand {
                 .setDefault("command", this)
                 .help("Download source file to local file")
                 .description("Download source file to local file");
-        subparser.addArgument("sourcePath").help("Source path").required(true);
-        subparser.addArgument("targetPath").help("Target path").required(true);
+        subparser.addArgument("source").help("Source path").required(true);
+        subparser.addArgument("target").help("Target path").required(true);
         return subparser;
     }
 
@@ -26,12 +26,12 @@ public class DownloadCommand extends CopyCommand {
     public void run(Namespace res, Xenon xenon) throws XenonException {
         String sourceScheme = res.getString("scheme");
         String sourceLocation = res.getString("location");
-        String sourcePath = res.getString("sourcePath");
+        String sourcePath = res.getString("source");
         Credential sourceCredential = buildCredential(res, xenon);
-        String targetPath = res.getString("targetPath");
+        String targetPath = res.getString("target");
 
         CopyInput source = new CopyInput(sourceScheme, sourceLocation, sourcePath, sourceCredential);
-        CopyInput target = new CopyInput("local", null, targetPath, null);
+        CopyInput target = new CopyInput("file", null, targetPath, null);
 
         Files files = xenon.files();
         this.copy(files, source, target);
