@@ -4,10 +4,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nl.esciencecenter.xenon.files.CopyOption;
 import nl.esciencecenter.xenon.jobs.JobDescription;
 
+import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 public class ParserHelpers {
@@ -21,6 +24,25 @@ public class ParserHelpers {
         credGroup.addArgument("--" + prefix + "password").help("Password or passphrase");
         credGroup.addArgument("--" + prefix + "certfile").help("Certificate file");
         return credGroup;
+    }
+
+    public static MutuallyExclusiveGroup addCopyModeArguments(ArgumentParser parser) {
+        MutuallyExclusiveGroup group = parser.addMutuallyExclusiveGroup("optional copy mode arguments");
+        group.addArgument("--overwrite")
+            .help("Overwrite existing files at target location")
+            .type(CopyOption.class)
+            .action(Arguments.storeConst())
+            .dest("copymode")
+            .setConst(CopyOption.REPLACE)
+            .setDefault(CopyOption.CREATE);
+        group.addArgument("--ignore")
+            .help("Ignore existing files at target location")
+            .type(CopyOption.class)
+            .action(Arguments.storeConst())
+            .dest("copymode")
+            .setConst(CopyOption.IGNORE)
+            .setDefault(CopyOption.CREATE);
+        return group;
     }
 
     public static Map<String, String> parseArgumentListAsMap(List<String> input) {

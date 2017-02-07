@@ -1,10 +1,14 @@
 package nl.esciencecenter.xenon.cli;
 
+import static nl.esciencecenter.xenon.cli.ParserHelpers.addCopyModeArguments;
+
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.files.*;
+import nl.esciencecenter.xenon.util.Utils;
 
+import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
@@ -14,7 +18,7 @@ import org.slf4j.LoggerFactory;
 public class CopyCommand extends XenonCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(CopyCommand.class);
 
-    protected void copy(Files files, CopyInput source, CopyInput target) throws XenonException {
+    protected void copy(Files files, CopyInput source, CopyInput target, Boolean recursive, CopyOption copymode) throws XenonException {
         FileSystem sourceFS = files.newFileSystem(source.scheme, source.location, source.credential, source.properties);
         FileSystem targetFS = files.newFileSystem(target.scheme, target.location, target.credential, target.properties);
 
@@ -35,7 +39,11 @@ public class CopyCommand extends XenonCommand {
             }
         }
 
-        files.copy(sourcePath, targetPath, CopyOption.CREATE);
+        if (recursive) {
+            Utils.recursiveCopy(files, sourcePath, targetPath, copymode);
+        } else {
+            files.copy(sourcePath, targetPath, copymode);
+        }
 
         files.close(sourceFS);
         files.close(targetFS);
@@ -53,6 +61,8 @@ public class CopyCommand extends XenonCommand {
         subparser.addArgument("target-path").help("Target path").required(true);
         // TODO For file scheme requires no credentials
         ParserHelpers.addCredentialArguments(subparser, "target-");
+        subparser.addArgument("--recursive").help("Copy directories recursively").action(Arguments.storeTrue());
+        addCopyModeArguments(subparser);
         return subparser;
     }
 
@@ -65,12 +75,14 @@ public class CopyCommand extends XenonCommand {
         String targetLocation = res.getString("target_location");
         String targetPath = res.getString("target_path");
         Credential targetCredential = buildCredential(res, xenon, "target_");
+        CopyOption copymode = res.get("copymode");
+        Boolean recursive = res.getBoolean("recursive");
 
         CopyInput source = new CopyInput(scheme, sourceLocation, sourcePath, sourceCredential);
         CopyInput target = new CopyInput(scheme, targetLocation, targetPath, targetCredential);
 
         Files files = xenon.files();
-        this.copy(files, source, target);
+        this.copy(files, source, target, recursive, copymode);
 
         CopyOutPut copyOutput = new CopyOutPut(source, target);
         String format = res.getString("format");

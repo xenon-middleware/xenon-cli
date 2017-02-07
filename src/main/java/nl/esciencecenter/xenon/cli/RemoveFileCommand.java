@@ -1,5 +1,7 @@
 package nl.esciencecenter.xenon.cli;
 
+import static nl.esciencecenter.xenon.util.Utils.recursiveDelete;
+
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
@@ -28,6 +30,7 @@ public class RemoveFileCommand extends XenonCommand {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
         String path = res.getString("path");
+        Boolean recursive = res.getBoolean("recursive");
         Files files = xenon.files();
         Credential credential = buildCredential(res, xenon);
         remove(files, scheme, location, path, credential);
@@ -47,6 +50,6 @@ public class RemoveFileCommand extends XenonCommand {
                 path = files.newPath(fs, workingDirectory.resolve(pathIn));
             }
         }
-        files.delete(path);
+        recursiveDelete(files, path);
     }
 }
