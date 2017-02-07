@@ -45,13 +45,9 @@ public class ListCommand extends XenonCommand {
 
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("list")
-                .setDefault("operation", this)
+                .setDefault("command", this)
                 .help("List objects at path of location")
                 .description("List objects at path of location");
-        subparser.addArgument("location")
-                .help("Location, " + getSupportedLocationHelp())
-                .nargs("?")
-                .setDefault("/");
         subparser.addArgument("path").help("Path").required(true);
         return subparser;
     }
@@ -64,7 +60,7 @@ public class ListCommand extends XenonCommand {
         Credential credential = buildCredential(res, xenon);
         ListOutput listing = listObjects(files, scheme, location, path, credential);
 
-        Boolean json = res.getBoolean("json");
-        this.print(listing, json);
+        String format = res.getString("format");
+        this.print(listing, format);
     }
 }

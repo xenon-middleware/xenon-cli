@@ -14,12 +14,9 @@ public class DownloadCommand extends CopyCommand {
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("download")
-                .setDefault("operation", this)
+                .setDefault("command", this)
                 .help("Download source file to local file")
                 .description("Download source file to local file");
-        subparser.addArgument("sourceLocation")
-                .help("Source location, " + getSupportedLocationHelp())
-                .setDefault("/");
         subparser.addArgument("sourcePath").help("Source path").required(true);
         subparser.addArgument("targetPath").help("Target path").required(true);
         return subparser;
@@ -28,7 +25,7 @@ public class DownloadCommand extends CopyCommand {
     @Override
     public void run(Namespace res, Xenon xenon) throws XenonException {
         String sourceScheme = res.getString("scheme");
-        String sourceLocation = res.getString("sourceLocation");
+        String sourceLocation = res.getString("location");
         String sourcePath = res.getString("sourcePath");
         Credential sourceCredential = buildCredential(res, xenon);
         String targetPath = res.getString("targetPath");
@@ -39,8 +36,8 @@ public class DownloadCommand extends CopyCommand {
         Files files = xenon.files();
         this.copy(files, source, target);
 
-        Boolean json = res.getBoolean("json");
         DownloadOutput downloadOutput = new DownloadOutput(source, target);
-        this.print(downloadOutput, json);
+        String format = res.getString("format");
+        this.print(downloadOutput, format);
     }
 }

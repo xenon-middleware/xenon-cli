@@ -14,13 +14,10 @@ public class UploadCommand extends CopyCommand {
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("upload")
-                .setDefault("operation", this)
+                .setDefault("command", this)
                 .help("Upload local file to target")
                 .description("Upload local file to target");
         subparser.addArgument("sourcePath").help("Source path").required(true);
-        subparser.addArgument("targetLocation")
-                .help("Target location, " + getSupportedLocationHelp())
-                .setDefault("/");
         subparser.addArgument("targetPath").help("Target path").required(true);
         return subparser;
     }
@@ -29,7 +26,7 @@ public class UploadCommand extends CopyCommand {
     public void run(Namespace res, Xenon xenon) throws XenonException {
         String sourcePath = res.getString("sourcePath");
         String targetScheme = res.getString("scheme");
-        String targetLocation = res.getString("targetLocation");
+        String targetLocation = res.getString("location");
         String targetPath = res.getString("targetPath");
         Credential targetCredential = buildCredential(res, xenon);
 
@@ -40,7 +37,7 @@ public class UploadCommand extends CopyCommand {
         this.copy(files, source, target);
 
         UploadOutput uploadOutput = new UploadOutput(source, target);
-        Boolean json = res.getBoolean("json");
-        this.print(uploadOutput, json);
+        String format = res.getString("format");
+        this.print(uploadOutput, format);
     }
 }

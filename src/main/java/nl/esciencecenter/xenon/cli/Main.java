@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import net.sourceforge.argparse4j.inf.*;
 import nl.esciencecenter.xenon.AdaptorStatus;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
@@ -16,11 +17,6 @@ import nl.esciencecenter.xenon.XenonPropertyDescription;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.ArgumentGroup;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-import net.sourceforge.argparse4j.inf.Subparsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,8 +29,8 @@ public class Main {
         Main main = new Main();
         ArgumentParser parser = main.buildArgumentParser();
         Namespace res = parser.parseArgsOrFail(args);
-        LOGGER.debug(res.toString());
-        ICommand subcommand = res.get("subcommand");
+        LOGGER.warn(res.toString());
+        ICommand subcommand = res.get("command");
         Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res));
         subcommand.run(res, xenon);
         XenonFactory.endXenon(xenon);
@@ -73,6 +69,7 @@ public class Main {
         List<String> jobsSchemes = Arrays.asList("local", "ssh", "ge", "sge", "slurm", "torque");
         List<String> onlineSchemes = Arrays.asList("file", "local", "ssh", "sftp");
         List<String> localSchemes = Arrays.asList("file", "local");
+        List<String> sshSchemes = Arrays.asList("ssh", "sftp");
 
         for (AdaptorStatus adaptor: adaptors) {
             for (String scheme: adaptor.getSupportedSchemes()) {
@@ -80,15 +77,17 @@ public class Main {
                     .help(adaptor.getDescription())
                     .description(adaptor.getDescription())
                     .setDefault("scheme", scheme);
-                if (!localSchemes.contains(scheme)) {
-                    // --location
+                // --location
+                Argument locationArgument = schemeParser.addArgument("--location").help("Location, " + getSupportedLocationHelp(adaptor));
+                if (sshSchemes.contains(scheme)) {
+                    locationArgument.required(true);
                 }
                 schemeParser.addArgument("--prop")
                     .action(Arguments.append())
                     .metavar("KEY=VALUE")
                     .help("Xenon adaptor properties, " + getSupportedPropertiesHelp(adaptor))
                     .dest("props");
-                Subparsers commandsParser = schemeParser.addSubparsers().title("subcommands");
+                Subparsers commandsParser = schemeParser.addSubparsers().title("commands");
                 if (filesSchemes.contains(scheme)) {
                     if (!localSchemes.contains(scheme)) {
                         // upload
@@ -113,6 +112,13 @@ public class Main {
         }
     }
 
+    private String getSupportedLocationHelp(AdaptorStatus adaptor) {
+        List<String> helps = Arrays.stream(adaptor.getSupportedLocations()).map((location) -> "- " + location).collect(Collectors.toList());
+        helps.add(0, "Supported locations:");
+        String sep = System.getProperty("line.separator");
+        return String.join(sep, helps);
+    }
+
     private String getSupportedPropertiesHelp(AdaptorStatus adaptor) {
         String sep = System.getProperty("line.separator");
         List<String> helps = Arrays.stream(adaptor.getSupportedProperties()).map(
@@ -130,17 +136,6 @@ public class Main {
         credGroup.addArgument("--certfile").help("Certificate file");
     }
 
-    private String getDefaultSchemeName() {
-        return "local";
-    }
-
-    private List<String> getSchemeNames() throws XenonException {
-        ArrayList<String> schemeNames = new ArrayList<String>();
-        AdaptorStatus[] adaptors = getAdaptorStatuses();
-        Arrays.stream(adaptors).forEach((adaptor) -> Collections.addAll(schemeNames, adaptor.getSupportedSchemes()));
-        return schemeNames;
-    }
-
     private AdaptorStatus[] getAdaptorStatuses() {
         AdaptorStatus[] adaptors = {};
         try {
@@ -152,29 +147,5 @@ public class Main {
             e.printStackTrace();
         }
         return adaptors;
-    }
-
-    private List<XenonPropertyDescription> getSupportedProperties() {
-        ArrayList<XenonPropertyDescription> props = new ArrayList<>();
-        try {
-            Xenon xenon = XenonFactory.newXenon(null);
-            AdaptorStatus[] adaptors = xenon.getAdaptorStatuses();
-            Arrays.stream(adaptors).forEach((adaptor) -> Collections.addAll(props, adaptor.getSupportedProperties()));
-            XenonFactory.endXenon(xenon);
-        } catch (XenonException e) {
-            e.printStackTrace();
-        }
-        return props;
-    }
-
-    private String getSupportedPropertiesHelp() {
-        String sep = System.getProperty("line.separator");
-        List<String> helps = getSupportedProperties()
-                .stream().distinct().map(
-                    (property) -> "- " + property.getName() + "=" + property.getDefaultValue() + " ("+ property.getDescription() + ", type:" + property.getType() + ") "
-                ).collect(Collectors.toList());
-
-        helps.add(0, "Supported properties:");
-        return String.join(sep, helps);
     }
 }
