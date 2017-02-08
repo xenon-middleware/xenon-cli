@@ -36,3 +36,4 @@ docker {
     dependsOn tasks.installDist
     files tasks.installDist.outputs
 }
+dockerfileZip.enabled = false
