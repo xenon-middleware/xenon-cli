@@ -86,19 +86,21 @@ public class Main {
                     .dest("props");
                 Subparsers commandsParser = schemeParser.addSubparsers().title("commands");
                 if (filesSchemes.contains(scheme)) {
+                    // copy
+                    new CopyCommand().buildArgumentParser(commandsParser, supportedLocationHelp, localSchemes.contains(scheme));
                     if (!localSchemes.contains(scheme)) {
                         // upload
                         new UploadCommand().buildArgumentParser(commandsParser);
                         // download
                         new DownloadCommand().buildArgumentParser(commandsParser);
                     }
-                    // copy
-                    new CopyCommand().buildArgumentParser(commandsParser, supportedLocationHelp, localSchemes.contains(scheme));
-                    // remove
-                    new RemoveFileCommand().buildArgumentParser(commandsParser);
                     // list
                     new ListFilesCommand().buildArgumentParser(commandsParser);
+                    // remove
+                    new RemoveFileCommand().buildArgumentParser(commandsParser);
                 } else if (jobsSchemes.contains(scheme)) {
+                    // exec
+                    new ExecCommand().buildArgumentParser(commandsParser);
                     if (!onlineSchemes.contains(scheme)) {
                         // submit
                         new SubmitCommand().buildArgumentParser(commandsParser);
@@ -109,8 +111,6 @@ public class Main {
                         // queues
                         new QueuesCommand().buildArgumentParser(commandsParser);
                     }
-                    // exec
-                    new ExecCommand().buildArgumentParser(commandsParser);
                 }
             }
         }

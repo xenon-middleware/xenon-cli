@@ -73,7 +73,7 @@ public class ParserHelpers {
 
         JobDescription description = new JobDescription();
         description.setExecutable(executable);
-        if (!args.isEmpty()) {
+        if (args != null && !args.isEmpty()) {
             description.setArguments(args.toArray(new String[0]));
         }
         if (queue != null) {

@@ -2,6 +2,8 @@ package nl.esciencecenter.xenon.cli;
 
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getJobDescription;
 
+import java.io.IOException;
+
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
@@ -9,13 +11,19 @@ import nl.esciencecenter.xenon.jobs.Job;
 import nl.esciencecenter.xenon.jobs.JobDescription;
 import nl.esciencecenter.xenon.jobs.Jobs;
 import nl.esciencecenter.xenon.jobs.Scheduler;
+import nl.esciencecenter.xenon.jobs.Streams;
+import nl.esciencecenter.xenon.util.Utils;
 
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExecCommand extends XenonCommand {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExecCommand.class);
+
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
         //   exec <executable> <args> <environment> <job options> <max time> <queue> <working directory> <std* attached to local streams>
@@ -27,7 +35,7 @@ public class ExecCommand extends XenonCommand {
         subparser.addArgument("executable").help("Executable to execute").required(true);
         subparser.addArgument("args")
             .help("Arguments for executable, prepend ' -- ' when arguments start with '-'")
-            .nargs("?");
+            .nargs("*");
 
         subparser.addArgument("--queue").help("Execute job in this queue");
         subparser.addArgument("--env")
@@ -59,13 +67,27 @@ public class ExecCommand extends XenonCommand {
         String location = res.getString("location");
         Credential credential = buildCredential(res, xenon);
         JobDescription description = getJobDescription(res);
+        description.setInteractive(true);
         long waitTimeout = res.getLong("wait_timeout");
 
         Jobs jobs = xenon.jobs();
         Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
 
-        // TODO attach stdin, stdout, stderr of job to this process
         Job job = jobs.submitJob(scheduler, description);
+        Streams streams = jobs.getStreams(job);
+        try {
+            // TODO attach stdin of job to this process
+            // copying stdin blocks, need to run it in own thread
+            // Utils.copy(System.in, streams.getStdin(), -1);
+            streams.getStdin().close();
+            Utils.copy(streams.getStdout(), System.out, -1);
+            streams.getStdout().close();
+            Utils.copy(streams.getStderr(), System.err, -1);
+            streams.getStderr().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         jobs.waitUntilDone(job, waitTimeout);
 
         jobs.close(scheduler);

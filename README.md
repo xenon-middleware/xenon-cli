@@ -2,7 +2,13 @@
 
 # Install
 
-For now it must be build, see Build chapter below.
+For now it must be build, see [Build chapter](#build) below.
+The distribution can be installed with:
+```
+tar -xf build/distributions/xenon*.tar
+xenon*/bin/xenon --help
+```
+Add `xenon*/bin` to your PATH environment variable for easy usage.
 
 # Usage
 

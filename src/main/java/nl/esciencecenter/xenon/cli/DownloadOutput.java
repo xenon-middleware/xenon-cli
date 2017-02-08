@@ -4,12 +4,12 @@ public class DownloadOutput {
 
     private final String location;
     private final String path;
-    private final String target;
+    private final CwlFile target;
 
     public DownloadOutput(CopyInput source, CopyInput target) {
         this.location = source.location;
         this.path = source.path;
-        this.target = target.path;
+        this.target = new CwlFile(target.path);
     }
 
     @Override

@@ -81,13 +81,13 @@ public class CopyCommand extends XenonCommand {
             sourcePath.help("Source path");
         }
         Argument targetLocation = subparser.addArgument("target-location").help("Target location, " + supportedLocationHelp);
-        if (!isLocal) {
-            targetLocation.required(true);
+        if (isLocal) {
+            targetLocation.nargs("?");
         }
         Argument targetPath = subparser.addArgument("target-path").required(true);
         if (isLocal) {
-            targetPath.help("Source path, use '-' for stdout")
-                .type(Arguments.fileType().acceptSystemIn().verifyCanWrite());
+            targetPath.help("Target path, use '-' for stdout")
+                .type(Arguments.fileType().acceptSystemIn().verifyCanWriteParent());
         } else {
             targetPath.help("Target path");
         }

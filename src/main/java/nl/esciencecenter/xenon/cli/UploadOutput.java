@@ -1,12 +1,12 @@
 package nl.esciencecenter.xenon.cli;
 
 public class UploadOutput {
-    public String source;
+    public CwlFile source;
     public String location;
     public String path;
 
     public UploadOutput(CopyInput source, CopyInput target) {
-        this.source = source.path;
+        this.source = new CwlFile(source.path);
         location = target.location;
         path = target.path;
     }
