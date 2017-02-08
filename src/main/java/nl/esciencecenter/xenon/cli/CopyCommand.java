@@ -43,7 +43,7 @@ public class CopyCommand extends XenonCommand {
             if (!target.path.startsWith("/") && !target.path.equals("-")) {
                 // Path is relative to working directory, make it absolute
                 RelativePath workingDirectory = new RelativePath(System.getProperty("user.dir"));
-                sourcePath = files.newPath(sourceFS, workingDirectory.resolve(target.path));
+                targetPath = files.newPath(targetFS, workingDirectory.resolve(target.path));
             }
         }
 

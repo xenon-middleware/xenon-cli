@@ -23,7 +23,7 @@ public class DownloadCommand extends CopyCommand {
                 .description("Download source file to local file");
         subparser.addArgument("source").help("Local source path").required(true);
         subparser.addArgument("target")
-            .type(Arguments.fileType().acceptSystemIn().verifyCanWriteParent())
+            .type(Arguments.fileType().acceptSystemIn())
             .help("Target path, use '-' for stdout")
             .required(true);
         subparser.addArgument("--recursive").help("Copy directories recursively").action(Arguments.storeTrue());

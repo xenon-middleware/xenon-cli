@@ -32,7 +32,7 @@ public class Main {
         Main main = new Main();
         ArgumentParser parser = main.buildArgumentParser();
         Namespace res = parser.parseArgsOrFail(args);
-        LOGGER.warn(res.toString());
+        LOGGER.debug(res.toString());
         ICommand subcommand = res.get("command");
         Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res));
         subcommand.run(res, xenon);

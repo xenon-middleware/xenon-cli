@@ -18,6 +18,12 @@ xenon --adaptor ssh --json list --location localhost /etc
 xenon --adaptor ssh --json upload --source /etc/passwd --location localhost --path /tmp/copy-of-passwd 
 ```
 
+To keep password or passphrase invisible in process list put the password in a text file (eg. 'password.txt') and then use '@password.txt' as argument.
+For example:
+```
+xenon --username $USER --password @password.txt sftp --location localhost list $PWD/src
+```
+
 # Build
 
 ```
