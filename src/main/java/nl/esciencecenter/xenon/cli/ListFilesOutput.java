@@ -1,16 +1,32 @@
 package nl.esciencecenter.xenon.cli;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 public class ListFilesOutput {
-    public List<String> objects = new ArrayList<>();
-    public List<String> files = new ArrayList<>();
-    public List<String> directories = new ArrayList<>();
+    public Set<String> objects = new HashSet<>();
+    public Set<String> files = new HashSet<>();
+    public Set<String> directories = new HashSet<>();
 
     @Override
     public String toString() {
         String sep = System.getProperty("line.separator");
         return String.join(sep, objects);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ListFilesOutput that = (ListFilesOutput) o;
+        return Objects.equals(objects, that.objects) &&
+            Objects.equals(files, that.files) &&
+            Objects.equals(directories, that.directories);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(objects, files, directories);
     }
 }

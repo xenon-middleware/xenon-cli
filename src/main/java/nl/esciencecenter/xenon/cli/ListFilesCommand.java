@@ -5,12 +5,10 @@ import static nl.esciencecenter.xenon.util.Utils.walkFileTree;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.files.DirectoryStream;
 import nl.esciencecenter.xenon.files.FileAttributes;
 import nl.esciencecenter.xenon.files.FileSystem;
 import nl.esciencecenter.xenon.files.Files;
 import nl.esciencecenter.xenon.files.Path;
-import nl.esciencecenter.xenon.files.PathAttributesPair;
 import nl.esciencecenter.xenon.files.RelativePath;
 import nl.esciencecenter.xenon.util.FileVisitResult;
 import nl.esciencecenter.xenon.util.FileVisitor;
@@ -22,7 +20,7 @@ import net.sourceforge.argparse4j.inf.Subparsers;
 
 public class ListFilesCommand extends XenonCommand {
 
-    private ListFilesOutput listObjects(Files files, String scheme, String location, String pathIn, Credential credential, Boolean recursive) throws XenonException {
+    private ListFilesOutput listObjects(Files files, String scheme, String location, String pathIn, Credential credential, Boolean recursive, Boolean hidden) throws XenonException {
         FileSystem fs = files.newFileSystem(scheme, location, credential, null);
 
         ListFilesOutput listing = new ListFilesOutput();
@@ -42,17 +40,24 @@ public class ListFilesCommand extends XenonCommand {
 
                 @Override
                 public FileVisitResult preVisitDirectory(Path dir, FileAttributes attributes, Files files) throws XenonException {
-                    if (!dir.equals(path)) {
-                        String filename = relPath.relativize(dir.getRelativePath()).getRelativePath();
-                        listing.directories.add(filename);
-                        listing.objects.add(filename);
+                    if (dir.equals(path)) {
+                        return FileVisitResult.CONTINUE;
                     }
+                    if (!hidden && attributes.isHidden()) {
+                        return FileVisitResult.TERMINATE;
+                    }
+                    String filename = relPath.relativize(dir.getRelativePath()).getRelativePath();
+                    listing.directories.add(filename);
+                    listing.objects.add(filename);
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
                 public FileVisitResult visitFile(Path file, FileAttributes attributes, Files files) throws XenonException {
                     String filename = relPath.relativize(file.getRelativePath()).getRelativePath();
+                    if (!hidden && attributes.isHidden()) {
+                        return FileVisitResult.CONTINUE;
+                    }
                     listing.objects.add(filename);
                     if (attributes.isDirectory()) {
                         listing.directories.add(filename);
@@ -85,6 +90,7 @@ public class ListFilesCommand extends XenonCommand {
                 .description("List objects at path of location");
         subparser.addArgument("path").help("Path").required(true);
         subparser.addArgument("--recursive").help("List directories recursively").action(Arguments.storeTrue());
+        subparser.addArgument("--hidden").help("Include hidden items").action(Arguments.storeTrue());
         return subparser;
     }
 
@@ -93,9 +99,10 @@ public class ListFilesCommand extends XenonCommand {
         String location = res.getString("location");
         String path = res.getString("path");
         Boolean recursive = res.getBoolean("recursive");
+        Boolean hidden = res.getBoolean("hidden");
         Files files = xenon.files();
         Credential credential = buildCredential(res, xenon);
-        ListFilesOutput listing = listObjects(files, scheme, location, path, credential, recursive);
+        ListFilesOutput listing = listObjects(files, scheme, location, path, credential, recursive, hidden);
 
         return listing;
     }
