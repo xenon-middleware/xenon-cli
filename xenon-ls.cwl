@@ -62,6 +62,12 @@ inputs:
     inputBinding:
       prefix: --recursive
       position: 4
+  hidden:
+    doc: Include hidden files/directories
+    type: boolean?
+    inputBinding:
+      prefix: --hidden
+      position: 4
   path:
     type: string
     doc: List contents of path at location
