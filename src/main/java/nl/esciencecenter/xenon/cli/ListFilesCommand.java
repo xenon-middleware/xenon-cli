@@ -26,51 +26,49 @@ public class ListFilesCommand extends XenonCommand {
         FileSystem fs = files.newFileSystem(scheme, location, credential, null);
 
         ListFilesOutput listing = new ListFilesOutput();
-        Path path = files.newPath(fs, new RelativePath(pathIn));
+        RelativePath relPath = new RelativePath(pathIn);
+        Path path = files.newPath(fs, relPath);
         FileAttributes att = files.getAttributes(path);
+        int depth = 1;
+        if (recursive) {
+            depth = Integer.MAX_VALUE;
+        }
         if (att.isDirectory()) {
-            if (recursive) {
-                FileVisitor visitor = new FileVisitor() {
-                    @Override
-                    public FileVisitResult postVisitDirectory(Path dir, XenonException exception, Files files) throws XenonException {
-                        return FileVisitResult.CONTINUE;
-                    }
+            FileVisitor visitor = new FileVisitor() {
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, XenonException exception, Files files) throws XenonException {
+                    return FileVisitResult.CONTINUE;
+                }
 
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, FileAttributes attributes, Files files) throws XenonException {
-                        String filename = dir.getRelativePath().getFileNameAsString();
-                        listing.objects.add(filename);
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, FileAttributes attributes, Files files) throws XenonException {
+                    if (!dir.equals(path)) {
+                        String filename = relPath.relativize(dir.getRelativePath()).getRelativePath();
                         listing.directories.add(filename);
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    @Override
-                    public FileVisitResult visitFile(Path file, FileAttributes attributes, Files files) throws XenonException {
-                        String filename = file.getRelativePath().getFileNameAsString();
                         listing.objects.add(filename);
-                        listing.files.add(filename);
-                        return FileVisitResult.CONTINUE;
                     }
+                    return FileVisitResult.CONTINUE;
+                }
 
-                    @Override
-                    public FileVisitResult visitFileFailed(Path file, XenonException exception, Files files) throws XenonException {
-                        // TODO now failed files are ignored or should it die
-                        return FileVisitResult.CONTINUE;
-                    }
-                };
-                walkFileTree(files, path, visitor);
-            } else {
-                DirectoryStream<PathAttributesPair> stream = files.newAttributesDirectoryStream(path);
-                for (PathAttributesPair p : stream) {
-                    String filename = p.path().getRelativePath().getFileNameAsString();
+                @Override
+                public FileVisitResult visitFile(Path file, FileAttributes attributes, Files files) throws XenonException {
+                    String filename = relPath.relativize(file.getRelativePath()).getRelativePath();
                     listing.objects.add(filename);
-                    if (p.attributes().isDirectory()) {
+                    if (attributes.isDirectory()) {
                         listing.directories.add(filename);
                     } else {
                         listing.files.add(filename);
                     }
+                    return FileVisitResult.CONTINUE;
                 }
-            }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, XenonException exception, Files files) throws XenonException {
+                    // TODO now failed files are ignored or should it die
+                    return FileVisitResult.CONTINUE;
+                }
+            };
+            walkFileTree(files, path, true, depth, visitor);
         } else {
             String fn = path.getRelativePath().getFileNameAsString();
             listing.objects.add(fn);

@@ -3,9 +3,12 @@ package nl.esciencecenter.xenon.cli;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +18,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class MainTest {
+    @Rule
+    public TemporaryFolder myfolder = new TemporaryFolder();
 
     @Test
     public void buildXenonProperties() throws Exception {
@@ -39,11 +44,24 @@ public class MainTest {
     }
 
     @Test
-    public void copyLocalFile() throws XenonException, ArgumentParserException {
-        String[] args = {"file", "copy", "--overwrite", "README.md", "/tmp/copy-of-README.md"};
+    public void copyLocalFile() throws XenonException, ArgumentParserException, IOException {
+        File target = myfolder.newFile("copy-of-README.md");
+        String[] args = {"file", "copy", "--overwrite", "README.md", target.getPath()};
         Main main = new Main();
         main.run(args);
-        File f = new File("/tmp/copy-of-README.md");
-        assertTrue(f.isFile());
+        assertTrue(target.isFile());
+    }
+
+    @Test
+    public void listLocal() throws IOException, XenonException, ArgumentParserException {
+        myfolder.newFile("file1").createNewFile();
+        File dir1 = myfolder.newFolder("dir1");
+        dir1.mkdirs();
+        new File(dir1, "file2").createNewFile();
+
+        String[] args = {"file", "list", myfolder.getRoot().getCanonicalPath()};
+        Main main = new Main();
+        main.run(args);
+        assertTrue(false);
     }
 }
