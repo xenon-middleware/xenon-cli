@@ -23,7 +23,7 @@ public class QueuesCommand extends XenonCommand {
     }
 
     @Override
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public QueuesOutput run(Namespace res, Xenon xenon) throws XenonException {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
         Credential credential = buildCredential(res, xenon);
@@ -35,7 +35,6 @@ public class QueuesCommand extends XenonCommand {
         jobs.close(scheduler);
 
         QueuesOutput output = new QueuesOutput(queues, defaultQueue);
-        String format = res.getString("format");
-        this.print(output, format);
+        return output;
     }
 }

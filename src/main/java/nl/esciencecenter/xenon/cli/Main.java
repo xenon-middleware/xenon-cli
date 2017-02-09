@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.sourceforge.argparse4j.inf.*;
 import nl.esciencecenter.xenon.AdaptorStatus;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
@@ -15,11 +18,6 @@ import nl.esciencecenter.xenon.XenonFactory;
 
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.Argument;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-import net.sourceforge.argparse4j.inf.Subparsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,20 +25,58 @@ public class Main {
     private static final String PROGRAM_NAME = "xenon";
     private static final String PROGRAM_VERSION = "1.0.0";
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+    private final ArgumentParser parser;
+    private Namespace res;
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        ArgumentParser parser = main.buildArgumentParser();
-        Namespace res = parser.parseArgsOrFail(args);
-        LOGGER.debug(res.toString());
-        ICommand subcommand = res.get("command");
-        Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res));
-        subcommand.run(res, xenon);
-        XenonFactory.endXenon(xenon);
+        try {
+            Object output = main.run(args);
+            main.print(output);
+        } catch (ArgumentParserException e) {
+            main.getParser().handleError(e);
+        }
     }
 
     public static Map<String,String> buildXenonProperties(Namespace res) {
         return parseArgumentListAsMap(res.getList("props"));
+    }
+
+    public ArgumentParser getParser() {
+        return parser;
+    }
+
+    public Namespace getRes() {
+        return res;
+    }
+
+    public Main() throws XenonException {
+        parser = buildArgumentParser();
+    }
+
+    public Object run(String[] args) throws XenonException, ArgumentParserException {
+        res = parser.parseArgs(args);
+        LOGGER.debug(res.toString());
+
+        ICommand subcommand = res.get("command");
+        Xenon xenon = null;
+        try {
+            xenon = XenonFactory.newXenon(buildXenonProperties(res));
+            Object output = subcommand.run(res, xenon);
+            return output;
+        } finally {
+            XenonFactory.endXenon(xenon);
+        }
+    }
+
+    public void print(Object output) {
+        String format = res.getString("format");
+        if ("cwljson".equals(format)) {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            System.out.print(gson.toJson(output));
+        } else if (output != null) {
+            System.out.println(output);
+        }
     }
 
     public ArgumentParser buildArgumentParser() throws XenonException {

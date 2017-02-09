@@ -26,17 +26,15 @@ public class RemoveFileCommand extends XenonCommand {
     }
 
     @Override
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public RemoveFileOutput run(Namespace res, Xenon xenon) throws XenonException {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
         String path = res.getString("path");
-        Boolean recursive = res.getBoolean("recursive");
         Files files = xenon.files();
         Credential credential = buildCredential(res, xenon);
         remove(files, scheme, location, path, credential);
-        String format = res.getString("format");
         RemoveFileOutput output = new RemoveFileOutput(location, path);
-        this.print(output, format);
+        return output;
     }
 
     private void remove(Files files, String scheme, String location, String pathIn, Credential credential) throws XenonException {

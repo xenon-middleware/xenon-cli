@@ -51,15 +51,11 @@ public class SubmitCommand extends XenonCommand {
         subparser.addArgument("--stdout").help("Path to file which is used as stdout for executable");
         subparser.addArgument("--stderr").help("Path to file which is used as stderr for executable");
 
-        subparser.addArgument("--wait-timeout")
-            .type(Long.class)
-            .help("Time to wait for job completion")
-            .setDefault(Long.MAX_VALUE);
         return subparser;
     }
 
     @Override
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public SubmitOutput run(Namespace res, Xenon xenon) throws XenonException {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
         Credential credential = buildCredential(res, xenon);
@@ -76,21 +72,15 @@ public class SubmitCommand extends XenonCommand {
         if (stderr != null) {
             description.setStderr(stderr);
         }
-        long waitTimeout = res.getLong("wait_timeout");
 
         Jobs jobs = xenon.jobs();
         Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
 
-        // TODO attach stdin, stdout, stderr of job to this process
         Job job = jobs.submitJob(scheduler, description);
         String jobId = job.getIdentifier();
         jobs.close(scheduler);
 
-        // TODO output stuff
         SubmitOutput output = new SubmitOutput(location, description, jobId);
-        String format = res.getString("format");
-        this.print(output, format);
+        return output;
     }
-
-
 }

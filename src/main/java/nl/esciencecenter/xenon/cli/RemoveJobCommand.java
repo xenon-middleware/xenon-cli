@@ -27,7 +27,7 @@ public class RemoveJobCommand extends XenonCommand {
     }
 
     @Override
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public RemoveJobOutput run(Namespace res, Xenon xenon) throws XenonException {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
         String jobId = res.getString("job_identifier");
@@ -45,7 +45,6 @@ public class RemoveJobCommand extends XenonCommand {
         jobs.close(scheduler);
 
         RemoveJobOutput output = new RemoveJobOutput(location, jobId);
-        String format = res.getString("format");
-        this.print(output, format);
+        return output;
     }
 }

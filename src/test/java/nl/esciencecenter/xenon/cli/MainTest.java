@@ -1,15 +1,21 @@
 package nl.esciencecenter.xenon.cli;
 
-import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import nl.esciencecenter.xenon.XenonException;
 import org.junit.Test;
 
-import java.util.*;
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MainTest {
+
     @Test
     public void buildXenonProperties() throws Exception {
         Main main = new Main();
@@ -26,11 +32,18 @@ public class MainTest {
     }
 
     @Test(expected = ArgumentParserException.class)
-    public void mainRootHelp() throws Exception {
+    public void mainRootHelp() throws XenonException, ArgumentParserException {
+        String[] args = {"--help"};
         Main main = new Main();
-        ArgumentParser parser = main.buildArgumentParser();
+        main.run(args);
+    }
 
-        String[] args = {};
-        parser.parseArgs(args);
+    @Test
+    public void copyLocalFile() throws XenonException, ArgumentParserException {
+        String[] args = {"file", "copy", "--overwrite", "README.md", "/tmp/copy-of-README.md"};
+        Main main = new Main();
+        main.run(args);
+        File f = new File("/tmp/copy-of-README.md");
+        assertTrue(f.isFile());
     }
 }

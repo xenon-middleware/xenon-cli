@@ -32,7 +32,7 @@ public class UploadCommand extends CopyCommand {
     }
 
     @Override
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public CopyOutput run(Namespace res, Xenon xenon) throws XenonException {
         String sourcePath = res.getString("source");
         String targetScheme = res.getString("scheme");
         String targetLocation = res.getString("location");
@@ -47,8 +47,7 @@ public class UploadCommand extends CopyCommand {
         Files files = xenon.files();
         this.copy(files, source, target, recursive, copymode);
 
-        UploadOutput uploadOutput = new UploadOutput(source, target);
-        String format = res.getString("format");
-        this.print(uploadOutput, format);
+        CopyOutput uploadOutput = new CopyOutput(source, target);
+        return uploadOutput;
     }
 }

@@ -1,10 +1,10 @@
 package nl.esciencecenter.xenon.cli;
 
-public class CopyOutPut {
+public class CopyOutput {
     private final CopyInput target;
     private final CopyInput source;
 
-    public CopyOutPut(CopyInput source, CopyInput target) {
+    public CopyOutput(CopyInput source, CopyInput target) {
         this.source = source;
         this.target = target;
     }

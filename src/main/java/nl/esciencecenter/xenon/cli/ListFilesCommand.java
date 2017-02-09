@@ -90,7 +90,7 @@ public class ListFilesCommand extends XenonCommand {
         return subparser;
     }
 
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public ListFilesOutput run(Namespace res, Xenon xenon) throws XenonException {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
         String path = res.getString("path");
@@ -99,7 +99,6 @@ public class ListFilesCommand extends XenonCommand {
         Credential credential = buildCredential(res, xenon);
         ListFilesOutput listing = listObjects(files, scheme, location, path, credential, recursive);
 
-        String format = res.getString("format");
-        this.print(listing, format);
+        return listing;
     }
 }

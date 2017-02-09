@@ -33,7 +33,7 @@ public class DownloadCommand extends CopyCommand {
     }
 
     @Override
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public CopyOutput run(Namespace res, Xenon xenon) throws XenonException {
         String sourceScheme = res.getString("scheme");
         String sourceLocation = res.getString("location");
         String sourcePath = res.getString("source");
@@ -48,10 +48,11 @@ public class DownloadCommand extends CopyCommand {
         Files files = xenon.files();
         this.copy(files, source, target, recursive, copymode);
 
-        if (!target.stream) {
-            DownloadOutput downloadOutput = new DownloadOutput(source, target);
-            String format = res.getString("format");
-            this.print(downloadOutput, format);
+        if (target.stream) {
+            return null;
+        } else {
+            CopyOutput downloadOutput = new CopyOutput(source, target);
+            return downloadOutput;
         }
     }
 }

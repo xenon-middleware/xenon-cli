@@ -8,5 +8,5 @@ import nl.esciencecenter.xenon.XenonException;
 
 public interface ICommand {
     Subparser buildArgumentParser(Subparsers subparsers);
-    void run(Namespace res, Xenon xenon) throws XenonException;
+    Object run(Namespace res, Xenon xenon) throws XenonException;
 }

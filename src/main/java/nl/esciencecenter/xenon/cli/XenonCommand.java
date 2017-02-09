@@ -5,8 +5,6 @@ import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.credentials.Credentials;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 public abstract class XenonCommand implements ICommand {
@@ -27,19 +25,10 @@ public abstract class XenonCommand implements ICommand {
         Credentials credentials = xenon.credentials();
         if (certfile != null) {
             return credentials.newCertificateCredential(scheme, certfile, username, password, null);
-        } else if (username != null) {
+        } else if (password != null) {
             return credentials.newPasswordCredential(scheme, username, password, null);
         } else {
             return credentials.getDefaultCredential(scheme);
-        }
-    }
-
-    protected void print(Object output, String format) {
-        if ("cwljson".equals(format)) {
-            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            System.out.print(gson.toJson(output));
-        } else {
-            System.out.println(output);
         }
     }
 }

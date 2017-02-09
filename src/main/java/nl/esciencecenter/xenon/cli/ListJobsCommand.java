@@ -27,7 +27,7 @@ public class ListJobsCommand extends XenonCommand {
     }
 
     @Override
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public ListJobsOutput run(Namespace res, Xenon xenon) throws XenonException {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
         String queue = res.getString("queue");
@@ -46,7 +46,6 @@ public class ListJobsCommand extends XenonCommand {
         jobs.close(scheduler);
 
         ListJobsOutput output = new ListJobsOutput(location, queue, jobIdentifiers);
-        String format = res.getString("format");
-        this.print(output, format);
+        return output;
     }
 }

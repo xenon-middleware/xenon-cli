@@ -62,7 +62,7 @@ public class ExecCommand extends XenonCommand {
     }
 
     @Override
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public Object run(Namespace res, Xenon xenon) throws XenonException {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
         Credential credential = buildCredential(res, xenon);
@@ -94,5 +94,6 @@ public class ExecCommand extends XenonCommand {
 
         // TODO output stuff
 
+        return null;
     }
 }

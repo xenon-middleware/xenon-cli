@@ -13,12 +13,8 @@ import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CopyCommand extends XenonCommand {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CopyCommand.class);
-
     protected void copy(Files files, CopyInput source, CopyInput target, Boolean recursive, CopyOption copymode) throws XenonException {
         if (recursive && source.stream) {
             throw new NoSuchCopyException(source.scheme, "Unable to do recursive copy from stdin");
@@ -105,7 +101,7 @@ public class CopyCommand extends XenonCommand {
     }
 
     @Override
-    public void run(Namespace res, Xenon xenon) throws XenonException {
+    public CopyOutput run(Namespace res, Xenon xenon) throws XenonException {
         String scheme = res.getString("scheme");
         String sourceLocation = res.getString("location");
         String sourcePath = res.getString("source_path");
@@ -122,10 +118,11 @@ public class CopyCommand extends XenonCommand {
         Files files = xenon.files();
         this.copy(files, source, target, recursive, copymode);
 
-        if (!target.stream) {
-            CopyOutPut copyOutput = new CopyOutPut(source, target);
-            String format = res.getString("format");
-            this.print(copyOutput, format);
+        if (target.stream) {
+            return null;
+        } else {
+            CopyOutput copyOutput = new CopyOutput(source, target);
+            return copyOutput;
         }
     }
 }

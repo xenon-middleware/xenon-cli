@@ -8,9 +8,9 @@ public class CopyInput {
     public String scheme;
     public String location = null;
     public String path;
-    public Credential credential = null;
-    public boolean stream = false;
-    public Map<String,String> properties = null;
+    public transient Credential credential = null;
+    public transient boolean stream = false;
+    public transient Map<String,String> properties = null;
 
     public CopyInput(String scheme, String location, String path, Credential credential) {
         this.scheme = scheme;
