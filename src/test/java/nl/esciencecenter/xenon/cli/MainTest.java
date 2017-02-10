@@ -1,5 +1,6 @@
 package nl.esciencecenter.xenon.cli;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -19,9 +20,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class MainTest {
-    @Rule
-    public TemporaryFolder myfolder = new TemporaryFolder();
-
     @Test
     public void buildXenonProperties() throws Exception {
         Map<String, Object> attrs = new HashMap<>();
@@ -41,37 +39,5 @@ public class MainTest {
         String[] args = {"--help"};
         Main main = new Main();
         main.run(args);
-    }
-
-    @Test
-    public void copyLocalFile() throws XenonException, ArgumentParserException, IOException {
-        File target = myfolder.newFile("copy-of-README.md");
-        String[] args = {"file", "copy", "--overwrite", "README.md", target.getPath()};
-        Main main = new Main();
-        main.run(args);
-        assertTrue(target.isFile());
-    }
-
-    @Test
-    public void listLocal() throws IOException, XenonException, ArgumentParserException {
-        myfolder.newFile("file1").createNewFile();
-        myfolder.newFile(".hidden1").createNewFile();
-        File dir1 = myfolder.newFolder("dir1");
-        dir1.mkdirs();
-        new File(dir1, "file3").createNewFile();
-        File hdir2 = myfolder.newFolder(".hidden2");
-        hdir2.mkdirs();
-
-        String path = myfolder.getRoot().getCanonicalPath();
-        String[] args = {"file", "list", path};
-        Main main = new Main();
-        ListFilesOutput output = (ListFilesOutput) main.run(args);
-
-        ListFilesOutput expected = new ListFilesOutput();
-        expected.objects.add("file1");
-        expected.objects.add("dir1");
-        expected.directories.add("dir1");
-        expected.files.add("file1");
-        assertEquals(expected, output);
     }
 }

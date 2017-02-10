@@ -1,5 +1,8 @@
 package nl.esciencecenter.xenon.cli;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class QueuesOutput {
     private final String defaultQueue;
     private final String[] queues;
@@ -13,5 +16,19 @@ public class QueuesOutput {
     public String toString() {
         String sep = System.getProperty("line.separator");
         return "Available queues: '" + String.join(",", queues) + "'" + sep + "Default queue: '" + defaultQueue + "'";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        QueuesOutput that = (QueuesOutput) o;
+        return Objects.equals(defaultQueue, that.defaultQueue) &&
+                Arrays.equals(queues, that.queues);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(defaultQueue, queues);
     }
 }

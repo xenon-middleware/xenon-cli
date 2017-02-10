@@ -1,5 +1,10 @@
 # Xenon Command Line Interface
 
+[![Build Status](https://travis-ci.org/NLeSC/xenon-cli.svg?branch=master)](https://travis-ci.org/NLeSC/xenon-cli)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5956168fece74be4af782398a3310f65)](https://www.codacy.com/app/NLeSC/xenon-cli?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/xenon-cli&amp;utm_campaign=Badge_Grade)
+
+Command line interface which uses the [Xenon library](https://nlesc.github.io/Xenon) to perform job and file operations.
+
 # Install
 
 For now it must be build, see [Build chapter](#build) below.

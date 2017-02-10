@@ -92,8 +92,7 @@ public class ExecCommand extends XenonCommand {
 
         jobs.close(scheduler);
 
-        // TODO output stuff
-
+        // run has no output, because all output has already been sent to stdout and stderr.
         return null;
     }
 }

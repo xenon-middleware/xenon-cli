@@ -1,0 +1,18 @@
+language: java
+sudo: required
+jdk: oraclejdk8
+services:
+  - docker
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.m2
+after_success:
+  - curl -sL https://github.com/jpm4j/jpm4j.installers/raw/master/dist/biz.aQute.jpm.run.jar > ~/.m2/jpm4j.jar
+  - java -jar $HOME/.m2/jpm4j.jar -u install com.codacy:codacy-coverage-reporter:assembly
+  - ./gradlew jacocoTestReport
+  - $HOME/jpm/bin/codacy-coverage-reporter -l Java -r build/reports/jacoco/test/jacocoTestReport.xml

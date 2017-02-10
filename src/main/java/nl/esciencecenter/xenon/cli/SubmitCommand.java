@@ -28,7 +28,7 @@ public class SubmitCommand extends XenonCommand {
         subparser.addArgument("executable").help("Executable to schedule for execution").required(true);
         subparser.addArgument("args")
             .help("Arguments for executable, prepend ' -- ' when arguments start with '-'")
-            .nargs("?");
+            .nargs("*");
 
         subparser.addArgument("--queue").help("Schedule job in this queue");
         subparser.addArgument("--env")
@@ -74,13 +74,16 @@ public class SubmitCommand extends XenonCommand {
         }
 
         Jobs jobs = xenon.jobs();
-        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
+        Scheduler scheduler = null;
+        try {
+            scheduler = jobs.newScheduler(scheme, location, credential, null);
 
-        Job job = jobs.submitJob(scheduler, description);
-        String jobId = job.getIdentifier();
-        jobs.close(scheduler);
-
-        SubmitOutput output = new SubmitOutput(location, description, jobId);
-        return output;
+            Job job = jobs.submitJob(scheduler, description);
+            String jobId = job.getIdentifier();
+            SubmitOutput output = new SubmitOutput(location, description, jobId);
+            return output;
+        } finally {
+            jobs.close(scheduler);
+        }
     }
 }
