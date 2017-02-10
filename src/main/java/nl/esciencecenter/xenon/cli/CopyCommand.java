@@ -23,26 +23,33 @@ public class CopyCommand extends XenonCommand {
             throw new NoSuchCopyException(target.scheme, "Unable to do recursive copy to stdout");
         }
 
-        FileSystem sourceFS = files.newFileSystem(source.scheme, source.location, source.credential, source.properties);
-        FileSystem targetFS = files.newFileSystem(target.scheme, target.location, target.credential, target.properties);
+        FileSystem sourceFS = null;
+        FileSystem targetFS = null;
+        try {
+            sourceFS = files.newFileSystem(source.scheme, source.location, source.credential, source.properties);
+            targetFS = files.newFileSystem(target.scheme, target.location, target.credential, target.properties);
 
+            Path sourcePath = getAbsolutePath(files, source, sourceFS);
+            Path targetPath = getAbsolutePath(files, target, targetFS);
+
+            copy(files, source, target, recursive, copymode, sourcePath, targetPath);
+        } finally {
+            files.close(sourceFS);
+            files.close(targetFS);
+        }
+    }
+
+    private Path getAbsolutePath(Files files, CopyInput source, FileSystem sourceFS) throws XenonException {
         Path sourcePath = files.newPath(sourceFS, new RelativePath(source.path));
-        if ("local".equals(source.scheme) || "file".equals(source.scheme)) {
-            if (!source.path.startsWith("/") && !source.path.equals("-")) {
-                // Path is relative to working directory, make it absolute
-                RelativePath workingDirectory = new RelativePath(System.getProperty("user.dir"));
-                sourcePath = files.newPath(sourceFS, workingDirectory.resolve(source.path));
-            }
+        if ("local".equals(source.scheme) || "file".equals(source.scheme) && !source.path.startsWith("/") && !"-".equals(source.path)) {
+            // Path is relative to working directory, make it absolute
+            RelativePath workingDirectory = new RelativePath(System.getProperty("user.dir"));
+            sourcePath = files.newPath(sourceFS, workingDirectory.resolve(source.path));
         }
-        Path targetPath = files.newPath(targetFS, new RelativePath(target.path));
-        if ("local".equals(target.scheme) || "file".equals(target.scheme)) {
-            if (!target.path.startsWith("/") && !target.path.equals("-")) {
-                // Path is relative to working directory, make it absolute
-                RelativePath workingDirectory = new RelativePath(System.getProperty("user.dir"));
-                targetPath = files.newPath(targetFS, workingDirectory.resolve(target.path));
-            }
-        }
+        return sourcePath;
+    }
 
+    private void copy(Files files, CopyInput source, CopyInput target, Boolean recursive, CopyOption copymode, Path sourcePath, Path targetPath) throws XenonException {
         if (source.stream && !target.stream) {
             // copy from stdin
             if (copymode.occursIn(CopyOption.REPLACE)) {
@@ -58,9 +65,6 @@ public class CopyCommand extends XenonCommand {
         } else {
             files.copy(sourcePath, targetPath, copymode);
         }
-
-        files.close(sourceFS);
-        files.close(targetFS);
     }
 
     public Subparser buildArgumentParser(Subparsers subparsers, String supportedLocationHelp, Boolean isLocal) {

@@ -41,12 +41,10 @@ public class RemoveFileCommand extends XenonCommand {
         FileSystem fs = files.newFileSystem(scheme, location, credential, null);
 
         Path path = files.newPath(fs, new RelativePath(pathIn));
-        if ("local".equals(scheme) || "file".equals(scheme)) {
-            if (!pathIn.startsWith("/")) {
-                // Path is relative to working directory, make it absolute
-                RelativePath workingDirectory = new RelativePath(System.getProperty("user.dir"));
-                path = files.newPath(fs, workingDirectory.resolve(pathIn));
-            }
+        if ("local".equals(scheme) || "file".equals(scheme) && !pathIn.startsWith("/")) {
+            // Path is relative to working directory, make it absolute
+            RelativePath workingDirectory = new RelativePath(System.getProperty("user.dir"));
+            path = files.newPath(fs, workingDirectory.resolve(pathIn));
         }
         recursiveDelete(files, path);
     }

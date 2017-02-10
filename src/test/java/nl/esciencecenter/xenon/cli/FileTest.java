@@ -24,7 +24,7 @@ public class FileTest {
     public TemporaryFolder myfolder = new TemporaryFolder();
 
     @Test
-    public void copyFile() throws XenonException, ArgumentParserException, IOException {
+    public void copy_file() throws XenonException, ArgumentParserException, IOException {
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
         File targetFile = new File(myfolder.getRoot(), "target.txt");
@@ -36,9 +36,8 @@ public class FileTest {
         assertTrue(targetFile.isFile());
     }
 
-
     @Test
-    public void copyFile_recursiveFile() throws XenonException, ArgumentParserException, IOException {
+    public void copy_recursiveFile() throws XenonException, ArgumentParserException, IOException {
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
         File targetFile = new File(myfolder.getRoot(), "target.txt");
@@ -50,8 +49,39 @@ public class FileTest {
         assertTrue(targetFile.isFile());
     }
 
+    @Test
+    public void copy_dir() throws XenonException, ArgumentParserException, IOException {
+        File sourceDir = myfolder.newFolder("source");
+        File targetDir = new File(myfolder.getRoot(), "target");
+
+        String[] args = {"file", "copy", "--recursive", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()};
+        Main main = new Main();
+        main.run(args);
+
+        assertTrue(targetDir.isDirectory());
+    }
+
+    @Test
+    public void copy_recursiveDir() throws XenonException, ArgumentParserException, IOException {
+        File sourceDir = myfolder.newFolder("source");
+        new File(sourceDir, "file1").createNewFile();
+        File sourceDirDir = myfolder.newFolder("source", "dep1");
+        new File(sourceDirDir,"file2").createNewFile();
+        File targetDir = new File(myfolder.getRoot(), "target");
+
+        String[] args = {"file", "copy", "--recursive", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()};
+        Main main = new Main();
+        main.run(args);
+
+        assertTrue(targetDir.isDirectory());
+        assertTrue(new File(targetDir, "file1").isFile());
+        File targetDirDir = new File(targetDir, "dep1");
+        assertTrue(targetDirDir.isDirectory());
+        assertTrue(new File(targetDirDir, "file2").isFile());
+    }
+
     @Test(expected = XenonException.class)
-    public void copyFile_targetExists_throwsExecption() throws XenonException, ArgumentParserException, IOException {
+    public void copy_targetExists_throwsExecption() throws XenonException, ArgumentParserException, IOException {
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
         File targetFile = myfolder.newFile("target.txt");
@@ -63,7 +93,7 @@ public class FileTest {
     }
 
     @Test
-    public void copyFile_fromStdin() throws XenonException, ArgumentParserException, IOException {
+    public void copy_fromStdin() throws XenonException, ArgumentParserException, IOException {
         Path targetFile = Paths.get(myfolder.getRoot().getAbsolutePath(), "target.txt");
         InputStream oldIn = System.in;
         String sourceContent = "my content";
@@ -83,7 +113,7 @@ public class FileTest {
     }
 
     @Test(expected = XenonException.class)
-    public void copyFile_RecursiveStdin_throwsExecption() throws XenonException, ArgumentParserException {
+    public void copy_RecursiveStdin_throwsExecption() throws XenonException, ArgumentParserException {
         String[] args = {"file", "copy", "--recursive", "-", myfolder.getRoot().getAbsolutePath()};
         Main main = new Main();
         main.run(args);
@@ -97,7 +127,7 @@ public class FileTest {
     }
 
     @Test
-    public void listFile_aDirectory() throws IOException, XenonException, ArgumentParserException {
+    public void list_aDirectory() throws IOException, XenonException, ArgumentParserException {
         myfolder.newFile("file1").createNewFile();
         myfolder.newFile(".hidden1").createNewFile();
         File dir1 = myfolder.newFolder("dir1");
@@ -120,7 +150,7 @@ public class FileTest {
     }
 
     @Test
-    public void listFile_aFile() throws IOException, XenonException, ArgumentParserException {
+    public void list_aFile() throws IOException, XenonException, ArgumentParserException {
         File file1 = myfolder.newFile("file1");
         file1.createNewFile();
 

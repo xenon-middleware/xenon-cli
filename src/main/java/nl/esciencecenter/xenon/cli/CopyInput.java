@@ -15,7 +15,7 @@ public class CopyInput {
     public CopyInput(String scheme, String location, String path, Credential credential) {
         this.scheme = scheme;
         this.location = location;
-        if (path.equals("-") && (scheme.equals("file") || scheme.equals("local"))) {
+        if ("-".equals(path) && ("file".equals(scheme) || "local".equals(scheme))) {
             // can only stream stdin or stdout using local adaptor,
             // if not local adaptor will treat path as path, so will read/write remote file called '-'
             this.stream = true;

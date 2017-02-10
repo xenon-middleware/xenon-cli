@@ -22,8 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExecCommand extends XenonCommand {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExecCommand.class);
-
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
         //   exec <executable> <args> <environment> <job options> <max time> <queue> <working directory> <std* attached to local streams>
