@@ -18,8 +18,6 @@ import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExecCommand extends XenonCommand {
     @Override
@@ -73,22 +71,21 @@ public class ExecCommand extends XenonCommand {
 
         Job job = jobs.submitJob(scheduler, description);
         Streams streams = jobs.getStreams(job);
+        StreamForwarder stdinForwarder = new StreamForwarder(System.in, streams.getStdin());
+        StreamForwarder stderrForwarder = new StreamForwarder(streams.getStderr(), System.err);
+        jobs.waitUntilDone(job, waitTimeout);
         try {
-            // TODO attach stdin of job to this process
-            // copying stdin blocks, need to run it in own thread
-            // Utils.copy(System.in, streams.getStdin(), -1);
-            streams.getStdin().close();
+            // Using copy instead of StreamForwarder to pipe stdout in main thread,
+            // so close is called after all stdout has been produced
             Utils.copy(streams.getStdout(), System.out, -1);
             streams.getStdout().close();
-            Utils.copy(streams.getStderr(), System.err, -1);
-            streams.getStderr().close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        jobs.waitUntilDone(job, waitTimeout);
-
+        stdinForwarder.terminate(1000);
+        stderrForwarder.terminate(1000);
         jobs.close(scheduler);
+
 
         // run has no output, because all output has already been sent to stdout and stderr.
         return null;

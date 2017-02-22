@@ -20,6 +20,9 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     jcenter()
+    maven {
+        url 'https://dl.bintray.com/palantir/releases' // docker-compose-rule is published on bintray
+    }
 }
 
 dependencies {
@@ -31,6 +34,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'com.github.geowarin:docker-junit-rule:1.1.0'
     testCompile 'com.github.stefanbirkner:system-rules:1.16.0'
+    testCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.30.0'
 }
 
 docker {
