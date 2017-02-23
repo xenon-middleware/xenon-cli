@@ -24,3 +24,8 @@ after_success:
   - java -jar $HOME/.m2/jpm4j.jar -u install com.codacy:codacy-coverage-reporter:assembly
   - ./gradlew jacocoTestReport
   - $HOME/jpm/bin/codacy-coverage-reporter -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
+after_failure:
+  - cat build/test-results/test/TEST-nl.esciencecenter.xenon.cli.SlurmTest.xml
+  - cat build/dockerLogs/SlurmTest/slurm.log
+  - cat build/test-results/test/TEST-nl.esciencecenter.xenon.cli.GridEngineTest.xml
+  - cat build/dockerLogs/SgeTest/sge.log
