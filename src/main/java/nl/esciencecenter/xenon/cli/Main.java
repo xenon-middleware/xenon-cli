@@ -59,14 +59,10 @@ public class Main {
         LOGGER.debug(res.toString());
 
         ICommand subcommand = res.get("command");
-        Xenon xenon = null;
-        try {
-            xenon = XenonFactory.newXenon(buildXenonProperties(res));
-            Object output = subcommand.run(res, xenon);
-            return output;
-        } finally {
-            XenonFactory.endXenon(xenon);
-        }
+        Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res));
+        Object output = subcommand.run(res, xenon);
+        XenonFactory.endXenon(xenon);
+        return output;
     }
 
     public void print(Object output) {

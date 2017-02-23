@@ -23,20 +23,15 @@ public class CopyCommand extends XenonCommand {
             throw new NoSuchCopyException(target.scheme, "Unable to do recursive copy to stdout");
         }
 
-        FileSystem sourceFS = null;
-        FileSystem targetFS = null;
-        try {
-            sourceFS = files.newFileSystem(source.scheme, source.location, source.credential, source.properties);
-            targetFS = files.newFileSystem(target.scheme, target.location, target.credential, target.properties);
+        FileSystem sourceFS = files.newFileSystem(source.scheme, source.location, source.credential, source.properties);
+        FileSystem targetFS = files.newFileSystem(target.scheme, target.location, target.credential, target.properties);
 
-            Path sourcePath = getAbsolutePath(files, source, sourceFS);
-            Path targetPath = getAbsolutePath(files, target, targetFS);
+        Path sourcePath = getAbsolutePath(files, source, sourceFS);
+        Path targetPath = getAbsolutePath(files, target, targetFS);
 
-            copy(files, source, target, recursive, copymode, sourcePath, targetPath);
-        } finally {
-            files.close(sourceFS);
-            files.close(targetFS);
-        }
+        copy(files, source, target, recursive, copymode, sourcePath, targetPath);
+        files.close(sourceFS);
+        files.close(targetFS);
     }
 
     private Path getAbsolutePath(Files files, CopyInput source, FileSystem sourceFS) throws XenonException {

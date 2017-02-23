@@ -1,10 +1,12 @@
 package nl.esciencecenter.xenon.cli;
 
-import com.github.geowarin.junit.DockerRule;
+import com.palantir.docker.compose.DockerComposeRule;
+import com.palantir.docker.compose.connection.DockerPort;
+import com.palantir.docker.compose.connection.waiting.HealthChecks;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import nl.esciencecenter.xenon.XenonException;
+import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
@@ -17,28 +19,21 @@ import java.util.stream.Stream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-@Ignore("TODO test jobs commands which require batch scheduler")
 public class GridEngineTest {
-    public static String SSH_PORT = "22/tcp";
-    public static String GE_PORT = "6444/tcp";
-
-    private Main main = new Main();
-
     @ClassRule
-    public static DockerRule server = DockerRule.builder()
-            .image("nlesc/xenon-gridengine")
-            .ports("22", "6444")
-            .waitForPort(GE_PORT, 100000)
+    public static DockerComposeRule docker = DockerComposeRule.builder()
+            .file("src/test/resources/sge-docker-compose.yml")
+            .saveLogsTo("build/dockerLogs/SgeTest")
+            .waitingForService("sge", HealthChecks.toHaveAllPortsOpen())
             .build();
 
     @Rule
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
-
-    public GridEngineTest() throws XenonException {
-    }
+    private Main main;
 
     public static String getLocation() {
-        return server.getDockerHost() + ":" + server.getHostPort(SSH_PORT);
+        DockerPort sge = docker.containers().container("sge").port(22);
+        return sge.inFormat("$HOST:$EXTERNAL_PORT");
     }
 
     public static String[] argsBuilder(String... args) {
@@ -52,6 +47,11 @@ public class GridEngineTest {
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }
 
+    @Before
+    public void setUp() throws XenonException {
+        main = new Main();
+    }
+    
     @Test
     public void queues() throws IOException, XenonException, ArgumentParserException {
         String[] args= argsBuilder(
@@ -70,7 +70,7 @@ public class GridEngineTest {
         );
         ListJobsOutput output = (ListJobsOutput) main.run(args);
 
-        ListJobsOutput expected = new ListJobsOutput(getLocation(), null, new ArrayList<String>());
+        ListJobsOutput expected = new ListJobsOutput(getLocation(), null, new ArrayList<>());
         assertEquals(expected, output);
     }
 
@@ -98,5 +98,8 @@ public class GridEngineTest {
         SubmitOutput output = (SubmitOutput) main.run(args);
 
         assertNotNull(output.jobId);
+
+        // clean up
+        main.run(argsBuilder("remove", output.jobId));
     }
 }

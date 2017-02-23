@@ -1,6 +1,7 @@
 package nl.esciencecenter.xenon.cli;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ListJobsOutput {
     private final String location;
@@ -16,6 +17,21 @@ public class ListJobsOutput {
     @Override
     public String toString() {
         String sep = System.getProperty("line.separator");
-        return String.join(sep, jobs);
+        return String.join(sep, jobs) + sep;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ListJobsOutput that = (ListJobsOutput) o;
+        return Objects.equals(location, that.location) &&
+                Objects.equals(queue, that.queue) &&
+                Objects.equals(jobs, that.jobs);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(location, queue, jobs);
     }
 }

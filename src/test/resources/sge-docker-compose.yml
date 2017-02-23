@@ -1,0 +1,11 @@
+version: '3'
+services:
+  sge:
+    image: nlesc/xenon-gridengine
+    ports:
+    - 22 # ssh
+    healthcheck:
+      test: 'qhost | grep lx26-amd64'
+      interval: 100ms
+      timeout: 1s
+      retries: 1

@@ -29,16 +29,12 @@ public class QueuesCommand extends XenonCommand {
         Credential credential = buildCredential(res, xenon);
 
         Jobs jobs = xenon.jobs();
-        Scheduler scheduler = null;
-        try {
-            scheduler = jobs.newScheduler(scheme, location, credential, null);
-            String[] queues = scheduler.getQueueNames();
-            String defaultQueue = jobs.getDefaultQueueName(scheduler);
+        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
+        String[] queues = scheduler.getQueueNames();
+        String defaultQueue = jobs.getDefaultQueueName(scheduler);
 
-            QueuesOutput output = new QueuesOutput(queues, defaultQueue);
-            return output;
-        } finally {
-            jobs.close(scheduler);
-        }
+        QueuesOutput output = new QueuesOutput(queues, defaultQueue);
+        jobs.close(scheduler);
+        return output;
     }
 }

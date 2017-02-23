@@ -1,18 +1,23 @@
 version: '3'
 services:
   mysql:
-    image: mysql:5.5
+    image: mysql:5.7
     environment:
     - MYSQL_ROOT_PASSWORD=xenon-slurm-pw
     healthcheck:
-      test: ["CMD",  "mysqladmin", "-pxenon-slurm-pw", "ping" ]
-      interval: 1s
+      test: mysqladmin -pxenon-slurm-pw ping || exit 1
+      interval: 100ms
+      timeout: 1s
+      retries: 1
   slurm:
     image: nlesc/xenon-slurm
     depends_on:
     - mysql
     ports:
     - 22 # ssh
+    - 6817 # slurm controller
     healthcheck:
-      test: ["CMD",  "sinfo" ]
-      interval: 1s
+      test: sinfo || exit 1
+      interval: 100ms
+      timeout: 1s
+      retries: 1

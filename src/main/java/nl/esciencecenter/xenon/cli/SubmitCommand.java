@@ -74,16 +74,11 @@ public class SubmitCommand extends XenonCommand {
         }
 
         Jobs jobs = xenon.jobs();
-        Scheduler scheduler = null;
-        try {
-            scheduler = jobs.newScheduler(scheme, location, credential, null);
-
-            Job job = jobs.submitJob(scheduler, description);
-            String jobId = job.getIdentifier();
-            SubmitOutput output = new SubmitOutput(location, description, jobId);
-            return output;
-        } finally {
-            jobs.close(scheduler);
-        }
+        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
+        Job job = jobs.submitJob(scheduler, description);
+        String jobId = job.getIdentifier();
+        SubmitOutput output = new SubmitOutput(location, description, jobId);
+        jobs.close(scheduler);
+        return output;
     }
 }
