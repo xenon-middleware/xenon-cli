@@ -4,6 +4,7 @@
 # Using `./gradlew docker` to build image
 FROM openjdk:jre-alpine
 MAINTAINER Stefan Verhoeven <s.verhoeven@esciencecenter.nl>
+RUN apk add --no-cache bash
 COPY bin /usr/bin
 COPY lib /usr/lib
-CMD ["/usr/bin/xenon", "--help"]
+CMD ["xenon", "--help"]

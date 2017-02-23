@@ -2,13 +2,14 @@
 
 [![Build Status](https://travis-ci.org/NLeSC/xenon-cli.svg?branch=master)](https://travis-ci.org/NLeSC/xenon-cli)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5956168fece74be4af782398a3310f65)](https://www.codacy.com/app/NLeSC/xenon-cli?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/xenon-cli&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/5956168fece74be4af782398a3310f65)](https://www.codacy.com/app/NLeSC/xenon-cli?utm_source=github.com&utm_medium=referral&utm_content=NLeSC/xenon-cli&utm_campaign=Badge_Coverage)
 
 Command line interface which uses the [Xenon library](https://nlesc.github.io/Xenon) to perform job and file operations.
 
 # Install
 
-For now it must be build, see [Build chapter](#build) below.
-The distribution can be installed with:
+Goto https://github.com/NLeSC/xenon-cli/releases and download a tarball (or zipfile).
+The tarball can be installed with:
 ```
 tar -xf build/distributions/xenon*.tar
 xenon*/bin/xenon --help
@@ -39,6 +40,12 @@ xenon --username $USER --password @password.txt sftp --location localhost list $
 ```
 
 Generates application tar/zip in `build/distributions/` directory.
+
+# Release
+
+1. Create a new GitHub release
+2. Upload the files in `build/distributions/` directory to that release
+3. Publish release
 
 ## Docker
 
