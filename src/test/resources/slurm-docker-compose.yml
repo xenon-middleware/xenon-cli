@@ -6,14 +6,13 @@ services:
     - MYSQL_ROOT_PASSWORD=xenon-slurm-pw
     healthcheck:
       test: ["CMD",  "mysqladmin", "-pxenon-slurm-pw", "ping" ]
+      interval: 1s
   slurm:
     image: nlesc/xenon-slurm
     depends_on:
     - mysql
     ports:
     - 22 # ssh
-    - 6817 # slurm controller
-    # Follow https://docs.docker.com/compose/startup-order/ to start slurm after mysql is up and running
-    command: ["/sbin/wait-for-it.sh", "mysql:3306", "--", "/sbin/my_init"]
     healthcheck:
       test: ["CMD",  "sinfo" ]
+      interval: 1s
