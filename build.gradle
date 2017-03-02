@@ -13,7 +13,7 @@ plugins {
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
-version = '1.0.0'
+version = '1.0.1'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
 sourceCompatibility = 1.8
@@ -30,7 +30,7 @@ repositories {
 dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
-    compile 'nl.esciencecenter.xenon:xenon:1.2.0'
+    compile 'nl.esciencecenter.xenon:xenon:1.2.1'
     compile 'org.slf4j:slf4j-api:1.7.21'
 
     testCompile 'junit:junit:4.12'

@@ -53,8 +53,8 @@ public class ExecCommand extends XenonCommand {
 
         subparser.addArgument("--wait-timeout")
             .type(Long.class)
-            .help("Time to wait for job completion")
-            .setDefault(Long.MAX_VALUE);
+            .help("Time to wait for job completion (ms)")
+            .setDefault(0L);
         return subparser;
     }
 
