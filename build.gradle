@@ -68,5 +68,6 @@ sonarqube {
     properties {
         property 'sonar.host.url', 'https://sonarqube.com'
         property 'sonar.organization', project.group
+        property 'sonar.links.homepage', 'https://github.com/NLeSC/xenon-cli'
     }
 }
