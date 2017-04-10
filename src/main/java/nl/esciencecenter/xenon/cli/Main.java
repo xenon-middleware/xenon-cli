@@ -61,8 +61,6 @@ public class Main {
 
     public Object run(String[] args) throws XenonException, ArgumentParserException {
         res = parser.parseArgs(args);
-        LOGGER.debug(res.toString());
-
         ICommand subcommand = res.get("command");
         Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res));
         Object output = subcommand.run(res, xenon);
