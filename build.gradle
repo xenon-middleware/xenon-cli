@@ -7,6 +7,7 @@ plugins {
     id 'eclipse'
     // test coverage
     id 'jacoco'
+    id 'org.sonarqube' version '2.3'
     // docker build & push
     id 'maven-publish'
     id 'com.palantir.docker' version '0.11.0'
@@ -14,6 +15,7 @@ plugins {
 
 description = 'Perform files and jobs operations with Xenon library from command line'
 version = '1.0.1'
+group = 'nlesc'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
 sourceCompatibility = 1.8
@@ -36,7 +38,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     testCompile 'com.github.geowarin:docker-junit-rule:1.1.0'
     testCompile 'com.github.stefanbirkner:system-rules:1.16.0'
-    testCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.31.0'
+    testCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.31.1'
 }
 
 docker {
@@ -60,4 +62,11 @@ jacocoTestReport {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.3'
+}
+
+sonarqube {
+    properties {
+        property 'sonar.host.url', 'https://sonarqube.com'
+        property 'sonar.organization', project.group
+    }
 }
