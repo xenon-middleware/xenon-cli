@@ -36,7 +36,7 @@ public class CopyCommand extends XenonCommand {
 
     private Path getAbsolutePath(Files files, CopyInput source, FileSystem sourceFS) throws XenonException {
         Path sourcePath = files.newPath(sourceFS, new RelativePath(source.path));
-        if ("local".equals(source.scheme) || "file".equals(source.scheme) && !source.path.startsWith("/") && !"-".equals(source.path)) {
+        if ("local".equals(source.scheme) || "file".equals(source.scheme) && !(source.path.startsWith("/") || "-".equals(source.path))) {
             // Path is relative to working directory, make it absolute
             RelativePath workingDirectory = new RelativePath(System.getProperty("user.dir"));
             sourcePath = files.newPath(sourceFS, workingDirectory.resolve(source.path));
