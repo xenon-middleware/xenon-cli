@@ -33,7 +33,7 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
     compile 'nl.esciencecenter.xenon:xenon:1.2.1'
-    compile 'org.slf4j:slf4j-api:1.7.21'
+    compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'
     testCompile 'com.github.geowarin:docker-junit-rule:1.1.0'

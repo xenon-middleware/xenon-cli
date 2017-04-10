@@ -12,15 +12,19 @@ import nl.esciencecenter.xenon.jobs.JobDescription;
 import nl.esciencecenter.xenon.jobs.Jobs;
 import nl.esciencecenter.xenon.jobs.Scheduler;
 import nl.esciencecenter.xenon.jobs.Streams;
-import nl.esciencecenter.xenon.util.Utils;
 import nl.esciencecenter.xenon.util.StreamForwarder;
+import nl.esciencecenter.xenon.util.Utils;
 
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExecCommand extends XenonCommand {
+    final Logger logger = LoggerFactory.getLogger(ExecCommand.class);
+
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
         //   exec <executable> <args> <environment> <job options> <max time> <queue> <working directory> <std* attached to local streams>
@@ -81,7 +85,7 @@ public class ExecCommand extends XenonCommand {
             Utils.copy(streams.getStdout(), System.out, -1);
             streams.getStdout().close();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info("Copy stdout failed", e);
         }
         stdinForwarder.terminate(1000);
         stderrForwarder.terminate(1000);

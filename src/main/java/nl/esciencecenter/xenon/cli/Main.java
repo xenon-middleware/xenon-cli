@@ -8,16 +8,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.sourceforge.argparse4j.inf.*;
 import nl.esciencecenter.xenon.AdaptorStatus;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonFactory;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.Argument;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+import net.sourceforge.argparse4j.inf.Subparsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -166,7 +171,7 @@ public class Main {
             XenonFactory.endXenon(xenon);
             return adaptors;
         } catch (XenonException e) {
-            e.printStackTrace();
+            LOGGER.info("Failed to getAdaptorStatuses", e);
         }
         return adaptors;
     }
