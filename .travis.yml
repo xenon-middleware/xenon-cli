@@ -11,6 +11,9 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
+script:
+  - ./gradlew check 
+  - ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN --debug
 services:
   - docker
 before_cache:
@@ -22,8 +25,6 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.m2
     - $HOME/.sonar/cache
-after_script:
-  - ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
 after_success:
   - curl -sL https://github.com/jpm4j/jpm4j.installers/raw/master/dist/biz.aQute.jpm.run.jar > ~/.m2/jpm4j.jar
   - java -jar $HOME/.m2/jpm4j.jar -u install com.codacy:codacy-coverage-reporter:assembly
