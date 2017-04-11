@@ -16,15 +16,15 @@ import net.sourceforge.argparse4j.inf.Subparsers;
 
 public class CopyCommand extends XenonCommand {
     protected void copy(Files files, CopyInput source, CopyInput target, Boolean recursive, CopyOption copymode) throws XenonException {
-        if (recursive && source.stream) {
-            throw new NoSuchCopyException(source.scheme, "Unable to do recursive copy from stdin");
+        if (recursive && source.isStream()) {
+            throw new NoSuchCopyException(source.getScheme(), "Unable to do recursive copy from stdin");
         }
-        if (recursive && target.stream) {
-            throw new NoSuchCopyException(target.scheme, "Unable to do recursive copy to stdout");
+        if (recursive && target.isStream()) {
+            throw new NoSuchCopyException(target.getScheme(), "Unable to do recursive copy to stdout");
         }
 
-        FileSystem sourceFS = files.newFileSystem(source.scheme, source.location, source.credential, source.properties);
-        FileSystem targetFS = files.newFileSystem(target.scheme, target.location, target.credential, target.properties);
+        FileSystem sourceFS = files.newFileSystem(source.getScheme(), source.getLocation(), source.getCredential(), source.getProperties());
+        FileSystem targetFS = files.newFileSystem(target.getScheme(), target.getLocation(), target.getCredential(), target.getProperties());
 
         Path sourcePath = getAbsolutePath(files, source, sourceFS);
         Path targetPath = getAbsolutePath(files, target, targetFS);
@@ -35,24 +35,24 @@ public class CopyCommand extends XenonCommand {
     }
 
     private Path getAbsolutePath(Files files, CopyInput source, FileSystem sourceFS) throws XenonException {
-        Path sourcePath = files.newPath(sourceFS, new RelativePath(source.path));
-        if ("local".equals(source.scheme) || "file".equals(source.scheme) && !(source.path.startsWith("/") || "-".equals(source.path))) {
+        Path sourcePath = files.newPath(sourceFS, new RelativePath(source.getPath()));
+        if ("local".equals(source.getScheme()) || "file".equals(source.getScheme()) && !(source.getPath().startsWith("/") || "-".equals(source.getPath()))) {
             // Path is relative to working directory, make it absolute
             RelativePath workingDirectory = new RelativePath(System.getProperty("user.dir"));
-            sourcePath = files.newPath(sourceFS, workingDirectory.resolve(source.path));
+            sourcePath = files.newPath(sourceFS, workingDirectory.resolve(source.getPath()));
         }
         return sourcePath;
     }
 
     private void copy(Files files, CopyInput source, CopyInput target, Boolean recursive, CopyOption copymode, Path sourcePath, Path targetPath) throws XenonException {
-        if (source.stream && !target.stream) {
+        if (source.isStream() && !target.isStream()) {
             // copy from stdin
             if (copymode.occursIn(CopyOption.REPLACE)) {
                 Utils.copy(files, System.in, targetPath, true);
             } else {
                 Utils.copy(files, System.in, targetPath, false);
             }
-        } else if (!source.stream && target.stream) {
+        } else if (!source.isStream() && target.isStream()) {
             // copy to stdout
             Utils.copy(files, sourcePath, System.out);
         } else if (recursive) {
@@ -117,7 +117,7 @@ public class CopyCommand extends XenonCommand {
         Files files = xenon.files();
         this.copy(files, source, target, recursive, copymode);
 
-        if (target.stream) {
+        if (target.isStream()) {
             return null;
         } else {
             CopyOutput copyOutput = new CopyOutput(source, target);

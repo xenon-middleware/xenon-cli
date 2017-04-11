@@ -5,9 +5,9 @@ import java.util.Objects;
 import java.util.Set;
 
 public class ListFilesOutput {
-    public Set<String> objects = new HashSet<>();
-    public Set<String> files = new HashSet<>();
-    public Set<String> directories = new HashSet<>();
+    private Set<String> objects = new HashSet<>();
+    private Set<String> files = new HashSet<>();
+    private Set<String> directories = new HashSet<>();
 
     @Override
     public String toString() {
@@ -17,16 +17,30 @@ public class ListFilesOutput {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ListFilesOutput that = (ListFilesOutput) o;
         return Objects.equals(objects, that.objects) &&
-            Objects.equals(files, that.files) &&
-            Objects.equals(directories, that.directories);
+                Objects.equals(files, that.files) &&
+                Objects.equals(directories, that.directories);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(objects, files, directories);
+    }
+
+    public void addFile(String filename) {
+        files.add(filename);
+        objects.add(filename);
+    }
+
+    public void addDirectory(String filename) {
+        directories.add(filename);
+        objects.add(filename);
     }
 }

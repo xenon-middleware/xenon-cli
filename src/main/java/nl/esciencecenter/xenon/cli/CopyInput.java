@@ -5,12 +5,12 @@ import java.util.Map;
 import nl.esciencecenter.xenon.credentials.Credential;
 
 public class CopyInput {
-    public String scheme;
-    public String location = null;
-    public String path;
-    public transient Credential credential = null;
-    public transient boolean stream = false;
-    public transient Map<String,String> properties = null;
+    private String scheme;
+    private String location = null;
+    private String path;
+    private Credential credential = null;
+    private boolean stream = false;
+    private Map<String, String> properties = null;
 
     public CopyInput(String scheme, String location, String path, Credential credential) {
         this.scheme = scheme;
@@ -22,5 +22,33 @@ public class CopyInput {
         }
         this.path = path;
         this.credential = credential;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public Credential getCredential() {
+        return credential;
+    }
+
+    public boolean isStream() {
+        return stream;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

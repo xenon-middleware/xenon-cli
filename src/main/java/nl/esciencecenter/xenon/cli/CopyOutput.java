@@ -11,6 +11,6 @@ public class CopyOutput {
 
     @Override
     public String toString() {
-        return "Copied '" + source.path + "' from location '" + source.location + "' to  '" + target.path + "' to location '" + target.location + "'";
+        return "Copied '" + source.getPath() + "' from location '" + source.getLocation() + "' to  '" + target.getPath() + "' to location '" + target.getLocation() + "'";
     }
 }

@@ -48,11 +48,10 @@ public class DownloadCommand extends CopyCommand {
         Files files = xenon.files();
         this.copy(files, source, target, recursive, copymode);
 
-        if (target.stream) {
+        if (target.isStream()) {
             return null;
         } else {
-            CopyOutput downloadOutput = new CopyOutput(source, target);
-            return downloadOutput;
+            return new CopyOutput(source, target);
         }
     }
 }

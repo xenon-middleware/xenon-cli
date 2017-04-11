@@ -43,10 +43,9 @@ public class ListJobsCommand extends XenonCommand {
             scheduledJobs = jobs.getJobs(scheduler, queue);
         }
         // TODO Slurm adaptor returns job with id="" when there are no jobs, adaptor should be fixed instead of ignoring empty strings here
-        List<String> jobIdentifiers = Arrays.stream(scheduledJobs).filter((job) -> !job.getIdentifier().isEmpty()).map((job) -> job.getIdentifier()).collect(Collectors.toList());
+        List<String> jobIdentifiers = Arrays.stream(scheduledJobs).filter(job -> !job.getIdentifier().isEmpty()).map(job -> job.getIdentifier()).collect(Collectors.toList());
         jobs.close(scheduler);
 
-        ListJobsOutput output = new ListJobsOutput(location, queue, jobIdentifiers);
-        return output;
+        return new ListJobsOutput(location, queue, jobIdentifiers);
     }
 }

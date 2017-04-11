@@ -47,8 +47,7 @@ public class ListFilesCommand extends XenonCommand {
                         return FileVisitResult.TERMINATE;
                     }
                     String filename = relPath.relativize(dir.getRelativePath()).getRelativePath();
-                    listing.directories.add(filename);
-                    listing.objects.add(filename);
+                    listing.addDirectory(filename);
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -58,11 +57,10 @@ public class ListFilesCommand extends XenonCommand {
                     if (!hidden && attributes.isHidden()) {
                         return FileVisitResult.CONTINUE;
                     }
-                    listing.objects.add(filename);
                     if (attributes.isDirectory()) {
-                        listing.directories.add(filename);
+                        listing.addDirectory(filename);
                     } else {
-                        listing.files.add(filename);
+                        listing.addFile(filename);
                     }
                     return FileVisitResult.CONTINUE;
                 }
@@ -76,8 +74,7 @@ public class ListFilesCommand extends XenonCommand {
             walkFileTree(files, path, true, depth, visitor);
         } else {
             String fn = path.getRelativePath().getFileNameAsString();
-            listing.objects.add(fn);
-            listing.files.add(fn);
+            listing.addFile(fn);
         }
         files.close(fs);
         return listing;
