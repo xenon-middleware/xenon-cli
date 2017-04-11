@@ -120,8 +120,7 @@ public class CopyCommand extends XenonCommand {
         if (target.isStream()) {
             return null;
         } else {
-            CopyOutput copyOutput = new CopyOutput(source, target);
-            return copyOutput;
+            return new CopyOutput(source, target);
         }
     }
 }

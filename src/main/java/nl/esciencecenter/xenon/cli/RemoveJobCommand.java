@@ -36,7 +36,7 @@ public class RemoveJobCommand extends XenonCommand {
         Jobs jobs = xenon.jobs();
         Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
         Job[] scheduledJobs = jobs.getJobs(scheduler);
-        Optional<Job> job = Arrays.stream(scheduledJobs).filter((j) -> j.getIdentifier().equals(jobId)).findFirst();
+        Optional<Job> job = Arrays.stream(scheduledJobs).filter(j -> j.getIdentifier().equals(jobId)).findFirst();
         if (job.isPresent()) {
             jobs.cancelJob(job.get());
         } else {
@@ -44,7 +44,6 @@ public class RemoveJobCommand extends XenonCommand {
         }
         jobs.close(scheduler);
 
-        RemoveJobOutput output = new RemoveJobOutput(location, jobId);
-        return output;
+        return new RemoveJobOutput(location, jobId);
     }
 }

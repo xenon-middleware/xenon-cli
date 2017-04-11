@@ -17,6 +17,10 @@ import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 public class ParserHelpers {
+    private ParserHelpers() {
+        throw new IllegalAccessError("Utility class");
+    }
+
     public static ArgumentGroup addCredentialArguments(ArgumentParser parser) {
         return addCredentialArguments(parser, "");
     }
@@ -95,7 +99,7 @@ public class ParserHelpers {
     }
 
     public static String getSupportedLocationHelp(AdaptorStatus adaptor) {
-        List<String> helps = Arrays.stream(adaptor.getSupportedLocations()).map((location) -> "- " + location).collect(Collectors.toList());
+        List<String> helps = Arrays.stream(adaptor.getSupportedLocations()).map(location -> "- " + location).collect(Collectors.toList());
         helps.add(0, "Supported locations:");
         String sep = System.getProperty("line.separator");
         return String.join(sep, helps);

@@ -47,7 +47,6 @@ public class UploadCommand extends CopyCommand {
         Files files = xenon.files();
         this.copy(files, source, target, recursive, copymode);
 
-        CopyOutput uploadOutput = new CopyOutput(source, target);
-        return uploadOutput;
+        return new CopyOutput(source, target);
     }
 }

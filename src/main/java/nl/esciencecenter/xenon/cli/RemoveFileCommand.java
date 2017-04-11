@@ -33,8 +33,7 @@ public class RemoveFileCommand extends XenonCommand {
         Files files = xenon.files();
         Credential credential = buildCredential(res, xenon);
         remove(files, scheme, location, path, credential);
-        RemoveFileOutput output = new RemoveFileOutput(location, path);
-        return output;
+        return new RemoveFileOutput(location, path);
     }
 
     private void remove(Files files, String scheme, String location, String pathIn, Credential credential) throws XenonException {

@@ -27,6 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main {
+    // TODO make filesSchemes+jobsSchemes dynamic after https://github.com/NLeSC/Xenon/issues/400 is fixed
+    private static final List<String> FILES_SCHEMES = Arrays.asList("file", "sftp", "ftp");
+    private static final List<String> jobsSchemes = Arrays.asList("local", "ssh", "ge", "sge", "slurm", "torque");
+    private static final List<String> ONLINE_SCHEMES = Arrays.asList("file", "local", "ssh", "sftp");
+    private static final List<String> LOCAL_SCHEMES = Arrays.asList("file", "local");
+    private static final List<String> SSH_SCHEMES = Arrays.asList("ssh", "sftp");
     private static final String PROGRAM_NAME = "xenon";
     private static final String PROGRAM_VERSION = "1.0.0";
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -59,7 +65,7 @@ public class Main {
         parser = buildArgumentParser();
     }
 
-    public Object run(String[] args) throws XenonException, ArgumentParserException {
+    public Object run(String[] args) throws ArgumentParserException, XenonException {
         res = parser.parseArgs(args);
         ICommand subcommand = res.get("command");
         Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res));
@@ -94,36 +100,16 @@ public class Main {
         Subparsers subparsers = parser.addSubparsers().title("scheme");
         AdaptorStatus[] adaptors = getAdaptorStatuses();
 
-        // TODO make filesSchemes+jobsSchemes dynamic after https://github.com/NLeSC/Xenon/issues/400 is fixed
-        List<String> filesSchemes = Arrays.asList("file", "sftp", "ftp");
-        List<String> jobsSchemes = Arrays.asList("local", "ssh", "ge", "sge", "slurm", "torque");
-        List<String> onlineSchemes = Arrays.asList("file", "local", "ssh", "sftp");
-        List<String> localSchemes = Arrays.asList("file", "local");
-        List<String> sshSchemes = Arrays.asList("ssh", "sftp");
-
         for (AdaptorStatus adaptor: adaptors) {
             for (String scheme: adaptor.getSupportedSchemes()) {
-                Subparser schemeParser = subparsers.addParser(scheme)
-                    .help(adaptor.getDescription())
-                    .description(adaptor.getDescription())
-                    .setDefault("scheme", scheme);
-                // --location
-                String supportedLocationHelp = getSupportedLocationHelp(adaptor);
-                Argument locationArgument = schemeParser.addArgument("--location").help("Location, " + supportedLocationHelp);
-                if (sshSchemes.contains(scheme)) {
-                    locationArgument.required(true);
-                }
-                // --prop
-                schemeParser.addArgument("--prop")
-                    .action(Arguments.append())
-                    .metavar("KEY=VALUE")
-                    .help("Xenon adaptor properties, " + getSupportedPropertiesHelp(adaptor))
-                    .dest("props");
+                Subparser schemeParser = addSubCommandScheme(subparsers, adaptor, scheme);
+                String supportedLocationHelp = addArgumentLocation(SSH_SCHEMES, adaptor, scheme, schemeParser);
+                addArgumentProp(adaptor, schemeParser);
                 Subparsers commandsParser = schemeParser.addSubparsers().title("commands");
-                if (filesSchemes.contains(scheme)) {
+                if (FILES_SCHEMES.contains(scheme)) {
                     // copy
-                    new CopyCommand().buildArgumentParser(commandsParser, supportedLocationHelp, localSchemes.contains(scheme));
-                    if (!localSchemes.contains(scheme)) {
+                    new CopyCommand().buildArgumentParser(commandsParser, supportedLocationHelp, LOCAL_SCHEMES.contains(scheme));
+                    if (!LOCAL_SCHEMES.contains(scheme)) {
                         // upload
                         new UploadCommand().buildArgumentParser(commandsParser);
                         // download
@@ -136,7 +122,7 @@ public class Main {
                 } else if (jobsSchemes.contains(scheme)) {
                     // exec
                     new ExecCommand().buildArgumentParser(commandsParser);
-                    if (!onlineSchemes.contains(scheme)) {
+                    if (!ONLINE_SCHEMES.contains(scheme)) {
                         // submit
                         new SubmitCommand().buildArgumentParser(commandsParser);
                         // list
@@ -151,10 +137,34 @@ public class Main {
         }
     }
 
+    private Subparser addSubCommandScheme(Subparsers subparsers, AdaptorStatus adaptor, String scheme) {
+        return subparsers.addParser(scheme)
+                        .help(adaptor.getDescription())
+                        .description(adaptor.getDescription())
+                        .setDefault("scheme", scheme);
+    }
+
+    private String addArgumentLocation(List<String> sshSchemes, AdaptorStatus adaptor, String scheme, Subparser schemeParser) {
+        String supportedLocationHelp = getSupportedLocationHelp(adaptor);
+        Argument locationArgument = schemeParser.addArgument("--location").help("Location, " + supportedLocationHelp);
+        if (sshSchemes.contains(scheme)) {
+            locationArgument.required(true);
+        }
+        return supportedLocationHelp;
+    }
+
+    private void addArgumentProp(AdaptorStatus adaptor, Subparser schemeParser) {
+        schemeParser.addArgument("--prop")
+            .action(Arguments.append())
+            .metavar("KEY=VALUE")
+            .help("Xenon adaptor properties, " + getSupportedPropertiesHelp(adaptor))
+            .dest("props");
+    }
+
     private String getSupportedPropertiesHelp(AdaptorStatus adaptor) {
         String sep = System.getProperty("line.separator");
         List<String> helps = Arrays.stream(adaptor.getSupportedProperties()).map(
-                (property) -> "- " + property.getName() + "=" + property.getDefaultValue() + " ("+ property.getDescription() + ", type:" + property.getType() + ") "
+                property -> "- " + property.getName() + "=" + property.getDefaultValue() + " ("+ property.getDescription() + ", type:" + property.getType() + ") "
             ).collect(Collectors.toList());
 
         helps.add(0, "Supported properties:");

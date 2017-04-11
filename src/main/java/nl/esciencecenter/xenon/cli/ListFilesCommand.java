@@ -99,8 +99,6 @@ public class ListFilesCommand extends XenonCommand {
         Boolean hidden = res.getBoolean("hidden");
         Files files = xenon.files();
         Credential credential = buildCredential(res, xenon);
-        ListFilesOutput listing = listObjects(files, scheme, location, path, credential, recursive, hidden);
-
-        return listing;
+        return listObjects(files, scheme, location, path, credential, recursive, hidden);
     }
 }

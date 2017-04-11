@@ -12,7 +12,7 @@ public class ListFilesOutput {
     @Override
     public String toString() {
         String sep = System.getProperty("line.separator");
-        return String.join(sep, objects);
+        return String.join(sep, objects) + sep;
     }
 
     @Override

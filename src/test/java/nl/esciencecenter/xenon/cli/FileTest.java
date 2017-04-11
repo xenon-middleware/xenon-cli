@@ -1,10 +1,8 @@
 package nl.esciencecenter.xenon.cli;
 
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import nl.esciencecenter.xenon.XenonException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -15,9 +13,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import nl.esciencecenter.xenon.XenonException;
+
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class FileTest {
     @Rule
@@ -142,10 +143,8 @@ public class FileTest {
         ListFilesOutput output = (ListFilesOutput) main.run(args);
 
         ListFilesOutput expected = new ListFilesOutput();
-        expected.objects.add("file1");
-        expected.objects.add("dir1");
-        expected.directories.add("dir1");
-        expected.files.add("file1");
+        expected.addDirectory("dir1");
+        expected.addFile("file1");
         assertEquals(expected, output);
     }
 
@@ -160,8 +159,7 @@ public class FileTest {
         ListFilesOutput output = (ListFilesOutput) main.run(args);
 
         ListFilesOutput expected = new ListFilesOutput();
-        expected.objects.add("file1");
-        expected.files.add("file1");
+        expected.addFile("file1");
         assertEquals(expected, output);
     }
 
