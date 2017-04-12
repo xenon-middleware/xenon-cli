@@ -1,7 +1,6 @@
 package nl.esciencecenter.xenon.cli.removejob;
 
 import nl.esciencecenter.xenon.cli.IParser;
-import nl.esciencecenter.xenon.cli.removefile.RemoveFileCommand;
 
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;

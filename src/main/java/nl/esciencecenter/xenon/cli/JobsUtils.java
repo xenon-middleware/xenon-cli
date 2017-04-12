@@ -12,6 +12,10 @@ import net.sourceforge.argparse4j.inf.Namespace;
  * Helpers for Xenon.jobs based commands
  */
 public class JobsUtils {
+    private JobsUtils() {
+        throw new IllegalAccessError("Utility class");
+    }
+
     public static Map<String, String> parseArgumentListAsMap(List<String> input) {
         Map<String, String> output = new HashMap<>();
         if (input != null) {

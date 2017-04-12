@@ -7,6 +7,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 
 public class DownloadParser extends CopyParser {
+    @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("download")
             .setDefault("command", new DownloadCommand())

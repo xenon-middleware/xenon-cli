@@ -107,15 +107,15 @@ public class Main {
     }
 
     public ArgumentParser buildArgumentParser() {
-        ArgumentParser parser = ArgumentParsers.newArgumentParser(PROGRAM_NAME, true, "-", "@")
+        ArgumentParser newParser = ArgumentParsers.newArgumentParser(PROGRAM_NAME, true, "-", "@")
                 .defaultHelp(true)
                 .description("Files and Jobs operations with Xenon")
                 .version(PROGRAM_VERSION);
-        parser.addArgument("--version").action(Arguments.version());
-        parser.addArgument("--format").choices("cwljson").help("Output in JSON format");
-        addSchemeSubParsers(parser);
-        ParserHelpers.addCredentialArguments(parser);
-        return parser;
+        newParser.addArgument("--version").action(Arguments.version());
+        newParser.addArgument("--format").choices("cwljson").help("Output in JSON format");
+        addSchemeSubParsers(newParser);
+        ParserHelpers.addCredentialArguments(newParser);
+        return newParser;
     }
 
     private void addSchemeSubParsers(ArgumentParser parser) {

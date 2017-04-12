@@ -30,11 +30,15 @@ public class QueuesOutput {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         QueuesOutput that = (QueuesOutput) o;
         return Objects.equals(defaultQueue, that.defaultQueue) &&
-                Arrays.equals(queues, that.queues);
+            Arrays.equals(queues, that.queues);
     }
 
     @Override
