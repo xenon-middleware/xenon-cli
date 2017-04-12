@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
 
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Rule;

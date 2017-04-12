@@ -1,7 +1,7 @@
 package nl.esciencecenter.xenon.cli;
 
+import static nl.esciencecenter.xenon.cli.JobsUtils.parseArgumentListAsMap;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.parseArgumentListAsMap;
 
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +12,16 @@ import nl.esciencecenter.xenon.AdaptorStatus;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonFactory;
+import nl.esciencecenter.xenon.cli.copy.CopyParser;
+import nl.esciencecenter.xenon.cli.copy.DownloadParser;
+import nl.esciencecenter.xenon.cli.copy.UploadParser;
+import nl.esciencecenter.xenon.cli.exec.ExecParser;
+import nl.esciencecenter.xenon.cli.listfiles.ListFilesParser;
+import nl.esciencecenter.xenon.cli.listjobs.ListJobsParser;
+import nl.esciencecenter.xenon.cli.queues.QueuesParser;
+import nl.esciencecenter.xenon.cli.removefile.RemoveFileParser;
+import nl.esciencecenter.xenon.cli.removejob.RemoveJobParser;
+import nl.esciencecenter.xenon.cli.submit.SubmitParser;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -26,6 +36,9 @@ import net.sourceforge.argparse4j.inf.Subparsers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Parse arguments and runs sub-commands.
+ */
 public class Main {
     // TODO make filesSchemes+JOBS_SCHEMES dynamic after https://github.com/NLeSC/Xenon/issues/400 is fixed
     private static final List<String> FILES_SCHEMES = Arrays.asList("file", "sftp", "ftp");
@@ -129,32 +142,32 @@ public class Main {
 
     private void jobsSubCommands(String scheme, Subparsers commandsParser) {
         // exec
-        new ExecCommand().buildArgumentParser(commandsParser);
+        new ExecParser().buildArgumentParser(commandsParser);
         if (!ONLINE_SCHEMES.contains(scheme)) {
             // submit
-            new SubmitCommand().buildArgumentParser(commandsParser);
+            new SubmitParser().buildArgumentParser(commandsParser);
             // list
-            new ListJobsCommand().buildArgumentParser(commandsParser);
+            new ListJobsParser().buildArgumentParser(commandsParser);
             // remove
-            new RemoveJobCommand().buildArgumentParser(commandsParser);
+            new RemoveJobParser().buildArgumentParser(commandsParser);
             // queues
-            new QueuesCommand().buildArgumentParser(commandsParser);
+            new QueuesParser().buildArgumentParser(commandsParser);
         }
     }
 
     private void filesSubCommands(String scheme, String supportedLocationHelp, Subparsers commandsParser) {
         // copy
-        new CopyCommand().buildArgumentParser(commandsParser, supportedLocationHelp, LOCAL_SCHEMES.contains(scheme));
+        new CopyParser().buildArgumentParser(commandsParser, supportedLocationHelp, LOCAL_SCHEMES.contains(scheme));
         if (!LOCAL_SCHEMES.contains(scheme)) {
             // upload
-            new UploadCommand().buildArgumentParser(commandsParser);
+            new UploadParser().buildArgumentParser(commandsParser);
             // download
-            new DownloadCommand().buildArgumentParser(commandsParser);
+            new DownloadParser().buildArgumentParser(commandsParser);
         }
         // list
-        new ListFilesCommand().buildArgumentParser(commandsParser);
+        new ListFilesParser().buildArgumentParser(commandsParser);
         // remove
-        new RemoveFileCommand().buildArgumentParser(commandsParser);
+        new RemoveFileParser().buildArgumentParser(commandsParser);
     }
 
     private Subparser addSubCommandScheme(Subparsers subparsers, AdaptorStatus adaptor, String scheme) {

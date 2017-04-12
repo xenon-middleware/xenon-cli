@@ -5,6 +5,9 @@ import com.palantir.docker.compose.connection.DockerPort;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
+import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
+
 import org.junit.*;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 

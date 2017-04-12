@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
 
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.Rule;
