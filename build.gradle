@@ -7,10 +7,13 @@ plugins {
     id 'eclipse'
     // test coverage
     id 'jacoco'
+    // quality
     id 'org.sonarqube' version '2.3'
     // docker build & push
     id 'maven-publish'
     id 'com.palantir.docker' version '0.11.0'
+    // integration tests
+    id 'org.unbroken-dome.test-sets' version '1.3.2'
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
@@ -54,20 +57,52 @@ distTar.enabled = false
 assemble.dependsOn distShadowTar
 assemble.dependsOn distShadowZip
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.3'
+}
+
 jacocoTestReport {
+    description 'Generate coverage report of unit tests'
+    group 'Code coverage reporting'
     reports {
         xml.enabled true
     }
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.3'
+testSets {
+    integrationTest
+}
+
+check.dependsOn integrationTest
+
+task jacocoIntegrationTestReport(type: JacocoReport) {
+    description 'Generate coverage report of integration tests'
+    group 'Code coverage reporting'
+    executionData integrationTest
+    sourceSets sourceSets.main
+}
+
+
+task jacocoMerge(type: JacocoMerge) {
+    executionData test, integrationTest
+}
+
+task jacocoIntegrationAndUnitTestReport(type: JacocoReport) {
+    description 'Generate coverage report of integration and unit tests'
+    group 'Code coverage reporting'
+    dependsOn jacocoMerge
+    executionData jacocoMerge.destinationFile
+    sourceSets sourceSets.main
 }
 
 sonarqube {
     properties {
         property 'sonar.host.url', 'https://sonarqube.com'
         property 'sonar.organization', project.group
+        property 'sonar.language', 'java'
         property 'sonar.links.homepage', 'https://github.com/NLeSC/xenon-cli'
+        properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
+        property 'sonar.jacoco.reportPaths', [jacocoTestReport.executionData, jacocoIntegrationTestReport.executionData]
     }
 }
+project.tasks["sonarqube"].dependsOn "check"

@@ -26,7 +26,7 @@ import org.junit.contrib.java.lang.system.SystemOutRule;
 public class GridEngineTest {
     @ClassRule
     public static DockerComposeRule docker = DockerComposeRule.builder()
-            .file("src/test/resources/sge-docker-compose.yml")
+            .file("src/integrationTest/resources/sge-docker-compose.yml")
             .saveLogsTo("build/dockerLogs/SgeTest")
             .waitingForService("sge", HealthChecks.toHaveAllPortsOpen())
             .build();

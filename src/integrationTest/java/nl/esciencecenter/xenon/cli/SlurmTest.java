@@ -1,27 +1,31 @@
 package nl.esciencecenter.xenon.cli;
 
-import com.palantir.docker.compose.DockerComposeRule;
-import com.palantir.docker.compose.connection.DockerPort;
-import com.palantir.docker.compose.connection.waiting.HealthChecks;
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
-import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
-
-import org.junit.*;
-import org.junit.contrib.java.lang.system.SystemOutRule;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
+import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
+import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
+
+import com.palantir.docker.compose.DockerComposeRule;
+import com.palantir.docker.compose.connection.DockerPort;
+import com.palantir.docker.compose.connection.waiting.HealthChecks;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 
 public class SlurmTest {
     @ClassRule
     public static DockerComposeRule docker = DockerComposeRule.builder()
-        .file("src/test/resources/slurm-docker-compose.yml")
+        .file("src/integrationTest/resources/slurm-docker-compose.yml")
         .saveLogsTo("build/dockerLogs/SlurmTest")
         .waitingForService("slurm", HealthChecks.toHaveAllPortsOpen())
         .build();

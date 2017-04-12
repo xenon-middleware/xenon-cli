@@ -1,15 +1,16 @@
 package nl.esciencecenter.xenon.cli;
 
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import nl.esciencecenter.xenon.XenonException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
+import nl.esciencecenter.xenon.XenonException;
+
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class LocalTest {
     @Rule
