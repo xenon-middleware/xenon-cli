@@ -1,8 +1,6 @@
 # Xenon Command Line Interface
 
 [![Build Status](https://travis-ci.org/NLeSC/xenon-cli.svg?branch=master)](https://travis-ci.org/NLeSC/xenon-cli)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5956168fece74be4af782398a3310f65)](https://www.codacy.com/app/NLeSC/xenon-cli?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=NLeSC/xenon-cli&amp;utm_campaign=Badge_Grade)
-[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/5956168fece74be4af782398a3310f65)](https://www.codacy.com/app/NLeSC/xenon-cli?utm_source=github.com&utm_medium=referral&utm_content=NLeSC/xenon-cli&utm_campaign=Badge_Coverage)
 [![SonarQube Gate](https://sonarqube.com/api/badges/gate?key=nlesc%3Axenon-cli)](https://sonarqube.com/dashboard?id=nlesc%3Axenon-cli)
 [![SonarQube Coverage](https://sonarqube.com/api/badges/measure?key=nlesc%3Axenon-cli&metric=coverage)](https://sonarqube.com/component_measures/domain/Coverage?id=nlesc%3Axenon-cli)
 

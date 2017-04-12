@@ -25,8 +25,3 @@ cache:
     - $HOME/.gradle/wrapper/
     - $HOME/.m2
     - $HOME/.sonar/cache
-after_success:
-  - curl -sL https://github.com/jpm4j/jpm4j.installers/raw/master/dist/biz.aQute.jpm.run.jar > ~/.m2/jpm4j.jar
-  - java -jar $HOME/.m2/jpm4j.jar -u install com.codacy:codacy-coverage-reporter:assembly
-  - ./gradlew jacocoTestReport
-  - $HOME/jpm/bin/codacy-coverage-reporter -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
