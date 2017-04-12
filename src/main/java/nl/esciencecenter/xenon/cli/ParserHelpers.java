@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.AdaptorStatus;
+import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.files.CopyOption;
 import nl.esciencecenter.xenon.jobs.JobDescription;
 
@@ -15,6 +16,7 @@ import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
 
 public class ParserHelpers {
     private ParserHelpers() {
@@ -103,5 +105,33 @@ public class ParserHelpers {
         helps.add(0, "Supported locations:");
         String sep = System.getProperty("line.separator");
         return String.join(sep, helps);
+    }
+
+    public static String getAdaptorPropertyHelp(XenonPropertyDescription property) {
+        return "- " + property.getName() + "=" + property.getDefaultValue() + " ("+ property.getDescription() + ", type:" + property.getType() + ") ";
+    }
+
+    public static void addRunArguments(Subparser subparser) {
+        subparser.addArgument("executable").help("Executable to schedule for execution").required(true);
+        subparser.addArgument("args")
+            .help("Arguments for executable, prepend ' -- ' when arguments start with '-'")
+            .nargs("*");
+
+        subparser.addArgument("--queue").help("Schedule job in this queue");
+        subparser.addArgument("--env")
+            .help("Environment variable of the executable")
+            .metavar("KEY=VAL")
+            .action(Arguments.append())
+            .dest("envs");
+        subparser.addArgument("--option")
+            .help("Option for job")
+            .metavar("KEY=VAL")
+            .action(Arguments.append())
+            .dest("options");
+        subparser.addArgument("--max-time").help("Maximum job time (in minutes)").type(Integer.class).setDefault(JobDescription.DEFAULT_MAX_RUN_TIME);
+        subparser.addArgument("--node-count").type(Integer.class).help("Number of nodes to reserve").setDefault(1);
+        subparser.addArgument("--procs-per-node").type(Integer.class).help("Number of processes started on each node").setDefault(1);
+        subparser.addArgument("--working-directory")
+            .help("Path at location where executable should be executed. If not given will local working directory or when remove will use home directory");
     }
 }

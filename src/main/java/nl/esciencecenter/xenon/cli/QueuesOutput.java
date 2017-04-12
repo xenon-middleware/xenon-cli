@@ -1,6 +1,8 @@
 package nl.esciencecenter.xenon.cli;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 public class QueuesOutput {
@@ -15,7 +17,12 @@ public class QueuesOutput {
     @Override
     public String toString() {
         String sep = System.getProperty("line.separator");
-        return "Available queues: '" + String.join(",", queues) + "'" + sep + "Default queue: '" + defaultQueue + "'";
+        List<String> lines = new ArrayList<>();
+        lines.add("Available queues: " + String.join(", ", queues));
+        if (defaultQueue != null) {
+            lines.add("Default queue: " + defaultQueue + "");
+        }
+        return String.join(sep, lines);
     }
 
     @Override

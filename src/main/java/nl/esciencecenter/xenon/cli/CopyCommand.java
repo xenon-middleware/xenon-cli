@@ -54,7 +54,7 @@ public class CopyCommand extends XenonCommand {
             }
         } else if (!source.isStream() && target.isStream()) {
             // copy to stdout
-            Utils.copy(files, sourcePath, System.out);
+            Utils.copy(files, sourcePath, System.out); //NOSONAR
         } else if (recursive) {
             Utils.recursiveCopy(files, sourcePath, targetPath, copymode);
         } else {

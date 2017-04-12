@@ -15,7 +15,6 @@ import nl.esciencecenter.xenon.jobs.Streams;
 import nl.esciencecenter.xenon.util.StreamForwarder;
 import nl.esciencecenter.xenon.util.Utils;
 
-import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
@@ -28,32 +27,12 @@ public class ExecCommand extends XenonCommand {
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
         //   exec <executable> <args> <environment> <job options> <max time> <queue> <working directory> <std* attached to local streams>
-
         Subparser subparser = subparsers.addParser("exec")
             .setDefault("command", this)
             .help("Execute job at location")
             .description("Execute job at location");
-        subparser.addArgument("executable").help("Executable to execute").required(true);
-        subparser.addArgument("args")
-            .help("Arguments for executable, prepend ' -- ' when arguments start with '-'")
-            .nargs("*");
 
-        subparser.addArgument("--queue").help("Execute job in this queue");
-        subparser.addArgument("--env")
-            .help("Environment variable of the executable")
-            .metavar("KEY=VAL")
-            .action(Arguments.append())
-            .dest("envs");
-        subparser.addArgument("--option")
-            .help("Option for job")
-            .metavar("KEY=VAL")
-            .action(Arguments.append())
-            .dest("options");
-        subparser.addArgument("--max-time").help("Maximum job time (in minutes)").type(Integer.class).setDefault(JobDescription.DEFAULT_MAX_RUN_TIME);
-        subparser.addArgument("--node-count").type(Integer.class).help("Number of nodes to reserve").setDefault(1);
-        subparser.addArgument("--procs-per-node").type(Integer.class).help("Number of processes started on each node").setDefault(1);
-        subparser.addArgument("--working-directory")
-            .help("Path at location where executable should be executed. If not given will local working directory or when remove will use home directory");
+        ParserHelpers.addRunArguments(subparser);
 
         subparser.addArgument("--wait-timeout")
             .type(Long.class)
@@ -77,12 +56,12 @@ public class ExecCommand extends XenonCommand {
         Job job = jobs.submitJob(scheduler, description);
         Streams streams = jobs.getStreams(job);
         StreamForwarder stdinForwarder = new StreamForwarder(System.in, streams.getStdin());
-        StreamForwarder stderrForwarder = new StreamForwarder(streams.getStderr(), System.err);
+        StreamForwarder stderrForwarder = new StreamForwarder(streams.getStderr(), System.err); //NOSONAR
         jobs.waitUntilDone(job, waitTimeout);
         try {
             // Using copy instead of StreamForwarder to pipe stdout in main thread,
             // so close is called after all stdout has been produced
-            Utils.copy(streams.getStdout(), System.out, -1);
+            Utils.copy(streams.getStdout(), System.out, -1); //NOSONAR
             streams.getStdout().close();
         } catch (IOException e) {
             logger.info("Copy stdout failed", e);

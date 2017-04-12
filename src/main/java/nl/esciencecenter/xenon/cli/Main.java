@@ -27,9 +27,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Main {
-    // TODO make filesSchemes+jobsSchemes dynamic after https://github.com/NLeSC/Xenon/issues/400 is fixed
+    // TODO make filesSchemes+JOBS_SCHEMES dynamic after https://github.com/NLeSC/Xenon/issues/400 is fixed
     private static final List<String> FILES_SCHEMES = Arrays.asList("file", "sftp", "ftp");
-    private static final List<String> jobsSchemes = Arrays.asList("local", "ssh", "ge", "sge", "slurm", "torque");
+    private static final List<String> JOBS_SCHEMES = Arrays.asList("local", "ssh", "ge", "sge", "slurm", "torque");
     private static final List<String> ONLINE_SCHEMES = Arrays.asList("file", "local", "ssh", "sftp");
     private static final List<String> LOCAL_SCHEMES = Arrays.asList("file", "local");
     private static final List<String> SSH_SCHEMES = Arrays.asList("ssh", "sftp");
@@ -41,12 +41,8 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
-        try {
-            Object output = main.run(args);
-            main.print(output);
-        } catch (ArgumentParserException e) {
-            main.getParser().handleError(e);
-        }
+        Object output = main.run(args);
+        main.print(output);
     }
 
     public static Map<String,String> buildXenonProperties(Namespace res) {
@@ -65,26 +61,39 @@ public class Main {
         parser = buildArgumentParser();
     }
 
-    public Object run(String[] args) throws ArgumentParserException, XenonException {
-        res = parser.parseArgs(args);
-        ICommand subcommand = res.get("command");
+    public Object run(String[] args) throws XenonException {
+        try {
+            res = parser.parseArgs(args);
+        } catch (ArgumentParserException e) {
+            parser.handleError(e);
+            return null;
+        }
+        ICommand subCommand = res.get("command");
+        return run(subCommand);
+    }
+
+    public Object run(ICommand subCommand) throws XenonException {
         Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res));
-        Object output = subcommand.run(res, xenon);
+        Object output = subCommand.run(res, xenon);
         XenonFactory.endXenon(xenon);
         return output;
     }
 
-    public void print(Object output) {
+    private void print(Object output) {
         String format = res.getString("format");
+        print(output, format);
+    }
+
+    public void print(Object output, String format) {
         if ("cwljson".equals(format)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            System.out.print(gson.toJson(output));
+            System.out.print(gson.toJson(output)); //NOSONAR
         } else if (output != null) {
-            System.out.println(output);
+            System.out.println(output); //NOSONAR
         }
     }
 
-    public ArgumentParser buildArgumentParser() throws XenonException {
+    public ArgumentParser buildArgumentParser() {
         ArgumentParser parser = ArgumentParsers.newArgumentParser(PROGRAM_NAME, true, "-", "@")
                 .defaultHelp(true)
                 .description("Files and Jobs operations with Xenon")
@@ -99,42 +108,53 @@ public class Main {
     private void addSchemeSubParsers(ArgumentParser parser) {
         Subparsers subparsers = parser.addSubparsers().title("scheme");
         AdaptorStatus[] adaptors = getAdaptorStatuses();
-
         for (AdaptorStatus adaptor: adaptors) {
             for (String scheme: adaptor.getSupportedSchemes()) {
-                Subparser schemeParser = addSubCommandScheme(subparsers, adaptor, scheme);
-                String supportedLocationHelp = addArgumentLocation(SSH_SCHEMES, adaptor, scheme, schemeParser);
-                addArgumentProp(adaptor, schemeParser);
-                Subparsers commandsParser = schemeParser.addSubparsers().title("commands");
-                if (FILES_SCHEMES.contains(scheme)) {
-                    // copy
-                    new CopyCommand().buildArgumentParser(commandsParser, supportedLocationHelp, LOCAL_SCHEMES.contains(scheme));
-                    if (!LOCAL_SCHEMES.contains(scheme)) {
-                        // upload
-                        new UploadCommand().buildArgumentParser(commandsParser);
-                        // download
-                        new DownloadCommand().buildArgumentParser(commandsParser);
-                    }
-                    // list
-                    new ListFilesCommand().buildArgumentParser(commandsParser);
-                    // remove
-                    new RemoveFileCommand().buildArgumentParser(commandsParser);
-                } else if (jobsSchemes.contains(scheme)) {
-                    // exec
-                    new ExecCommand().buildArgumentParser(commandsParser);
-                    if (!ONLINE_SCHEMES.contains(scheme)) {
-                        // submit
-                        new SubmitCommand().buildArgumentParser(commandsParser);
-                        // list
-                        new ListJobsCommand().buildArgumentParser(commandsParser);
-                        // remove
-                        new RemoveJobCommand().buildArgumentParser(commandsParser);
-                        // queues
-                        new QueuesCommand().buildArgumentParser(commandsParser);
-                    }
-                }
+                adaptorSubCommands(subparsers, adaptor, scheme);
             }
         }
+    }
+
+    private void adaptorSubCommands(Subparsers subparsers, AdaptorStatus adaptor, String scheme) {
+        Subparser schemeParser = addSubCommandScheme(subparsers, adaptor, scheme);
+        String supportedLocationHelp = addArgumentLocation(SSH_SCHEMES, adaptor, scheme, schemeParser);
+        addArgumentProp(adaptor, schemeParser);
+        Subparsers commandsParser = schemeParser.addSubparsers().title("commands");
+        if (FILES_SCHEMES.contains(scheme)) {
+            filesSubCommands(scheme, supportedLocationHelp, commandsParser);
+        } else if (JOBS_SCHEMES.contains(scheme)) {
+            jobsSubCommands(scheme, commandsParser);
+        }
+    }
+
+    private void jobsSubCommands(String scheme, Subparsers commandsParser) {
+        // exec
+        new ExecCommand().buildArgumentParser(commandsParser);
+        if (!ONLINE_SCHEMES.contains(scheme)) {
+            // submit
+            new SubmitCommand().buildArgumentParser(commandsParser);
+            // list
+            new ListJobsCommand().buildArgumentParser(commandsParser);
+            // remove
+            new RemoveJobCommand().buildArgumentParser(commandsParser);
+            // queues
+            new QueuesCommand().buildArgumentParser(commandsParser);
+        }
+    }
+
+    private void filesSubCommands(String scheme, String supportedLocationHelp, Subparsers commandsParser) {
+        // copy
+        new CopyCommand().buildArgumentParser(commandsParser, supportedLocationHelp, LOCAL_SCHEMES.contains(scheme));
+        if (!LOCAL_SCHEMES.contains(scheme)) {
+            // upload
+            new UploadCommand().buildArgumentParser(commandsParser);
+            // download
+            new DownloadCommand().buildArgumentParser(commandsParser);
+        }
+        // list
+        new ListFilesCommand().buildArgumentParser(commandsParser);
+        // remove
+        new RemoveFileCommand().buildArgumentParser(commandsParser);
     }
 
     private Subparser addSubCommandScheme(Subparsers subparsers, AdaptorStatus adaptor, String scheme) {
@@ -163,10 +183,7 @@ public class Main {
 
     private String getSupportedPropertiesHelp(AdaptorStatus adaptor) {
         String sep = System.getProperty("line.separator");
-        List<String> helps = Arrays.stream(adaptor.getSupportedProperties()).map(
-                property -> "- " + property.getName() + "=" + property.getDefaultValue() + " ("+ property.getDescription() + ", type:" + property.getType() + ") "
-            ).collect(Collectors.toList());
-
+        List<String> helps = Arrays.stream(adaptor.getSupportedProperties()).map(ParserHelpers::getAdaptorPropertyHelp).collect(Collectors.toList());
         helps.add(0, "Supported properties:");
         return String.join(sep, helps);
     }
@@ -183,4 +200,6 @@ public class Main {
         }
         return adaptors;
     }
+
+
 }
