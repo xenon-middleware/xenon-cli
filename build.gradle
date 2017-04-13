@@ -32,6 +32,10 @@ repositories {
     }
 }
 
+testSets {
+    integrationTest
+}
+
 dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
@@ -39,9 +43,9 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'com.github.geowarin:docker-junit-rule:1.1.0'
     testCompile 'com.github.stefanbirkner:system-rules:1.16.0'
-    testCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.31.1'
+    integrationTestCompile 'com.github.geowarin:docker-junit-rule:1.1.0'
+    integrationTestCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.31.1'
 }
 
 docker {
@@ -69,11 +73,8 @@ jacocoTestReport {
     }
 }
 
-testSets {
-    integrationTest
-}
-
 check.dependsOn integrationTest
+integrationTest.mustRunAfter test
 
 task jacocoIntegrationTestReport(type: JacocoReport) {
     description 'Generate coverage report of integration tests'
