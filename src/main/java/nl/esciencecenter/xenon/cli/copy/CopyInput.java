@@ -54,4 +54,12 @@ public class CopyInput {
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
+
+    public boolean isLocal() {
+        return "local".equals(scheme) || "file".equals(scheme);
+    }
+
+    public boolean isAbsolute() {
+        return path.startsWith("/");
+    }
 }
