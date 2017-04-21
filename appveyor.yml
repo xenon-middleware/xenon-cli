@@ -1,4 +1,4 @@
-version: {branch}-{build}
+version: '{branch}-{build}'
 cache:
 - C:\Users\appveyor\.m2
 - C:\Users\appveyor\.gradle\caches\
