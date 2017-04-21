@@ -12,7 +12,6 @@ artifacts:
     name: Java archive
 on_finish:
 - cmd: del /S C:\Users\appveyor\.gradle\caches\modules-2\modules-2.lock
-- cmd: del /S C:\Users\appveyor\.gradle\caches\*\plugin-resolution\
 - ps: >-
     $url = "https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)"
 

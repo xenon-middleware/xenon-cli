@@ -22,7 +22,8 @@ public class ListFilesOutputTest {
     @Test
     public void test_toString() {
         String result = listFilesOutput.toString();
-        String expected = "dir1\nfile1\n";
+        String sep = System.getProperty("line.separator");
+        String expected = "dir1" + sep + "file1" + sep;
         assertEquals(expected, result);
     }
 
