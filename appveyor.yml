@@ -6,7 +6,7 @@ cache:
 build_script:
 - cmd: ./gradlew.bat assemble
 test_script:
-- cmd: ./gradlew.bat check
+- cmd: ./gradlew.bat check -x integrationTest
 artifacts:
   - path: build/distributions/*.zip
     name: Java archive
