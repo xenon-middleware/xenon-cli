@@ -25,8 +25,12 @@ public class ListJobsOutput {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }    
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ListJobsOutput that = (ListJobsOutput) o;
         return Objects.equals(location, that.location) &&
                 Objects.equals(queue, that.queue) &&

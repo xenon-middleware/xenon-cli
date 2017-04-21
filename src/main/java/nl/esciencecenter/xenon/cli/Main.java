@@ -100,9 +100,9 @@ public class Main {
     public void print(Object output, String format) {
         if ("cwljson".equals(format)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
-            System.out.print(gson.toJson(output)); //NOSONAR
+            System.out.print(gson.toJson(output));
         } else if (output != null) {
-            System.out.println(output); //NOSONAR
+            System.out.println(output);
         }
     }
 

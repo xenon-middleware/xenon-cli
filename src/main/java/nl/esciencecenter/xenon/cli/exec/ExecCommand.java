@@ -41,12 +41,12 @@ public class ExecCommand extends XenonCommand {
         Job job = jobs.submitJob(scheduler, description);
         Streams streams = jobs.getStreams(job);
         StreamForwarder stdinForwarder = new StreamForwarder(System.in, streams.getStdin());
-        StreamForwarder stderrForwarder = new StreamForwarder(streams.getStderr(), System.err); //NOSONAR
+        StreamForwarder stderrForwarder = new StreamForwarder(streams.getStderr(), System.err);
         jobs.waitUntilDone(job, waitTimeout);
         try {
             // Using copy instead of StreamForwarder to pipe stdout in main thread,
             // so close is called after all stdout has been produced
-            Utils.copy(streams.getStdout(), System.out, -1); //NOSONAR
+            Utils.copy(streams.getStdout(), System.out, -1);
             streams.getStdout().close();
         } catch (IOException e) {
             logger.info("Copy stdout failed", e);
