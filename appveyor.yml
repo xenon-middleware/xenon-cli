@@ -6,7 +6,7 @@ cache:
 build_script:
 - cmd: ./gradlew.bat assemble
 test_script:
-- cmd: ./gradlew.bat verify
+- cmd: ./gradlew.bat check
 artifacts:
   - path: build/distributions/*.zip
     name: Java archive
