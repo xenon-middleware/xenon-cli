@@ -4,9 +4,9 @@ cache:
 - C:\Users\appveyor\.gradle\caches\
 - C:\Users\appveyor\.gradle\wrapper\
 build_script:
-- cmd: ./gradle.bat assemble
+- cmd: ./gradlew.bat assemble
 test_script:
-- cmd: ./gradle.bat verify
+- cmd: ./gradlew.bat verify
 artifacts:
   - path: build/distributions/*.zip
     name: Java archive
