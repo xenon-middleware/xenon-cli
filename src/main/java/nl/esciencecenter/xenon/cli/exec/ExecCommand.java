@@ -1,24 +1,16 @@
 package nl.esciencecenter.xenon.cli.exec;
 
-import static nl.esciencecenter.xenon.cli.JobsUtils.getJobDescription;
-
-import java.io.IOException;
-
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.jobs.Job;
-import nl.esciencecenter.xenon.jobs.JobDescription;
-import nl.esciencecenter.xenon.jobs.Jobs;
-import nl.esciencecenter.xenon.jobs.Scheduler;
-import nl.esciencecenter.xenon.jobs.Streams;
+import nl.esciencecenter.xenon.jobs.*;
 import nl.esciencecenter.xenon.util.StreamForwarder;
-import nl.esciencecenter.xenon.util.Utils;
-
-import net.sourceforge.argparse4j.inf.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static nl.esciencecenter.xenon.cli.JobsUtils.getJobDescription;
 
 /**
  * Command to execute job in the foreground
@@ -39,20 +31,15 @@ public class ExecCommand extends XenonCommand {
         Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
 
         Job job = jobs.submitJob(scheduler, description);
+
         Streams streams = jobs.getStreams(job);
-        StreamForwarder stdinForwarder = new StreamForwarder(System.in, streams.getStdin());
         StreamForwarder stderrForwarder = new StreamForwarder(streams.getStderr(), System.err);
+        UnbufferedStreamForwarder stdoutForwarder = new UnbufferedStreamForwarder(streams.getStdout(), System.out);
+        UnbufferedStreamForwarder stdinForwarder = new UnbufferedStreamForwarder(System.in, streams.getStdin());
         jobs.waitUntilDone(job, waitTimeout);
-        try {
-            // Using copy instead of StreamForwarder to pipe stdout in main thread,
-            // so close is called after all stdout has been produced
-            Utils.copy(streams.getStdout(), System.out, -1);
-            streams.getStdout().close();
-        } catch (IOException e) {
-            logger.info("Copy stdout failed", e);
-        }
         stdinForwarder.terminate(1000);
         stderrForwarder.terminate(1000);
+        stdoutForwarder.terminate(1000);
         jobs.close(scheduler);
         // run has no output, because all output has already been sent to stdout and stderr.
         return null;
