@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * Upgraded to Xenon 1.2.2
 
+## Fixes
+
+* Weird behavior with sftp (#10)
+
 ## [1.0.1] - 2017-03-02
 
 ### Changed
