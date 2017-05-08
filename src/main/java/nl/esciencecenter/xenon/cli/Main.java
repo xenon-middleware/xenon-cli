@@ -4,6 +4,7 @@ import static nl.esciencecenter.xenon.cli.JobsUtils.parseArgumentListAsMap;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -50,7 +51,7 @@ public class Main {
     private static final String PROGRAM_VERSION = "1.0.0";
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private final ArgumentParser parser;
-    private Namespace res;
+    private Namespace res = new Namespace(new HashMap<>());
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
@@ -213,6 +214,4 @@ public class Main {
         }
         return adaptors;
     }
-
-
 }
