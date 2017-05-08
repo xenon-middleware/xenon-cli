@@ -4,6 +4,9 @@ dist: trusty
 jdk: oraclejdk8
 env:
   DOCKER_COMPOSE_VERSION: 1.11.2
+addons:
+  sonarqube:
+    organization: nlesc
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y docker-engine
@@ -13,7 +16,7 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 script:
   - ./gradlew check 
-  - ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN --debug
+  - ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
 services:
   - docker
 before_cache:
