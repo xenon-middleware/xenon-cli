@@ -14,6 +14,14 @@ public class CopyOutput {
 
     @Override
     public String toString() {
-        return "Copied '" + source.getPath() + "' from location '" + source.getLocation() + "' to  '" + target.getPath() + "' to location '" + target.getLocation() + "'";
+        String sourceLocation = source.getLocation();
+        if (source.isLocal() && sourceLocation == null) {
+            sourceLocation = "local";
+        }
+        String targetLocation = target.getLocation();
+        if (target.isLocal() && targetLocation == null) {
+            targetLocation = "local";
+        }
+        return "Copied '" + source.getPath() + "' from location '" + sourceLocation + "' to  '" + target.getPath() + "' to location '" + targetLocation + "'";
     }
 }
