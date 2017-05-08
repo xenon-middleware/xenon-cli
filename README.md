@@ -4,6 +4,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/vki0xma8y7glpt09/branch/master?svg=true)](https://ci.appveyor.com/project/NLeSC/xenon-cli/branch/master)
 [![SonarQube Gate](https://sonarqube.com/api/badges/gate?key=nlesc%3Axenon-cli)](https://sonarqube.com/dashboard?id=nlesc%3Axenon-cli)
 [![SonarQube Coverage](https://sonarqube.com/api/badges/measure?key=nlesc%3Axenon-cli&metric=coverage)](https://sonarqube.com/component_measures/domain/Coverage?id=nlesc%3Axenon-cli)
+[![DOI](https://zenodo.org/badge/80642209.svg)](https://zenodo.org/badge/latestdoi/80642209)
 
 Command line interface which uses the [Xenon library](https://nlesc.github.io/Xenon) to perform job and file operations.
 
