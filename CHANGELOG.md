@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [1.0.2] - 2017-05-08
+
 ### Changed
 
 * Upgraded to Xenon 1.2.2
