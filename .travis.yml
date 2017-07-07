@@ -4,12 +4,14 @@ dist: trusty
 jdk: oraclejdk8
 env:
   DOCKER_COMPOSE_VERSION: 1.14.0
+services:
+  - docker
 addons:
   sonarcloud:
     organization: nlesc
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y docker-engine
+  - sudo apt-get install -y docker-ce
   - sudo rm /usr/local/bin/docker-compose
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
@@ -17,8 +19,6 @@ before_install:
 script:
   - ./gradlew check 
   - ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN
-services:
-  - docker
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
