@@ -3,9 +3,9 @@ sudo: required
 dist: trusty
 jdk: oraclejdk8
 env:
-  DOCKER_COMPOSE_VERSION: 1.11.2
+  DOCKER_COMPOSE_VERSION: 1.14.0
 addons:
-  sonarqube:
+  sonarcloud:
     organization: nlesc
 before_install:
   - sudo apt-get -qq update
