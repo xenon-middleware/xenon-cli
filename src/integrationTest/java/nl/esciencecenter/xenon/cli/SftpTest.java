@@ -80,7 +80,7 @@ public class SftpTest {
 
     @Test
     public void download() throws XenonException, ArgumentParserException {
-        String sourcePath = "/home/xenon/xenon_test/links/file0";
+        String sourcePath = "/home/xenon/filesystem-test-fixture/links/file0";
         File targetFile = new File(myfolder.getRoot(), "target.txt");
         String[] args = argsBuilder("download", sourcePath, targetFile.getAbsolutePath());
         Main main = new Main();
