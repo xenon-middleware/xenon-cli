@@ -1,11 +1,17 @@
 package nl.esciencecenter.xenon.cli.listjobs;
 
+import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedXenonPropertyKeys;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.jobs.Job;
@@ -26,7 +32,9 @@ public class ListJobsCommand extends XenonCommand {
         Credential credential = buildCredential(res, xenon);
 
         Jobs jobs = xenon.jobs();
-        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
+        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon, scheme, XenonPropertyDescription.Component.SCHEDULER);
+        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, props);
 
         Job[] scheduledJobs;
         if (queue == null) {

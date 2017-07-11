@@ -5,8 +5,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
@@ -27,7 +29,8 @@ public class MainTest {
         attrs.put("props", propsIn);
         Namespace ns = new Namespace(attrs);
 
-        Map<String, String> result = Main.buildXenonProperties(ns);
+        Set<String> allowedKeys = new HashSet<>(Arrays.asList("KEY1", "KEY2"));
+        Map<String, String> result = Main.buildXenonProperties(ns, allowedKeys);
         Map<String, String> expected = new HashMap<>();
         expected.put("KEY1", "VAL1");
         expected.put("KEY2", "VAL2");

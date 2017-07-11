@@ -1,9 +1,15 @@
 package nl.esciencecenter.xenon.cli.submit;
 
 import static nl.esciencecenter.xenon.cli.JobsUtils.getJobDescription;
+import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedXenonPropertyKeys;
+
+import java.util.Map;
+import java.util.Set;
 
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.jobs.Job;
@@ -37,7 +43,9 @@ public class SubmitCommand extends XenonCommand {
         }
 
         Jobs jobs = xenon.jobs();
-        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
+        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon, scheme, XenonPropertyDescription.Component.SCHEDULER);
+        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, props);
         Job job = jobs.submitJob(scheduler, description);
         String jobId = job.getIdentifier();
         SubmitOutput output = new SubmitOutput(location, description, jobId);

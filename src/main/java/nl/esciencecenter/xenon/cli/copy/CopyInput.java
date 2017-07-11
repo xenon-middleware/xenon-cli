@@ -16,6 +16,10 @@ public class CopyInput {
     private Map<String, String> properties = null;
 
     public CopyInput(String scheme, String location, String path, Credential credential) {
+        this(scheme, location, path, credential, null);
+    }
+
+    public CopyInput(String scheme, String location, String path, Credential credential, Map<String, String> properties) {
         this.scheme = scheme;
         this.location = location;
         if ("-".equals(path) && ("file".equals(scheme) || "local".equals(scheme))) {
@@ -25,6 +29,7 @@ public class CopyInput {
         }
         this.path = path;
         this.credential = credential;
+        this.properties = properties;
     }
 
     public String getScheme() {

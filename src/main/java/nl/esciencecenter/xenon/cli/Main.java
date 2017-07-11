@@ -1,18 +1,21 @@
 package nl.esciencecenter.xenon.cli;
 
 import static nl.esciencecenter.xenon.cli.JobsUtils.parseArgumentListAsMap;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedXenonPropertyKeys;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.AdaptorStatus;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonFactory;
+import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.copy.CopyParser;
 import nl.esciencecenter.xenon.cli.copy.DownloadParser;
 import nl.esciencecenter.xenon.cli.copy.UploadParser;
@@ -59,8 +62,10 @@ public class Main {
         main.print(output);
     }
 
-    public static Map<String,String> buildXenonProperties(Namespace res) {
-        return parseArgumentListAsMap(res.getList("props"));
+    public static Map<String,String> buildXenonProperties(Namespace res, Set<String> allowedKeys) {
+        return parseArgumentListAsMap(res.getList("props")).entrySet().stream()
+            .filter(p -> allowedKeys.contains(p.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public ArgumentParser getParser() {
@@ -87,7 +92,13 @@ public class Main {
     }
 
     public Object run(ICommand subCommand) throws XenonException {
-        Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res));
+        String scheme = res.getString("scheme");
+        // use temp xenon instance to fetch allowed property keys
+        Xenon xenon0 = XenonFactory.newXenon(null);
+        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon0, scheme, XenonPropertyDescription.Component.XENON);
+        XenonFactory.endXenon(xenon0);
+
+        Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res, allowedKeys));
         Object output = subCommand.run(res, xenon);
         XenonFactory.endXenon(xenon);
         return output;

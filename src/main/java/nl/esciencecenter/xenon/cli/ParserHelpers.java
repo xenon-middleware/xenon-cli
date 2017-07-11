@@ -2,9 +2,13 @@ package nl.esciencecenter.xenon.cli;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.AdaptorStatus;
+import nl.esciencecenter.xenon.Xenon;
+import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.files.CopyOption;
 import nl.esciencecenter.xenon.jobs.JobDescription;
@@ -87,5 +91,17 @@ public class ParserHelpers {
         subparser.addArgument("--procs-per-node").type(Integer.class).help("Number of processes started on each node").setDefault(1);
         subparser.addArgument("--working-directory")
             .help("Path at location where executable should be executed. If not given will local working directory or when remove will use home directory");
+    }
+
+    public static Set<String> getAllowedXenonPropertyKeys(Xenon xenon, String scheme, XenonPropertyDescription.Component level) throws XenonException {
+        // map scheme to adaptor
+        Optional<AdaptorStatus> status = Arrays.stream(xenon.getAdaptorStatuses()).filter(s -> Arrays.stream(s.getSupportedSchemes()).anyMatch(scheme::equals)).findFirst();
+        if (!status.isPresent()) {
+            throw new XenonException(scheme, "Unsupported scheme");
+        }
+        return Arrays.stream(status.get().getSupportedProperties())
+            .filter(p -> p.getLevels().contains(level))
+            .map(XenonPropertyDescription::getName)
+            .collect(Collectors.toSet());
     }
 }

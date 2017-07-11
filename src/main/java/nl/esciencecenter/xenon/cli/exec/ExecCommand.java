@@ -1,11 +1,16 @@
 package nl.esciencecenter.xenon.cli.exec;
 
 import static nl.esciencecenter.xenon.cli.JobsUtils.getJobDescription;
+import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedXenonPropertyKeys;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.jobs.Job;
@@ -36,7 +41,9 @@ public class ExecCommand extends XenonCommand {
         long waitTimeout = res.getLong("wait_timeout");
 
         Jobs jobs = xenon.jobs();
-        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, null);
+        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon, scheme, XenonPropertyDescription.Component.SCHEDULER);
+        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, props);
 
         Job job = jobs.submitJob(scheduler, description);
         Streams streams = jobs.getStreams(job);
@@ -57,4 +64,6 @@ public class ExecCommand extends XenonCommand {
         // run has no output, because all output has already been sent to stdout and stderr.
         return null;
     }
+
+
 }

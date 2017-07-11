@@ -1,9 +1,15 @@
 package nl.esciencecenter.xenon.cli.listfiles;
 
+import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedXenonPropertyKeys;
 import static nl.esciencecenter.xenon.util.Utils.walkFileTree;
+
+import java.util.Map;
+import java.util.Set;
 
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.files.FileAttributes;
@@ -19,8 +25,8 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public class ListFilesCommand extends XenonCommand {
 
-    private ListFilesOutput listObjects(Files files, String scheme, String location, String pathIn, Credential credential, Boolean recursive, Boolean hidden) throws XenonException {
-        FileSystem fs = files.newFileSystem(scheme, location, credential, null);
+    private ListFilesOutput listObjects(Files files, String scheme, String location, String pathIn, Credential credential, Boolean recursive, Boolean hidden, Map<String, String> props) throws XenonException {
+        FileSystem fs = files.newFileSystem(scheme, location, credential, props);
 
         RelativePath relPath = new RelativePath(pathIn);
         Path path = files.newPath(fs, relPath);
@@ -50,6 +56,8 @@ public class ListFilesCommand extends XenonCommand {
         Boolean hidden = res.getBoolean("hidden");
         Files files = xenon.files();
         Credential credential = buildCredential(res, xenon);
-        return listObjects(files, scheme, location, path, credential, recursive, hidden);
+        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon, scheme, XenonPropertyDescription.Component.FILESYSTEM);
+        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        return listObjects(files, scheme, location, path, credential, recursive, hidden, props);
     }
 }

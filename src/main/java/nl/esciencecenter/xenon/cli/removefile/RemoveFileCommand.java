@@ -1,9 +1,15 @@
 package nl.esciencecenter.xenon.cli.removefile;
 
+import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedXenonPropertyKeys;
 import static nl.esciencecenter.xenon.util.Utils.recursiveDelete;
+
+import java.util.Map;
+import java.util.Set;
 
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.files.FileSystem;
@@ -24,12 +30,14 @@ public class RemoveFileCommand extends XenonCommand {
         String path = res.getString("path");
         Files files = xenon.files();
         Credential credential = buildCredential(res, xenon);
-        remove(files, scheme, location, path, credential);
+        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon, scheme, XenonPropertyDescription.Component.FILESYSTEM);
+        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        remove(files, scheme, location, path, credential, props);
         return new RemoveFileOutput(location, path);
     }
 
-    private void remove(Files files, String scheme, String location, String pathIn, Credential credential) throws XenonException {
-        FileSystem fs = files.newFileSystem(scheme, location, credential, null);
+    private void remove(Files files, String scheme, String location, String pathIn, Credential credential, Map<String, String> props) throws XenonException {
+        FileSystem fs = files.newFileSystem(scheme, location, credential, props);
 
         Path path = files.newPath(fs, new RelativePath(pathIn));
         if ("local".equals(scheme) || "file".equals(scheme) && !pathIn.startsWith("/")) {
