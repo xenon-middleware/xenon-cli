@@ -30,6 +30,7 @@ repositories {
     maven {
         url 'https://dl.bintray.com/palantir/releases' // docker-compose-rule is published on bintray, not jcenter
     }
+    maven { url 'https://jitpack.io' }
 }
 
 testSets {
@@ -39,7 +40,7 @@ testSets {
 dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
-    compile 'nl.esciencecenter.xenon:xenon:1.2.2'
+    compile 'com.github.NLeSC:Xenon:jitpack-SNAPSHOT'
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'

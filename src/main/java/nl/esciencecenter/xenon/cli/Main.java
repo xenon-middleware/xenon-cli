@@ -37,6 +37,10 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
+import nl.esciencecenter.xenon.schedulers.Scheduler;
+import nl.esciencecenter.xenon.schedulers.SchedulerAdaptorDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +49,13 @@ import org.slf4j.LoggerFactory;
  */
 public class Main {
     // TODO make filesSchemes+JOBS_SCHEMES dynamic after https://github.com/NLeSC/Xenon/issues/400 is fixed
-    private static final List<String> FILES_SCHEMES = Arrays.asList("file", "sftp", "ftp");
-    private static final List<String> JOBS_SCHEMES = Arrays.asList("local", "ssh", "ge", "sge", "slurm", "torque");
-    private static final List<String> ONLINE_SCHEMES = Arrays.asList("file", "local", "ssh", "sftp");
+    private static final List<String> FILES_SCHEMES = getFilesystemNames();
+    private static final List<String> JOBS_SCHEMES = getSchedulerNames();
+    private static final List<String> ONLINE_SCHEMES = getOnlineNames();
+
+    // can not tell which adaptors are local, so hardcoded them
     private static final List<String> LOCAL_SCHEMES = Arrays.asList("file", "local");
+    // can not tell which adaptors are local, so hardcoded them
     private static final List<String> SSH_SCHEMES = Arrays.asList("ssh", "sftp");
     private static final String PROGRAM_NAME = "xenon";
     private static final String PROGRAM_VERSION = "1.0.0";
@@ -66,6 +73,28 @@ public class Main {
         return parseArgumentListAsMap(res.getList("props")).entrySet().stream()
             .filter(p -> allowedKeys.contains(p.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    private static List<String> getFilesystemNames() {
+        return Arrays.asList(FileSystem.getAdaptorNames());
+    }
+
+    private static List<String> getSchedulerNames() {
+        return Arrays.asList(Scheduler.getAdaptorNames());
+    }
+
+    private static List<String> getOnlineNames() {
+        // TODO can not tell which filesystems are online, so hardcoded them for now
+        List<String> names = Arrays.asList("file", "sftp");
+        try {
+            Arrays.stream(Scheduler.getAdaptorDescriptions())
+                    .filter(SchedulerAdaptorDescription::isOnline)
+                    .map(SchedulerAdaptorDescription::getName)
+                    .forEach(names::add);
+        } catch (XenonException e) {
+            e.printStackTrace();
+        }
+        return names;
     }
 
     public ArgumentParser getParser() {
@@ -92,16 +121,7 @@ public class Main {
     }
 
     public Object run(ICommand subCommand) throws XenonException {
-        String scheme = res.getString("scheme");
-        // use temp xenon instance to fetch allowed property keys
-        Xenon xenon0 = XenonFactory.newXenon(null);
-        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon0, scheme, XenonPropertyDescription.Component.XENON);
-        XenonFactory.endXenon(xenon0);
-
-        Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res, allowedKeys));
-        Object output = subCommand.run(res, xenon);
-        XenonFactory.endXenon(xenon);
-        return output;
+        return subCommand.run(res);
     }
 
     private void print(Object output) {
