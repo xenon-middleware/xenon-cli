@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import nl.esciencecenter.xenon.AdaptorDescription;
 import nl.esciencecenter.xenon.AdaptorStatus;
 import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
@@ -58,8 +59,8 @@ public class ParserHelpers {
         return group;
     }
 
-    public static String getSupportedLocationHelp(AdaptorStatus adaptor) {
-        List<String> helps = Arrays.stream(adaptor.getSupportedLocations()).map(location -> "- " + location).collect(Collectors.toList());
+    public static String getSupportedLocationHelp(String[] supportedLocations) {
+        List<String> helps = Arrays.stream(supportedLocations).map(location -> "- " + location).collect(Collectors.toList());
         helps.add(0, "Supported locations:");
         String sep = System.getProperty("line.separator");
         return String.join(sep, helps);
