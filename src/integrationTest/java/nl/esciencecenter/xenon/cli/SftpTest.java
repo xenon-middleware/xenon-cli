@@ -3,14 +3,11 @@ package nl.esciencecenter.xenon.cli;
 
 import com.github.geowarin.junit.DockerRule;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.XenonFactory;
 import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.files.FileSystem;
-import nl.esciencecenter.xenon.files.Files;
-import nl.esciencecenter.xenon.files.Path;
-import nl.esciencecenter.xenon.files.RelativePath;
+import nl.esciencecenter.xenon.credentials.PasswordCredential;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.filesystems.Path;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -65,17 +62,11 @@ public class SftpTest {
         Main main = new Main();
         main.run(args);
 
-        Xenon xenon = null;
-        try {
-            xenon = XenonFactory.newXenon(null);
-            Credential cred = xenon.credentials().newPasswordCredential("sftp", "xenon", "javagat".toCharArray(), null);
-            Files files = xenon.files();
-            FileSystem fs = files.newFileSystem("sftp", getLocation(), cred, null);
-            Path path = files.newPath(fs, new RelativePath(targetPath));
-            assertTrue(files.exists(path));
-        } finally {
-            XenonFactory.endXenon(xenon);
-        }
+        Credential cred = new PasswordCredential("xenon", "javagat".toCharArray());
+        FileSystem fs = FileSystem.create("sftp", getLocation(), cred);
+        Path path = new Path(targetPath);
+        assertTrue(fs.exists(path));
+        fs.close();
     }
 
     @Test

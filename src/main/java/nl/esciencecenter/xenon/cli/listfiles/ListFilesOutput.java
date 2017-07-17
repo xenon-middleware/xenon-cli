@@ -18,7 +18,7 @@ public class ListFilesOutput {
     public ListFilesOutput(Path start, Iterable<PathAttributes> items, Boolean hidden) {
         for (PathAttributes item: items) {
             if (!item.isHidden() || hidden) {
-                String path = start.relativize(item.getPath()).toString();
+                String path = start.relativize(item.getPath()).getRelativePath();
                 objects.add(path);
                 if (item.isDirectory()) {
                     directories.add(path);

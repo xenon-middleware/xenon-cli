@@ -24,6 +24,6 @@ public class CopyOutput {
         if (target.isLocal() && targetLocation == null) {
             targetLocation = "local";
         }
-        return String.format("Copied %i bytes %s' from location '%s' to '%s' to location '%s'", bytesCopied, source.getPath(), sourceLocation, target.getPath(), targetLocation);
+        return String.format("Copied '%s' from location '%s' to '%s' to location '%s', %d bytes copied", source.getPath(), sourceLocation, target.getPath(), targetLocation, bytesCopied);
     }
 }

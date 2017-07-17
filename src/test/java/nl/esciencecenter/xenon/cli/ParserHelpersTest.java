@@ -1,7 +1,7 @@
 package nl.esciencecenter.xenon.cli;
 
 import net.sourceforge.argparse4j.inf.Namespace;
-import nl.esciencecenter.xenon.jobs.JobDescription;
+import nl.esciencecenter.xenon.schedulers.JobDescription;
 import org.junit.Test;
 
 import java.util.*;
