@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static nl.esciencecenter.xenon.cli.JobsUtils.getJobDescription;
+import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
 import static org.junit.Assert.*;
 
 public class ParserHelpersTest {

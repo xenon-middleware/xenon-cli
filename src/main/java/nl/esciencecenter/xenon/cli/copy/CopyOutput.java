@@ -6,10 +6,12 @@ package nl.esciencecenter.xenon.cli.copy;
 public class CopyOutput {
     private final CopyInput target;
     private final CopyInput source;
+    private final long bytesCopied;
 
-    public CopyOutput(CopyInput source, CopyInput target) {
+    public CopyOutput(CopyInput source, CopyInput target, long bytesCopied) {
         this.source = source;
         this.target = target;
+        this.bytesCopied = bytesCopied;
     }
 
     @Override
@@ -22,6 +24,6 @@ public class CopyOutput {
         if (target.isLocal() && targetLocation == null) {
             targetLocation = "local";
         }
-        return "Copied '" + source.getPath() + "' from location '" + sourceLocation + "' to  '" + target.getPath() + "' to location '" + targetLocation + "'";
+        return String.format("Copied %i bytes %s' from location '%s' to '%s' to location '%s'", bytesCopied, source.getPath(), sourceLocation, target.getPath(), targetLocation);
     }
 }

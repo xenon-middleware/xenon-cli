@@ -1,6 +1,6 @@
 package nl.esciencecenter.xenon.cli.submit;
 
-import nl.esciencecenter.xenon.jobs.JobDescription;
+import nl.esciencecenter.xenon.schedulers.JobDescription;
 
 /**
  * Result of a job submission
