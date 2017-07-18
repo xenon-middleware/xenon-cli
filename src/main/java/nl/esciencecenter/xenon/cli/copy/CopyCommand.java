@@ -21,11 +21,14 @@ import nl.esciencecenter.xenon.filesystems.NoSuchCopyException;
 import nl.esciencecenter.xenon.filesystems.Path;
 
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Copy source file/directory to target location command
  */
 public class CopyCommand extends XenonCommand {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CopyCommand.class);
     /**
      * Default timeout for copy operation is a week
      */
@@ -57,7 +60,16 @@ public class CopyCommand extends XenonCommand {
 
     private CopyStatus copy(Path sourcePath, FileSystem sourceFS, Path targetPath, FileSystem targetFS, Boolean recursive, CopyMode copymode) throws XenonException {
         String copyId = sourceFS.copy(sourcePath, targetFS, targetPath, copymode, recursive);
-        return sourceFS.waitUntilDone(copyId, DEFAULT_COPY_TIMEOUT);
+        CopyStatus status = sourceFS.waitUntilDone(copyId, DEFAULT_COPY_TIMEOUT);
+        if (status.hasException()) {
+            Throwable e = status.getException();
+            if (e instanceof XenonException) {
+                throw (XenonException) e;
+            } else {
+                LOGGER.warn(e.getMessage(), e);
+            }
+        }
+        return status;
     }
 
     private long copyToSystemOut(Path sourcePath, FileSystem sourceFS) throws XenonException {
@@ -74,9 +86,8 @@ public class CopyCommand extends XenonCommand {
         if (CopyMode.REPLACE.equals(copymode) && targetFS.exists(targetPath)) {
             targetFS.delete(targetPath, recursive);
         }
-        long sourceSize = sourceFS.getAttributes(sourcePath).getSize();
         InputStream in = System.in;
-        OutputStream out = targetFS.writeToFile(targetPath, sourceSize);
+        OutputStream out = targetFS.writeToFile(targetPath);
         try {
             return Utils.pipe(in, out);
         } catch (IOException e) {
