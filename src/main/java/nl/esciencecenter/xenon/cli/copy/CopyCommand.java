@@ -66,7 +66,7 @@ public class CopyCommand extends XenonCommand {
             if (e instanceof XenonException) {
                 throw (XenonException) e;
             } else {
-                LOGGER.warn(e.getMessage(), e);
+                throw new XenonException(sourceFS.getAdaptorName(), e.getMessage(), e);
             }
         }
         return status;
