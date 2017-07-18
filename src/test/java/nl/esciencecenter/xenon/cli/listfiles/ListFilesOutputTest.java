@@ -23,7 +23,7 @@ public class ListFilesOutputTest {
         dir1.setDirectory(true);
         dir1.setPath(new Path("/start/dir1"));
         PathAttributes file1 = new PathAttributes();
-        file1.setReadable(true);
+        file1.setRegular(true);
         file1.setPath(new Path("/start/file1"));
         listFilesOutput = new ListFilesOutput(new Path("/start"), Arrays.asList(dir1, file1), false);
     }
