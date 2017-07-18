@@ -3,6 +3,8 @@ package nl.esciencecenter.xenon.cli.listfiles;
 import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
 
 import net.sourceforge.argparse4j.inf.Namespace;
+import nl.esciencecenter.xenon.filesystems.PathAttributes;
 
 /**
  * Command to list objects at path of location

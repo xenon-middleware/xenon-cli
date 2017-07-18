@@ -11,19 +11,26 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
 
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import nl.esciencecenter.xenon.filesystems.PathAlreadyExistsException;
+import nl.esciencecenter.xenon.filesystems.PathAttributes;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 public class FileTest {
     @Rule
     public TemporaryFolder myfolder = new TemporaryFolder();
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void copy_file() throws XenonException, ArgumentParserException, IOException {
@@ -82,8 +89,9 @@ public class FileTest {
         assertTrue(new File(targetDirDir, "file2").isFile());
     }
 
-    @Test(expected = XenonException.class)
+    @Test
     public void copy_targetExists_throwsExecption() throws XenonException, ArgumentParserException, IOException {
+        thrown.expect(PathAlreadyExistsException.class);
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
         File targetFile = myfolder.newFile("target.txt");
@@ -143,25 +151,29 @@ public class FileTest {
         Main main = new Main();
         ListFilesOutput output = (ListFilesOutput) main.run(args);
 
-        ListFilesOutput expected = new ListFilesOutput();
-        expected.addDirectory("dir1");
-        expected.addFile("file1");
+        nl.esciencecenter.xenon.filesystems.Path estart = new nl.esciencecenter.xenon.filesystems.Path(path);
+        PathAttributes edir1 = new PathAttributes();
+        edir1.setDirectory(true);
+        edir1.setPath(estart.resolve("dir1"));
+        PathAttributes efile1 = new PathAttributes();
+        efile1.setReadable(true);
+        efile1.setRegular(true);
+        efile1.setPath(estart.resolve("file1"));
+        ListFilesOutput expected = new ListFilesOutput(estart, Arrays.asList(edir1, efile1), false);
         assertEquals(expected, output);
     }
 
     @Test
     public void list_aFile() throws IOException, XenonException, ArgumentParserException {
+        thrown.expect(XenonException.class);
+        thrown.expectMessage("file adaptor: Failed to list directory");
         File file1 = myfolder.newFile("file1");
         file1.createNewFile();
 
         String path = file1.getAbsolutePath();
         String[] args = {"file", "list", path};
         Main main = new Main();
-        ListFilesOutput output = (ListFilesOutput) main.run(args);
-
-        ListFilesOutput expected = new ListFilesOutput();
-        expected.addFile("file1");
-        assertEquals(expected, output);
+        main.run(args);
     }
 
     @Test

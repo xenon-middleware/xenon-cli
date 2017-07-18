@@ -53,14 +53,4 @@ public class ListFilesOutput {
     public int hashCode() {
         return Objects.hash(objects, files, directories);
     }
-
-    public void addFile(String filename) {
-        files.add(filename);
-        objects.add(filename);
-    }
-
-    public void addDirectory(String filename) {
-        directories.add(filename);
-        objects.add(filename);
-    }
 }

@@ -26,8 +26,6 @@ public class ListFilesOutputTest {
         file1.setReadable(true);
         file1.setPath(new Path("/start/file1"));
         listFilesOutput = new ListFilesOutput(new Path("/start"), Arrays.asList(dir1, file1), false);
-        listFilesOutput.addDirectory("dir1");
-        listFilesOutput.addFile("file1");
     }
 
     @Test
