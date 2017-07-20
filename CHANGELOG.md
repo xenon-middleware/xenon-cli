@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [1.0.3] - 2017-07-20
+
+### Fixed
+
+* Filter scheme properties based on XenonPropertyDescription.Component.SCHEDULER or XenonPropertyDescription.Component.FILESYSTEM (#12)
+
 ## [1.0.2] - 2017-05-08
 
 ### Changed
