@@ -1,20 +1,20 @@
 package nl.esciencecenter.xenon.cli;
 
-import static nl.esciencecenter.xenon.cli.JobsUtils.parseArgumentListAsMap;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedXenonPropertyKeys;
+import static nl.esciencecenter.xenon.cli.Utils.parseArgumentListAsMap;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import nl.esciencecenter.xenon.AdaptorStatus;
-import nl.esciencecenter.xenon.Xenon;
+import nl.esciencecenter.xenon.AdaptorDescription;
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.XenonFactory;
 import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.copy.CopyParser;
 import nl.esciencecenter.xenon.cli.copy.DownloadParser;
@@ -26,6 +26,10 @@ import nl.esciencecenter.xenon.cli.queues.QueuesParser;
 import nl.esciencecenter.xenon.cli.removefile.RemoveFileParser;
 import nl.esciencecenter.xenon.cli.removejob.RemoveJobParser;
 import nl.esciencecenter.xenon.cli.submit.SubmitParser;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
+import nl.esciencecenter.xenon.schedulers.Scheduler;
+import nl.esciencecenter.xenon.schedulers.SchedulerAdaptorDescription;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -44,14 +48,8 @@ import org.slf4j.LoggerFactory;
  * Parse arguments and runs sub-commands.
  */
 public class Main {
-    // TODO make filesSchemes+JOBS_SCHEMES dynamic after https://github.com/NLeSC/Xenon/issues/400 is fixed
-    private static final List<String> FILES_SCHEMES = Arrays.asList("file", "sftp", "ftp");
-    private static final List<String> JOBS_SCHEMES = Arrays.asList("local", "ssh", "ge", "sge", "slurm", "torque");
-    private static final List<String> ONLINE_SCHEMES = Arrays.asList("file", "local", "ssh", "sftp");
-    private static final List<String> LOCAL_SCHEMES = Arrays.asList("file", "local");
-    private static final List<String> SSH_SCHEMES = Arrays.asList("ssh", "sftp");
     private static final String PROGRAM_NAME = "xenon";
-    private static final String PROGRAM_VERSION = "1.0.0";
+    private static final String PROGRAM_VERSION = "2.0.0";
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private final ArgumentParser parser;
     private Namespace res = new Namespace(new HashMap<>());
@@ -92,16 +90,7 @@ public class Main {
     }
 
     public Object run(ICommand subCommand) throws XenonException {
-        String scheme = res.getString("scheme");
-        // use temp xenon instance to fetch allowed property keys
-        Xenon xenon0 = XenonFactory.newXenon(null);
-        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon0, scheme, XenonPropertyDescription.Component.XENON);
-        XenonFactory.endXenon(xenon0);
-
-        Xenon xenon = XenonFactory.newXenon(buildXenonProperties(res, allowedKeys));
-        Object output = subCommand.run(res, xenon);
-        XenonFactory.endXenon(xenon);
-        return output;
+        return subCommand.run(res);
     }
 
     private void print(Object output) {
@@ -132,30 +121,35 @@ public class Main {
 
     private void addSchemeSubParsers(ArgumentParser parser) {
         Subparsers subparsers = parser.addSubparsers().title("scheme");
-        AdaptorStatus[] adaptors = getAdaptorStatuses();
-        for (AdaptorStatus adaptor: adaptors) {
-            for (String scheme: adaptor.getSupportedSchemes()) {
-                adaptorSubCommands(subparsers, adaptor, scheme);
-            }
+        List<AdaptorDescription> adaptorDescriptions = new ArrayList<>();
+        try {
+            Collections.addAll(adaptorDescriptions, Scheduler.getAdaptorDescriptions());
+            Collections.addAll(adaptorDescriptions, FileSystem.getAdaptorDescriptions());
+        } catch (XenonException e ) {
+            LOGGER.info("Failed to getAdaptorDescriptions", e);
+        }
+        adaptorDescriptions.sort(Comparator.comparing(AdaptorDescription::getName));
+        for (AdaptorDescription adaptorDescription : adaptorDescriptions) {
+            adaptorSubCommands(subparsers, adaptorDescription);
         }
     }
 
-    private void adaptorSubCommands(Subparsers subparsers, AdaptorStatus adaptor, String scheme) {
-        Subparser schemeParser = addSubCommandScheme(subparsers, adaptor, scheme);
-        String supportedLocationHelp = addArgumentLocation(SSH_SCHEMES, adaptor, scheme, schemeParser);
-        addArgumentProp(adaptor, schemeParser);
+    private void adaptorSubCommands(Subparsers subparsers, AdaptorDescription adaptorDescription) {
+        Subparser schemeParser = addSubCommandScheme(subparsers, adaptorDescription);
+        String supportedLocationHelp = addArgumentLocation(adaptorDescription, schemeParser);
+        addArgumentProp(adaptorDescription, schemeParser);
         Subparsers commandsParser = schemeParser.addSubparsers().title("commands");
-        if (FILES_SCHEMES.contains(scheme)) {
-            filesSubCommands(scheme, supportedLocationHelp, commandsParser);
-        } else if (JOBS_SCHEMES.contains(scheme)) {
-            jobsSubCommands(scheme, commandsParser);
+        if (adaptorDescription instanceof FileSystemAdaptorDescription) {
+            filesSubCommands((FileSystemAdaptorDescription) adaptorDescription, supportedLocationHelp, commandsParser);
+        } else if (adaptorDescription instanceof SchedulerAdaptorDescription) {
+            jobsSubCommands((SchedulerAdaptorDescription) adaptorDescription, commandsParser);
         }
     }
 
-    private void jobsSubCommands(String scheme, Subparsers commandsParser) {
+    private void jobsSubCommands(SchedulerAdaptorDescription adaptorDescription, Subparsers commandsParser) {
         // exec
         new ExecParser().buildArgumentParser(commandsParser);
-        if (!ONLINE_SCHEMES.contains(scheme)) {
+        if (!adaptorDescription.isOnline()) {
             // submit
             new SubmitParser().buildArgumentParser(commandsParser);
             // list
@@ -167,10 +161,11 @@ public class Main {
         }
     }
 
-    private void filesSubCommands(String scheme, String supportedLocationHelp, Subparsers commandsParser) {
+    private void filesSubCommands(FileSystemAdaptorDescription adaptorDescription, String supportedLocationHelp, Subparsers commandsParser) {
         // copy
-        new CopyParser().buildArgumentParser(commandsParser, supportedLocationHelp, LOCAL_SCHEMES.contains(scheme));
-        if (!LOCAL_SCHEMES.contains(scheme)) {
+        boolean isLocal = adaptorDescription.getName().equals("file");
+        new CopyParser().buildArgumentParser(commandsParser, supportedLocationHelp, isLocal);
+        if (!isLocal) {
             // upload
             new UploadParser().buildArgumentParser(commandsParser);
             // download
@@ -180,49 +175,38 @@ public class Main {
         new ListFilesParser().buildArgumentParser(commandsParser);
         // remove
         new RemoveFileParser().buildArgumentParser(commandsParser);
+        // TODO rename
     }
 
-    private Subparser addSubCommandScheme(Subparsers subparsers, AdaptorStatus adaptor, String scheme) {
-        return subparsers.addParser(scheme)
-                        .help(adaptor.getDescription())
-                        .description(adaptor.getDescription())
-                        .setDefault("scheme", scheme);
+    private Subparser addSubCommandScheme(Subparsers subparsers, AdaptorDescription adaptorDescription) {
+        return subparsers.addParser(adaptorDescription.getName())
+                        .help(adaptorDescription.getDescription())
+                        .description(adaptorDescription.getDescription())
+                        .setDefault("scheme", adaptorDescription.getName());
     }
 
-    private String addArgumentLocation(List<String> sshSchemes, AdaptorStatus adaptor, String scheme, Subparser schemeParser) {
-        String supportedLocationHelp = getSupportedLocationHelp(adaptor);
+    private String addArgumentLocation(AdaptorDescription adaptorDescription, Subparser schemeParser) {
+        String supportedLocationHelp = getSupportedLocationHelp(adaptorDescription.getSupportedLocations());
         Argument locationArgument = schemeParser.addArgument("--location").help("Location, " + supportedLocationHelp);
-        if (sshSchemes.contains(scheme)) {
+        boolean locationCanBeNull = Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(l -> l.equals("(null)"));
+        if (!locationCanBeNull) {
             locationArgument.required(true);
         }
         return supportedLocationHelp;
     }
 
-    private void addArgumentProp(AdaptorStatus adaptor, Subparser schemeParser) {
+    private void addArgumentProp(AdaptorDescription adaptorDescription, Subparser schemeParser) {
         schemeParser.addArgument("--prop")
             .action(Arguments.append())
             .metavar("KEY=VALUE")
-            .help("Xenon adaptor properties, " + getSupportedPropertiesHelp(adaptor))
+            .help("Supported adaptor properties, " + getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()))
             .dest("props");
     }
 
-    private String getSupportedPropertiesHelp(AdaptorStatus adaptor) {
+    private String getSupportedPropertiesHelp(XenonPropertyDescription[] descriptions) {
         String sep = System.getProperty("line.separator");
-        List<String> helps = Arrays.stream(adaptor.getSupportedProperties()).map(ParserHelpers::getAdaptorPropertyHelp).collect(Collectors.toList());
+        List<String> helps = Arrays.stream(descriptions).map(ParserHelpers::getAdaptorPropertyHelp).collect(Collectors.toList());
         helps.add(0, "Supported properties:");
         return String.join(sep, helps);
-    }
-
-    private AdaptorStatus[] getAdaptorStatuses() {
-        AdaptorStatus[] adaptors = {};
-        try {
-            Xenon xenon = XenonFactory.newXenon(null);
-            adaptors = xenon.getAdaptorStatuses();
-            XenonFactory.endXenon(xenon);
-            return adaptors;
-        } catch (XenonException e) {
-            LOGGER.info("Failed to getAdaptorStatuses", e);
-        }
-        return adaptors;
     }
 }

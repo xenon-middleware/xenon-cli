@@ -45,7 +45,7 @@ public class GridEngineTest {
         String[] myargs = {
                 "--username", "xenon",
                 "--password", "javagat",
-                "ge",
+                "gridengine",
                 "--location", location
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);

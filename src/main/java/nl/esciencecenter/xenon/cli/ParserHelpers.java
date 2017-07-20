@@ -2,16 +2,15 @@ package nl.esciencecenter.xenon.cli;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import nl.esciencecenter.xenon.AdaptorStatus;
-import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonPropertyDescription;
-import nl.esciencecenter.xenon.files.CopyOption;
-import nl.esciencecenter.xenon.jobs.JobDescription;
+import nl.esciencecenter.xenon.filesystems.CopyMode;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.schedulers.JobDescription;
+import nl.esciencecenter.xenon.schedulers.Scheduler;
 
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
@@ -43,23 +42,23 @@ public class ParserHelpers {
         MutuallyExclusiveGroup group = parser.addMutuallyExclusiveGroup("optional copy mode arguments");
         group.addArgument("--overwrite")
             .help("Overwrite existing files at target location")
-            .type(CopyOption.class)
+            .type(CopyMode.class)
             .action(Arguments.storeConst())
             .dest("copymode")
-            .setConst(CopyOption.REPLACE)
-            .setDefault(CopyOption.CREATE);
+            .setConst(CopyMode.REPLACE)
+            .setDefault(CopyMode.CREATE);
         group.addArgument("--ignore")
             .help("Ignore existing files at target location")
-            .type(CopyOption.class)
+            .type(CopyMode.class)
             .action(Arguments.storeConst())
             .dest("copymode")
-            .setConst(CopyOption.IGNORE)
-            .setDefault(CopyOption.CREATE);
+            .setConst(CopyMode.IGNORE)
+            .setDefault(CopyMode.CREATE);
         return group;
     }
 
-    public static String getSupportedLocationHelp(AdaptorStatus adaptor) {
-        List<String> helps = Arrays.stream(adaptor.getSupportedLocations()).map(location -> "- " + location).collect(Collectors.toList());
+    public static String getSupportedLocationHelp(String[] supportedLocations) {
+        List<String> helps = Arrays.stream(supportedLocations).map(location -> "- " + location).collect(Collectors.toList());
         helps.add(0, "Supported locations:");
         String sep = System.getProperty("line.separator");
         return String.join(sep, helps);
@@ -93,15 +92,11 @@ public class ParserHelpers {
             .help("Path at location where executable should be executed. If not given will local working directory or when remove will use home directory");
     }
 
-    public static Set<String> getAllowedXenonPropertyKeys(Xenon xenon, String scheme, XenonPropertyDescription.Component level) throws XenonException {
-        // map scheme to adaptor
-        Optional<AdaptorStatus> status = Arrays.stream(xenon.getAdaptorStatuses()).filter(s -> Arrays.stream(s.getSupportedSchemes()).anyMatch(scheme::equals)).findFirst();
-        if (!status.isPresent()) {
-            throw new XenonException(scheme, "Unsupported scheme");
-        }
-        return Arrays.stream(status.get().getSupportedProperties())
-            .filter(p -> p.getLevels().contains(level))
-            .map(XenonPropertyDescription::getName)
-            .collect(Collectors.toSet());
+    public static Set<String> getAllowedFileSystemPropertyKeys(String scheme) throws XenonException {
+        return Arrays.stream(FileSystem.getAdaptorDescription(scheme).getSupportedProperties()).map(XenonPropertyDescription::getName).collect(Collectors.toSet());
+    }
+
+    public static Set<String> getAllowedSchedulerPropertyKeys(String scheme) throws XenonException {
+        return Arrays.stream(Scheduler.getAdaptorDescription(scheme).getSupportedProperties()).map(XenonPropertyDescription::getName).collect(Collectors.toSet());
     }
 }

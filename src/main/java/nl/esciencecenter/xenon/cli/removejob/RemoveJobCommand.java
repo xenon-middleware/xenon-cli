@@ -1,22 +1,15 @@
 package nl.esciencecenter.xenon.cli.removejob;
 
 import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedXenonPropertyKeys;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
 
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
-import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.jobs.Job;
-import nl.esciencecenter.xenon.jobs.Jobs;
-import nl.esciencecenter.xenon.jobs.NoSuchJobException;
-import nl.esciencecenter.xenon.jobs.Scheduler;
+import nl.esciencecenter.xenon.schedulers.Scheduler;
 
 import net.sourceforge.argparse4j.inf.Namespace;
 
@@ -25,24 +18,19 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public class RemoveJobCommand extends XenonCommand {
     @Override
-    public RemoveJobOutput run(Namespace res, Xenon xenon) throws XenonException {
+    public RemoveJobOutput run(Namespace res) throws XenonException {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
         String jobId = res.getString("job_identifier");
-        Credential credential = buildCredential(res, xenon);
+        Credential credential = buildCredential(res);
 
-        Jobs jobs = xenon.jobs();
-        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon, scheme, XenonPropertyDescription.Component.SCHEDULER);
+        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(scheme);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, props);
-        Job[] scheduledJobs = jobs.getJobs(scheduler);
-        Optional<Job> job = Arrays.stream(scheduledJobs).filter(j -> j.getIdentifier().equals(jobId)).findFirst();
-        if (job.isPresent()) {
-            jobs.cancelJob(job.get());
-        } else {
-           throw new NoSuchJobException(scheme, "Job with identifier '" + jobId + "' not found");
-        }
-        jobs.close(scheduler);
+        Scheduler scheduler = Scheduler.create(scheme, location, credential, props);
+
+        scheduler.cancelJob(jobId);
+
+        scheduler.close();
 
         return new RemoveJobOutput(location, jobId);
     }

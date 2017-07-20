@@ -1,21 +1,17 @@
 package nl.esciencecenter.xenon.cli.submit;
 
-import static nl.esciencecenter.xenon.cli.JobsUtils.getJobDescription;
 import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedXenonPropertyKeys;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
+import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
 
 import java.util.Map;
 import java.util.Set;
 
-import nl.esciencecenter.xenon.Xenon;
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.jobs.Job;
-import nl.esciencecenter.xenon.jobs.JobDescription;
-import nl.esciencecenter.xenon.jobs.Jobs;
-import nl.esciencecenter.xenon.jobs.Scheduler;
+import nl.esciencecenter.xenon.schedulers.JobDescription;
+import nl.esciencecenter.xenon.schedulers.Scheduler;
 
 import net.sourceforge.argparse4j.inf.Namespace;
 
@@ -24,10 +20,10 @@ import net.sourceforge.argparse4j.inf.Namespace;
  */
 public class SubmitCommand extends XenonCommand {
     @Override
-    public SubmitOutput run(Namespace res, Xenon xenon) throws XenonException {
+    public SubmitOutput run(Namespace res) throws XenonException {
         String scheme = res.getString("scheme");
         String location = res.getString("location");
-        Credential credential = buildCredential(res, xenon);
+        Credential credential = buildCredential(res);
         JobDescription description = getJobDescription(res);
         String stdin = res.getString("stdin");
         if (stdin != null) {
@@ -42,14 +38,12 @@ public class SubmitCommand extends XenonCommand {
             description.setStderr(stderr);
         }
 
-        Jobs jobs = xenon.jobs();
-        Set<String> allowedKeys = getAllowedXenonPropertyKeys(xenon, scheme, XenonPropertyDescription.Component.SCHEDULER);
+        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(scheme);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        Scheduler scheduler = jobs.newScheduler(scheme, location, credential, props);
-        Job job = jobs.submitJob(scheduler, description);
-        String jobId = job.getIdentifier();
-        SubmitOutput output = new SubmitOutput(location, description, jobId);
-        jobs.close(scheduler);
+        Scheduler scheduler = Scheduler.create(scheme, location, credential, props);
+        String jobIdentifier = scheduler.submitBatchJob(description);
+        SubmitOutput output = new SubmitOutput(location, description, jobIdentifier);
+        scheduler.close();
         return output;
     }
 }

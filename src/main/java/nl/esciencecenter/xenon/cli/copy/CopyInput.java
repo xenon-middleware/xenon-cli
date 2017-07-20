@@ -2,7 +2,10 @@ package nl.esciencecenter.xenon.cli.copy;
 
 import java.util.Map;
 
+import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.filesystems.Path;
 
 /**
  * Data required for a source or target of a copy command
@@ -66,5 +69,19 @@ public class CopyInput {
 
     public boolean isAbsolute() {
         return path.startsWith("/");
+    }
+
+    public Path getAbsolutePath()  {
+        Path path = new Path(getPath());
+        if ("local".equals(getScheme()) || "file".equals(getScheme()) && !(getPath().startsWith("~") || getPath().startsWith("/") || "-".equals(getPath()))) {
+            // Path is relative to working directory, make it absolute
+            Path workingDirectory = new Path(System.getProperty("user.dir"));
+            path = workingDirectory.resolve(path);
+        }
+        return path;
+    }
+
+    public FileSystem getFileSystem() throws XenonException {
+        return FileSystem.create(getScheme(), getLocation(), getCredential(), getProperties());
     }
 }
