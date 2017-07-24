@@ -122,12 +122,8 @@ public class Main {
     private void addSchemeSubParsers(ArgumentParser parser) {
         Subparsers subparsers = parser.addSubparsers().title("scheme");
         List<AdaptorDescription> adaptorDescriptions = new ArrayList<>();
-        try {
-            Collections.addAll(adaptorDescriptions, Scheduler.getAdaptorDescriptions());
-            Collections.addAll(adaptorDescriptions, FileSystem.getAdaptorDescriptions());
-        } catch (XenonException e ) {
-            LOGGER.info("Failed to getAdaptorDescriptions", e);
-        }
+        Collections.addAll(adaptorDescriptions, Scheduler.getAdaptorDescriptions());
+        Collections.addAll(adaptorDescriptions, FileSystem.getAdaptorDescriptions());
         adaptorDescriptions.sort(Comparator.comparing(AdaptorDescription::getName));
         for (AdaptorDescription adaptorDescription : adaptorDescriptions) {
             adaptorSubCommands(subparsers, adaptorDescription);
@@ -149,7 +145,7 @@ public class Main {
     private void jobsSubCommands(SchedulerAdaptorDescription adaptorDescription, Subparsers commandsParser) {
         // exec
         new ExecParser().buildArgumentParser(commandsParser);
-        if (!adaptorDescription.isOnline()) {
+        if (!adaptorDescription.isEmbedded()) {
             // submit
             new SubmitParser().buildArgumentParser(commandsParser);
             // list
