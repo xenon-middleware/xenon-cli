@@ -102,8 +102,5 @@ public class GridEngineTest {
         SubmitOutput output = (SubmitOutput) main.run(args);
 
         assertNotNull(output.jobId);
-
-        // clean up
-        main.run(argsBuilder("remove", output.jobId));
     }
 }
