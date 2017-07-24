@@ -45,6 +45,7 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     testCompile 'com.github.stefanbirkner:system-rules:1.16.1'
+    testCompile 'org.mockito:mockito-core:2.+'
     integrationTestCompile 'com.github.geowarin:docker-junit-rule:1.1.0'
     integrationTestCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.32.0'
 }

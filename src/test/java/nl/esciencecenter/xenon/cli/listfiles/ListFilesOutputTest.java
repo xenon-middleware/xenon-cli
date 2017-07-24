@@ -1,30 +1,30 @@
 package nl.esciencecenter.xenon.cli.listfiles;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
+import java.util.Arrays;
+
+import nl.esciencecenter.xenon.filesystems.Path;
+import nl.esciencecenter.xenon.filesystems.PathAttributes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import nl.esciencecenter.xenon.filesystems.Path;
-import nl.esciencecenter.xenon.filesystems.PathAttributes;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ListFilesOutputTest {
     private ListFilesOutput listFilesOutput;
 
     @Before
     public void setUp() throws Exception {
-        PathAttributes dir1 = new PathAttributes();
-        dir1.setDirectory(true);
-        dir1.setPath(new Path("/start/dir1"));
-        PathAttributes file1 = new PathAttributes();
-        file1.setRegular(true);
-        file1.setPath(new Path("/start/file1"));
+        PathAttributes dir1 = mock(PathAttributes.class);
+        when(dir1.isDirectory()).thenReturn(true);
+        when(dir1.getPath()).thenReturn(new Path("/start/dir1"));
+        PathAttributes file1 = mock(PathAttributes.class);
+        when(file1.isRegular()).thenReturn(true);
+        when(file1.getPath()).thenReturn(new Path("/start/file1"));
         listFilesOutput = new ListFilesOutput(new Path("/start"), Arrays.asList(dir1, file1), false);
     }
 

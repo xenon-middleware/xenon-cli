@@ -3,6 +3,8 @@ package nl.esciencecenter.xenon.cli;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -16,10 +18,10 @@ import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
-
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import nl.esciencecenter.xenon.filesystems.PathAlreadyExistsException;
 import nl.esciencecenter.xenon.filesystems.PathAttributes;
+
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -152,13 +154,12 @@ public class FileTest {
         ListFilesOutput output = (ListFilesOutput) main.run(args);
 
         nl.esciencecenter.xenon.filesystems.Path estart = new nl.esciencecenter.xenon.filesystems.Path(path);
-        PathAttributes edir1 = new PathAttributes();
-        edir1.setDirectory(true);
-        edir1.setPath(estart.resolve("dir1"));
-        PathAttributes efile1 = new PathAttributes();
-        efile1.setReadable(true);
-        efile1.setRegular(true);
-        efile1.setPath(estart.resolve("file1"));
+        PathAttributes edir1 = mock(PathAttributes.class);
+        when(edir1.isDirectory()).thenReturn(true);
+        when(edir1.getPath()).thenReturn(estart.resolve("dir1"));
+        PathAttributes efile1 = mock(PathAttributes.class);
+        when(efile1.isRegular()).thenReturn(true);
+        when(efile1.getPath()).thenReturn(estart.resolve("file1"));
         ListFilesOutput expected = new ListFilesOutput(estart, Arrays.asList(edir1, efile1), false);
         assertEquals(expected, output);
     }
