@@ -3,8 +3,6 @@ package nl.esciencecenter.xenon.cli;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -14,10 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
-import nl.esciencecenter.xenon.filesystems.PathAttributes;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -176,7 +175,7 @@ public class FileTest {
     }
 
     @Test
-    public void list_aDirectory() throws IOException {
+    public void list_aDirectoryWithHiddenFiles_onlyListNonHiddenObjects() throws IOException {
         myfolder.newFile("file1").createNewFile();
         myfolder.newFile(".hidden1").createNewFile();
         File dir1 = myfolder.newFolder("dir1");
@@ -190,15 +189,9 @@ public class FileTest {
         Main main = new Main();
         ListFilesOutput output = (ListFilesOutput) main.run(args);
 
-        nl.esciencecenter.xenon.filesystems.Path estart = new nl.esciencecenter.xenon.filesystems.Path(path);
-        PathAttributes edir1 = mock(PathAttributes.class);
-        when(edir1.isDirectory()).thenReturn(true);
-        when(edir1.getPath()).thenReturn(estart.resolve("dir1"));
-        PathAttributes efile1 = mock(PathAttributes.class);
-        when(efile1.isRegular()).thenReturn(true);
-        when(efile1.getPath()).thenReturn(estart.resolve("file1"));
-        ListFilesOutput expected = new ListFilesOutput(estart, Arrays.asList(edir1, efile1), false);
-        assertEquals(expected, output);
+        Set<String> result = new HashSet<>(output.getObjects());
+        Set<String> expected = new HashSet<>(Arrays.asList("dir1", "file1"));
+        assertEquals(expected, result);
     }
 
     @Test
