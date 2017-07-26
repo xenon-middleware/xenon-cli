@@ -5,8 +5,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import nl.esciencecenter.xenon.XenonException;
-
 import com.github.geowarin.junit.DockerRule;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -42,7 +40,7 @@ public class SshTest {
     }
 
     @Test
-    public void exec() throws XenonException {
+    public void exec() {
         String[] args= argsBuilder(
                 "exec",
                 "/bin/echo",

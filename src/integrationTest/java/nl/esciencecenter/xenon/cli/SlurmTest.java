@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
 
 import com.palantir.docker.compose.DockerComposeRule;
@@ -49,13 +48,13 @@ public class SlurmTest {
     }
 
     @Before
-    public void setUp() throws XenonException {
+    public void setUp() {
         main = new Main();
     }
 
     @Test
-    public void exec() throws XenonException {
-        String[] args= argsBuilder(
+    public void exec_stdout() {
+        String[] args = argsBuilder(
             "exec",
             "/bin/echo",
             "--",
@@ -70,11 +69,11 @@ public class SlurmTest {
     }
 
     @Test
-    public void queues() throws XenonException {
-        String[] args= argsBuilder("queues");
+    public void queues() {
+        String[] args = argsBuilder("queues");
         QueuesOutput result = (QueuesOutput) main.run(args);
 
-        QueuesOutput expected = new QueuesOutput(new String[] {"mypartition", "otherpartition"},"mypartition");
+        QueuesOutput expected = new QueuesOutput(new String[]{"mypartition", "otherpartition"}, "mypartition");
         assertEquals(result, expected);
     }
 }

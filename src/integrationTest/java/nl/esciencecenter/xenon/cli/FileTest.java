@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
 import nl.esciencecenter.xenon.filesystems.PathAttributes;
 
@@ -45,7 +44,7 @@ public class FileTest {
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
-    public void copy_file() throws XenonException, IOException {
+    public void copy_file() throws IOException {
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
         File targetFile = new File(myfolder.getRoot(), "target.txt");
@@ -58,7 +57,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_recursiveFile() throws XenonException, IOException {
+    public void copy_recursiveFile() throws IOException {
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
         File targetFile = new File(myfolder.getRoot(), "target.txt");
@@ -71,7 +70,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_dir() throws XenonException, IOException {
+    public void copy_dir() throws IOException {
         File sourceDir = myfolder.newFolder("source");
         File targetDir = new File(myfolder.getRoot(), "target");
 
@@ -83,7 +82,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_recursiveDir() throws XenonException, IOException {
+    public void copy_recursiveDir() throws IOException {
         File sourceDir = myfolder.newFolder("source");
         new File(sourceDir, "file1").createNewFile();
         File sourceDirDir = myfolder.newFolder("source", "dep1");
@@ -102,7 +101,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_targetExists_throwsExecption() throws XenonException, IOException {
+    public void copy_targetExists_throwsExecption() throws IOException {
         exit.expectSystemExitWithStatus(1);
         exit.checkAssertionAfterwards(() -> {
             String expected = "file adaptor: Destination path already exists";
@@ -120,7 +119,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_fromStdin() throws XenonException, IOException {
+    public void copy_fromStdin() throws IOException {
         Path targetFile = Paths.get(myfolder.getRoot().getAbsolutePath(), "target.txt");
         InputStream oldIn = System.in;
         String sourceContent = "my content";
@@ -177,7 +176,7 @@ public class FileTest {
     }
 
     @Test
-    public void list_aDirectory() throws IOException, XenonException {
+    public void list_aDirectory() throws IOException {
         myfolder.newFile("file1").createNewFile();
         myfolder.newFile(".hidden1").createNewFile();
         File dir1 = myfolder.newFolder("dir1");
@@ -203,7 +202,7 @@ public class FileTest {
     }
 
     @Test
-    public void list_aFile_exit1() throws IOException, XenonException {
+    public void list_aFile_exit1() throws IOException {
         exit.expectSystemExitWithStatus(1);
         exit.checkAssertionAfterwards(() -> {
             String expected = "file adaptor: Failed to list directory";
@@ -222,7 +221,7 @@ public class FileTest {
     }
 
     @Test
-    public void removeFile_touchedFile_fileShouldNotExist() throws IOException, XenonException {
+    public void removeFile_touchedFile_fileShouldNotExist() throws IOException {
         File file1 = myfolder.newFile("file1");
         file1.createNewFile();
 

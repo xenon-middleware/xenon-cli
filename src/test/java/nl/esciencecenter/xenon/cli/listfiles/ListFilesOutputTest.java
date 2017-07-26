@@ -53,7 +53,7 @@ public class ListFilesOutputTest {
         when(file1.isRegular()).thenReturn(true);
         when(file1.isHidden()).thenReturn(true);
         when(file1.getPath()).thenReturn(new Path("/start/.file1"));
-        listFilesOutput = new ListFilesOutput(new Path("/start"), Arrays.asList(file1), false);
+        listFilesOutput = new ListFilesOutput(new Path("/start"), Collections.singletonList(file1), false);
 
         List<String> objects = listFilesOutput.getObjects();
 
@@ -66,11 +66,11 @@ public class ListFilesOutputTest {
         when(file1.isRegular()).thenReturn(true);
         when(file1.isHidden()).thenReturn(true);
         when(file1.getPath()).thenReturn(new Path("/start/.file1"));
-        listFilesOutput = new ListFilesOutput(new Path("/start"), Arrays.asList(file1), true);
+        listFilesOutput = new ListFilesOutput(new Path("/start"), Collections.singletonList(file1), true);
 
         List<String> objects = listFilesOutput.getObjects();
 
-        assertEquals("Hidden files shown", Arrays.asList(".file1"), objects);
+        assertEquals("Hidden files shown", Collections.singletonList(".file1"), objects);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ListFilesOutputTest {
 
         List<String> objects = listFilesOutput.getObjects();
 
-        List<String> expected = Arrays.asList("dir1");
+        List<String> expected = Collections.singletonList("dir1");
         assertEquals("Hidden files not shown", expected, objects);
     }
 

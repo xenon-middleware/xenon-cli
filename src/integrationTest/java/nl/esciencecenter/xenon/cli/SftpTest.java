@@ -62,6 +62,7 @@ public class SftpTest {
         Main main = new Main();
         main.run(args);
 
+        // Check file has been uploaded with Xenon
         Credential cred = new PasswordCredential("xenon", "javagat".toCharArray());
         FileSystem fs = FileSystem.create("sftp", getLocation(), cred);
         Path path = new Path(targetPath);
@@ -70,7 +71,7 @@ public class SftpTest {
     }
 
     @Test
-    public void download() throws XenonException {
+    public void download() {
         String sourcePath = "/home/xenon/filesystem-test-fixture/links/file0";
         File targetFile = new File(myfolder.getRoot(), "target.txt");
         String[] args = argsBuilder("download", sourcePath, targetFile.getAbsolutePath());

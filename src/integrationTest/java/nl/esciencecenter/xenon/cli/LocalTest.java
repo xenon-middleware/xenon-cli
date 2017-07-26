@@ -5,8 +5,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 
-import nl.esciencecenter.xenon.XenonException;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -16,7 +14,7 @@ public class LocalTest {
     public TemporaryFolder myfolder = new TemporaryFolder();
 
     @Test
-    public void exec_touchFile_fileExists() throws IOException, XenonException {
+    public void exec_touchFile_fileExists() throws IOException {
         File file1 = myfolder.newFile("file1");
         String[] args = {"local", "exec", "/bin/touch", file1.getAbsolutePath()};
         Main main = new Main();

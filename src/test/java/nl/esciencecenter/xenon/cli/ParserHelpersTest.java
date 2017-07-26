@@ -1,13 +1,19 @@
 package nl.esciencecenter.xenon.cli;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import nl.esciencecenter.xenon.schedulers.JobDescription;
-import org.junit.Test;
-
-import java.util.*;
-
 import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import nl.esciencecenter.xenon.schedulers.JobDescription;
+
+import net.sourceforge.argparse4j.inf.Namespace;
+import org.junit.Test;
 
 public class ParserHelpersTest {
     @Test
@@ -54,7 +60,7 @@ public class ParserHelpersTest {
         map.put("executable", "/bin/true");
         map.put("args", null);
         map.put("queue", null);
-        List<String> envs = Arrays.asList("KEY1=VAL1");
+        List<String> envs = Collections.singletonList("KEY1=VAL1");
         map.put("envs", envs);
         map.put("options", new ArrayList<String>());
         map.put("max_time", 1);
@@ -77,7 +83,7 @@ public class ParserHelpersTest {
         map.put("args", null);
         map.put("queue", null);
         map.put("envs", new ArrayList<String>());
-        List<String> options = Arrays.asList("KEY1=VAL1");
+        List<String> options = Collections.singletonList("KEY1=VAL1");
         map.put("options", options);
         map.put("max_time", 1);
         map.put("node_count", 1);
