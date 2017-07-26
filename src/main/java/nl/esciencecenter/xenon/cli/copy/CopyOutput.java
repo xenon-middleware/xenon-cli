@@ -8,7 +8,7 @@ public class CopyOutput {
     private final CopyInput source;
     private final long bytesCopied;
 
-    public CopyOutput(CopyInput source, CopyInput target, long bytesCopied) {
+    CopyOutput(CopyInput source, CopyInput target, long bytesCopied) {
         this.source = source;
         this.target = target;
         this.bytesCopied = bytesCopied;

@@ -11,7 +11,7 @@ public class ListJobsOutput {
     private final String queue;
     private final List<String> jobs;
 
-    public ListJobsOutput(String location, String queue, List<String> jobIdentifiers) {
+    ListJobsOutput(String location, String queue, List<String> jobIdentifiers) {
         this.location = location;
         this.queue = queue;
         this.jobs = jobIdentifiers;

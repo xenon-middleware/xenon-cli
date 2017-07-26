@@ -54,7 +54,7 @@ public class Main {
     private final ArgumentParser parser;
     private Namespace res = new Namespace(new HashMap<>());
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         Main main = new Main();
         Object output = main.run(args);
         main.print(output);

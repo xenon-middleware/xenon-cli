@@ -21,14 +21,11 @@ import nl.esciencecenter.xenon.filesystems.NoSuchCopyException;
 import nl.esciencecenter.xenon.filesystems.Path;
 
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Copy source file/directory to target location command
  */
 public class CopyCommand extends XenonCommand {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CopyCommand.class);
     /**
      * Default timeout for copy operation is a week
      */
@@ -42,9 +39,9 @@ public class CopyCommand extends XenonCommand {
             throw new NoSuchCopyException(target.getAdaptorName(), "Unable to do recursive copy to stdout");
         }
 
-        Path sourcePath = source.getAbsolutePath();
+        Path sourcePath = source.getPath();
         FileSystem sourceFS = source.getFileSystem();
-        Path targetPath = target.getAbsolutePath();
+        Path targetPath = target.getPath();
         FileSystem targetFS = target.getFileSystem();
 
         long bytesCopied;

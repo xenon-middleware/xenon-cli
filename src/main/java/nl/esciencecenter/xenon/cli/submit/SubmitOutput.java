@@ -8,9 +8,9 @@ import nl.esciencecenter.xenon.schedulers.JobDescription;
 public class SubmitOutput {
     public final String location;
     public final JobDescription description;
-    public final String jobId;
+    private final String jobId;
 
-    public SubmitOutput(String location, JobDescription description, String jobId) {
+    SubmitOutput(String location, JobDescription description, String jobId) {
         this.location = location;
         this.description = description;
         this.jobId = jobId;

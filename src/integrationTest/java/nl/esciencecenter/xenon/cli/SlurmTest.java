@@ -1,21 +1,21 @@
 package nl.esciencecenter.xenon.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.stream.Stream;
-
-import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
-
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.connection.DockerPort;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
+import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
+import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class SlurmTest {
     private static final String ADAPTOR_NAME = "slurm";
@@ -75,5 +75,25 @@ public class SlurmTest {
 
         QueuesOutput expected = new QueuesOutput(new String[]{"mypartition", "otherpartition"}, "mypartition");
         assertEquals(result, expected);
+    }
+
+    @Test
+    public void listjobs() {
+        String[] args = argsBuilder("list");
+        ListJobsOutput jobs = (ListJobsOutput) main.run(args);
+
+        String result = jobs.toString();
+        String expected = "\n";
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void listjobs_byqueue() {
+        String[] args = argsBuilder("list", "--queue", "mypartition");
+        ListJobsOutput jobs = (ListJobsOutput) main.run(args);
+
+        String result = jobs.toString();
+        String expected = "\n";
+        assertEquals(expected, result);
     }
 }

@@ -26,16 +26,15 @@ public class ParserHelpers {
         throw new IllegalAccessError("Utility class");
     }
 
-    public static ArgumentGroup addCredentialArguments(ArgumentParser parser) {
-        return addCredentialArguments(parser, "");
+    static void addCredentialArguments(ArgumentParser parser) {
+        addCredentialArguments(parser, "");
     }
 
-    public static ArgumentGroup addCredentialArguments(ArgumentParser parser, String prefix) {
+    public static void addCredentialArguments(ArgumentParser parser, String prefix) {
         ArgumentGroup credGroup = parser.addArgumentGroup("optional credential arguments");
         credGroup.addArgument("--" + prefix + "username").help("Username");
         credGroup.addArgument("--" + prefix + "password").help("Password or passphrase");
-        credGroup.addArgument("--" + prefix + "certfile").help("Certificate file");
-        return credGroup;
+        credGroup.addArgument("--" + prefix + "certfile").help("Certificate private key file");
     }
 
     public static MutuallyExclusiveGroup addCopyModeArguments(ArgumentParser parser) {
@@ -57,14 +56,14 @@ public class ParserHelpers {
         return group;
     }
 
-    public static String getSupportedLocationHelp(String[] supportedLocations) {
+    static String getSupportedLocationHelp(String[] supportedLocations) {
         List<String> helps = Arrays.stream(supportedLocations).map(location -> "- " + location).collect(Collectors.toList());
         helps.add(0, "Supported locations:");
         String sep = System.getProperty("line.separator");
         return String.join(sep, helps);
     }
 
-    public static String getAdaptorPropertyHelp(XenonPropertyDescription property) {
+    static String getAdaptorPropertyHelp(XenonPropertyDescription property) {
         return "- " + property.getName() + "=" + property.getDefaultValue() + " ("+ property.getDescription() + ", type:" + property.getType() + ") ";
     }
 

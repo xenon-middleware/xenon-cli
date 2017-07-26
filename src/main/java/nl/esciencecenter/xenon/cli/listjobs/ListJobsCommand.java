@@ -35,7 +35,6 @@ public class ListJobsCommand extends XenonCommand {
         } else {
             jobIdentifiers = scheduler.getJobs(queue);
         }
-        // TODO Slurm adaptor returns job with id="" when there are no jobs, adaptor should be fixed instead of ignoring empty strings here
 
         scheduler.close();
 

@@ -2,6 +2,7 @@ package nl.esciencecenter.xenon.cli.removefile;
 
 import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
+import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
 
 import java.util.Map;
 import java.util.Set;
@@ -34,12 +35,7 @@ public class RemoveFileCommand extends XenonCommand {
     private void remove(String adaptor, String location, String pathIn, Credential credential, Map<String, String> props, boolean recursive) throws XenonException {
         FileSystem fs = FileSystem.create(adaptor, location, credential, props);
 
-        Path path = new Path(pathIn);
-        if ("local".equals(adaptor) || "file".equals(adaptor) && !pathIn.startsWith("/")) {
-            // Path is relative to working directory, make it absolute
-            Path workingDirectory = new Path(System.getProperty("user.dir"));
-            path = workingDirectory.resolve(pathIn);
-        }
+        Path path = getAbsolutePath(adaptor, pathIn);
         fs.delete(path, recursive);
 
         fs.close();

@@ -1,21 +1,18 @@
 package nl.esciencecenter.xenon.cli.listfiles;
 
-import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import nl.esciencecenter.xenon.filesystems.PathAttributes;
+import java.util.Map;
+import java.util.Set;
+
+import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
+import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
 
 /**
  * Command to list objects at path of location
@@ -24,7 +21,7 @@ public class ListFilesCommand extends XenonCommand {
 
     private ListFilesOutput listObjects(String adaptor, String location, String pathIn, Credential credential, Boolean recursive, Boolean hidden, Map<String, String> props) throws XenonException {
         FileSystem fs = FileSystem.create(adaptor, location, credential, props);
-        Path start = new Path(pathIn);
+        Path start = getAbsolutePath(adaptor, pathIn);
         ListFilesOutput listing = new ListFilesOutput(start, fs.list(start, recursive), hidden);
         fs.close();
         return listing;

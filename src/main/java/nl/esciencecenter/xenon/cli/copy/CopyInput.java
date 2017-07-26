@@ -7,6 +7,8 @@ import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
 
+import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
+
 /**
  * Data required for a source or target of a copy command
  */
@@ -18,11 +20,11 @@ public class CopyInput {
     private boolean stream = false;
     private Map<String, String> properties = null;
 
-    public CopyInput(String adaptor, String location, String path, Credential credential) {
+    CopyInput(String adaptor, String location, String path, Credential credential) {
         this(adaptor, location, path, credential, null);
     }
 
-    public CopyInput(String adaptor, String location, String path, Credential credential, Map<String, String> properties) {
+    CopyInput(String adaptor, String location, String path, Credential credential, Map<String, String> properties) {
         this.adaptor = adaptor;
         this.location = location;
         if ("-".equals(path) && ("file".equals(adaptor) || "local".equals(adaptor))) {
@@ -35,16 +37,12 @@ public class CopyInput {
         this.properties = properties;
     }
 
-    public String getAdaptorName() {
+    String getAdaptorName() {
         return adaptor;
     }
 
     public String getLocation() {
         return location;
-    }
-
-    public String getPath() {
-        return path;
     }
 
     public Credential getCredential() {
@@ -55,7 +53,7 @@ public class CopyInput {
         return stream;
     }
 
-    public Map<String, String> getProperties() {
+    private Map<String, String> getProperties() {
         return properties;
     }
 
@@ -63,17 +61,11 @@ public class CopyInput {
         return "local".equals(adaptor) || "file".equals(adaptor);
     }
 
-    public Path getAbsolutePath()  {
-        Path path = new Path(getPath());
-        if ("local".equals(getAdaptorName()) || "file".equals(getAdaptorName()) && !(getPath().startsWith("~") || getPath().startsWith("/") || "-".equals(getPath()))) {
-            // Path is relative to working directory, make it absolute
-            Path workingDirectory = new Path(System.getProperty("user.dir"));
-            path = workingDirectory.resolve(path);
-        }
-        return path;
+    public Path getPath()  {
+        return getAbsolutePath(adaptor, path);
     }
 
-    public FileSystem getFileSystem() throws XenonException {
+    FileSystem getFileSystem() throws XenonException {
         return FileSystem.create(getAdaptorName(), getLocation(), getCredential(), getProperties());
     }
 }

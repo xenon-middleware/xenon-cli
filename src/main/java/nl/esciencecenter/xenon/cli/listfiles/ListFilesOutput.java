@@ -17,7 +17,7 @@ public class ListFilesOutput {
     private List<String> files = new ArrayList<>();
     private List<String> directories = new ArrayList<>();
 
-    public ListFilesOutput(Path start, Iterable<PathAttributes> items, Boolean hidden) {
+    ListFilesOutput(Path start, Iterable<PathAttributes> items, Boolean hidden) {
         // keep track of all hidden dirs,
         // if path starts with one of the hidden dirs than path is also hidden
         // only works when parent dir is given before child

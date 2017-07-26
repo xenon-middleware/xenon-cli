@@ -25,18 +25,6 @@ public class SubmitCommand extends XenonCommand {
         String location = res.getString("location");
         Credential credential = buildCredential(res);
         JobDescription description = getJobDescription(res);
-        String stdin = res.getString("stdin");
-        if (stdin != null) {
-            description.setStdin(stdin);
-        }
-        String stdout = res.getString("stdout");
-        if (stdout != null) {
-            description.setStdout(stdout);
-        }
-        String stderr = res.getString("stderr");
-        if (stderr != null) {
-            description.setStderr(stderr);
-        }
 
         Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
