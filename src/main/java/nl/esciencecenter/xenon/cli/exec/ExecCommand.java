@@ -2,6 +2,7 @@ package nl.esciencecenter.xenon.cli.exec;
 
 import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
+import static nl.esciencecenter.xenon.cli.Utils.createScheduler;
 import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
 import static nl.esciencecenter.xenon.cli.Utils.pipe;
 
@@ -29,15 +30,9 @@ public class ExecCommand extends XenonCommand {
 
     @Override
     public Object run(Namespace res) throws XenonException {
-        String adaptor = res.getString("adaptor");
-        String location = res.getString("location");
-        Credential credential = buildCredential(res);
+        Scheduler scheduler = createScheduler(res);
         JobDescription description = getJobDescription(res);
         long waitTimeout = res.getLong("wait_timeout");
-
-        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
-        Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        Scheduler scheduler = Scheduler.create(adaptor, location, credential, props);
 
         Streams streams = scheduler.submitInteractiveJob(description);
         StreamForwarder stdinForwarder = new StreamForwarder(System.in, streams.getStdin());

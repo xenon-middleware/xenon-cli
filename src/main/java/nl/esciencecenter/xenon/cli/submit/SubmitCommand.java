@@ -2,6 +2,7 @@ package nl.esciencecenter.xenon.cli.submit;
 
 import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
+import static nl.esciencecenter.xenon.cli.Utils.createScheduler;
 import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
 
 import java.util.Map;
@@ -21,16 +22,12 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class SubmitCommand extends XenonCommand {
     @Override
     public SubmitOutput run(Namespace res) throws XenonException {
-        String adaptor = res.getString("adaptor");
-        String location = res.getString("location");
-        Credential credential = buildCredential(res);
         JobDescription description = getJobDescription(res);
+        Scheduler scheduler = createScheduler(res);
 
-        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
-        Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        Scheduler scheduler = Scheduler.create(adaptor, location, credential, props);
         String jobIdentifier = scheduler.submitBatchJob(description);
-        SubmitOutput output = new SubmitOutput(location, description, jobIdentifier);
+
+        SubmitOutput output = new SubmitOutput(scheduler.getLocation(), description, jobIdentifier);
         scheduler.close();
         return output;
     }

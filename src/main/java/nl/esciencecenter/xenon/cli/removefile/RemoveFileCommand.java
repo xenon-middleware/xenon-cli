@@ -2,6 +2,7 @@ package nl.esciencecenter.xenon.cli.removefile;
 
 import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
+import static nl.esciencecenter.xenon.cli.Utils.createFileSystem;
 import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
 
 import java.util.Map;
@@ -21,21 +22,15 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class RemoveFileCommand extends XenonCommand {
     @Override
     public RemoveFileOutput run(Namespace res) throws XenonException {
-        String adaptor = res.getString("adaptor");
-        String location = res.getString("location");
+        FileSystem fs = createFileSystem(res);
         String path = res.getString("path");
         Boolean recursive = res.getBoolean("recursive");
-        Credential credential = buildCredential(res);
-        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
-        Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        remove(adaptor, location, path, credential, props, recursive);
-        return new RemoveFileOutput(location, path);
+        remove(fs, path, recursive);
+        return new RemoveFileOutput(fs.getLocation(), path);
     }
 
-    private void remove(String adaptor, String location, String pathIn, Credential credential, Map<String, String> props, boolean recursive) throws XenonException {
-        FileSystem fs = FileSystem.create(adaptor, location, credential, props);
-
-        Path path = getAbsolutePath(adaptor, pathIn);
+    private void remove(FileSystem fs, String pathIn, Boolean recursive) throws XenonException {
+        Path path = getAbsolutePath(fs.getAdaptorName(), pathIn);
         fs.delete(path, recursive);
 
         fs.close();

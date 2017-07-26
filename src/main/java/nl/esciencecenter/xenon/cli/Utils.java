@@ -6,11 +6,23 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.credentials.CertificateCredential;
+import nl.esciencecenter.xenon.credentials.Credential;
+import nl.esciencecenter.xenon.credentials.DefaultCredential;
+import nl.esciencecenter.xenon.credentials.PasswordCredential;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 
 import net.sourceforge.argparse4j.inf.Namespace;
+import nl.esciencecenter.xenon.schedulers.Scheduler;
+
+import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
 
 /**
  * Helpers for Xenon.jobs based commands
@@ -116,5 +128,48 @@ public class Utils {
             apath = workingDirectory.resolve(apath);
         }
         return apath;
+    }
+
+    public static Scheduler createScheduler(Namespace res) throws XenonException {
+        String adaptor = res.getString("adaptor");
+        String location = res.getString("location");
+        Credential credential = createCredential(res);
+
+        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
+        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        return Scheduler.create(adaptor, location, credential, props);
+    }
+
+    public static FileSystem createFileSystem(Namespace res) throws XenonException {
+        String adaptor = res.getString("adaptor");
+        String location = res.getString("location");
+        Credential credential = createCredential(res);
+
+        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
+        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        return FileSystem.create(adaptor, location, credential, props);
+    }
+
+    static Credential createCredential(Namespace res) {
+        return createCredential(res, "");
+    }
+
+    static Credential createCredential(Namespace res, String prefix) {
+        String username = res.getString(prefix + "username");
+        String passwordAsString = res.getString(prefix + "password");
+        String certfile = res.getString(prefix + "certfile");
+        char[] password = null;
+        if (passwordAsString != null) {
+            password = passwordAsString.toCharArray();
+        }
+        if (certfile != null) {
+            return new CertificateCredential(certfile, username, password);
+        } else if (password != null) {
+            return new PasswordCredential(username, password);
+        } else if (username != null) {
+            return new DefaultCredential(username);
+        } else {
+            return new DefaultCredential();
+        }
     }
 }
