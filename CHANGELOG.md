@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+* --verbose and --stacktrace arguments
+* In `xenon --help`, added type column to list of adaptors
+
+### Changed
+
+* Upgraded to Xenon 2.0.0
+
 ## [1.0.3] - 2017-07-20
 
 ### Fixed
