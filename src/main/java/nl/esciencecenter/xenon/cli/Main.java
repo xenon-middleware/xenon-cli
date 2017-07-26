@@ -88,15 +88,19 @@ public class Main {
 
     private void configureLogger() {
         Integer verboseness = res.getInt("verbose");
-        if (verboseness > 0) {
-            Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        if (verboseness == 1) {
+            root.setLevel(Level.WARN);
+        } else if (verboseness == 2) {
             root.setLevel(Level.INFO);
-            if (verboseness == 2) {
-                root.setLevel(Level.DEBUG);
-            } else if (verboseness > 2) {
-                root.setLevel(Level.TRACE);
-            }
+        } else if (verboseness == 3) {
+            root.setLevel(Level.DEBUG);
+        } else if (verboseness > 3) {
+            root.setLevel(Level.TRACE);
+        } else {
+            root.setLevel(Level.ERROR);
         }
+        // ?do we need a --quiet arg to set level to off
     }
 
     public Object run(ICommand subCommand) {
