@@ -101,6 +101,18 @@ task jacocoIntegrationAndUnitTestReport(type: JacocoReport) {
     sourceSets sourceSets.main
 }
 
+// See progress of tests
+tasks.withType(Test) {
+    // only verbose logging on when CI environment var is set, because on CI we can't look at html test reports
+    if (System.getenv("CI")) {
+        testLogging {
+            events 'started', 'passed', 'skipped', 'failed'
+            exceptionFormat 'full'
+            showStackTraces true
+        }
+    }
+}
+
 sonarqube {
     properties {
         property 'sonar.host.url', 'https://sonarqube.com'
