@@ -29,7 +29,7 @@ public class CopyOutputTest {
     public void toJson() {
         Gson gson = new GsonBuilder().create();
         String result = gson.toJson(copyOutput);
-        String expected = "{\"target\":{\"scheme\":\"sftp\",\"location\":\"localhost\",\"path\":\"/target\",\"stream\":false},\"source\":{\"scheme\":\"local\",\"location\":\"/\",\"path\":\"/source\",\"stream\":false},\"bytesCopied\":100}";
+        String expected = "{\"target\":{\"adaptor\":\"sftp\",\"location\":\"localhost\",\"path\":\"/target\",\"stream\":false},\"source\":{\"adaptor\":\"local\",\"location\":\"/\",\"path\":\"/source\",\"stream\":false},\"bytesCopied\":100}";
         assertEquals(expected, result);
     }
 

@@ -29,15 +29,15 @@ public class ExecCommand extends XenonCommand {
 
     @Override
     public Object run(Namespace res) throws XenonException {
-        String scheme = res.getString("scheme");
+        String adaptor = res.getString("adaptor");
         String location = res.getString("location");
         Credential credential = buildCredential(res);
         JobDescription description = getJobDescription(res);
         long waitTimeout = res.getLong("wait_timeout");
 
-        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(scheme);
+        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        Scheduler scheduler = Scheduler.create(scheme, location, credential, props);
+        Scheduler scheduler = Scheduler.create(adaptor, location, credential, props);
 
         Streams streams = scheduler.submitInteractiveJob(description);
         StreamForwarder stdinForwarder = new StreamForwarder(System.in, streams.getStdin());

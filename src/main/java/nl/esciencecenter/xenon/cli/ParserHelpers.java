@@ -92,11 +92,11 @@ public class ParserHelpers {
             .help("Path at location where executable should be executed. If not given will local working directory or when remove will use home directory");
     }
 
-    public static Set<String> getAllowedFileSystemPropertyKeys(String scheme) throws XenonException {
-        return Arrays.stream(FileSystem.getAdaptorDescription(scheme).getSupportedProperties()).map(XenonPropertyDescription::getName).collect(Collectors.toSet());
+    public static Set<String> getAllowedFileSystemPropertyKeys(String adaptor) throws XenonException {
+        return Arrays.stream(FileSystem.getAdaptorDescription(adaptor).getSupportedProperties()).map(XenonPropertyDescription::getName).collect(Collectors.toSet());
     }
 
-    public static Set<String> getAllowedSchedulerPropertyKeys(String scheme) throws XenonException {
-        return Arrays.stream(Scheduler.getAdaptorDescription(scheme).getSupportedProperties()).map(XenonPropertyDescription::getName).collect(Collectors.toSet());
+    public static Set<String> getAllowedSchedulerPropertyKeys(String adaptor) throws XenonException {
+        return Arrays.stream(Scheduler.getAdaptorDescription(adaptor).getSupportedProperties()).map(XenonPropertyDescription::getName).collect(Collectors.toSet());
     }
 }

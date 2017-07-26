@@ -20,14 +20,14 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class ListJobsCommand extends XenonCommand {
     @Override
     public ListJobsOutput run(Namespace res) throws XenonException {
-        String scheme = res.getString("scheme");
+        String adaptor = res.getString("adaptor");
         String location = res.getString("location");
         String queue = res.getString("queue");
         Credential credential = buildCredential(res);
 
-        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(scheme);
+        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        Scheduler scheduler = Scheduler.create(scheme, location, credential, props);
+        Scheduler scheduler = Scheduler.create(adaptor, location, credential, props);
 
         String[] jobIdentifiers;
         if (queue == null) {

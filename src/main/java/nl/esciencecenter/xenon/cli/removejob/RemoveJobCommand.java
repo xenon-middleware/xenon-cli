@@ -19,14 +19,14 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class RemoveJobCommand extends XenonCommand {
     @Override
     public RemoveJobOutput run(Namespace res) throws XenonException {
-        String scheme = res.getString("scheme");
+        String adaptor = res.getString("adaptor");
         String location = res.getString("location");
         String jobId = res.getString("job_identifier");
         Credential credential = buildCredential(res);
 
-        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(scheme);
+        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        Scheduler scheduler = Scheduler.create(scheme, location, credential, props);
+        Scheduler scheduler = Scheduler.create(adaptor, location, credential, props);
 
         scheduler.cancelJob(jobId);
 

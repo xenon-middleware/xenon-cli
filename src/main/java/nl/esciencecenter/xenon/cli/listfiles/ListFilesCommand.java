@@ -22,8 +22,8 @@ import nl.esciencecenter.xenon.filesystems.PathAttributes;
  */
 public class ListFilesCommand extends XenonCommand {
 
-    private ListFilesOutput listObjects(String scheme, String location, String pathIn, Credential credential, Boolean recursive, Boolean hidden, Map<String, String> props) throws XenonException {
-        FileSystem fs = FileSystem.create(scheme, location, credential, props);
+    private ListFilesOutput listObjects(String adaptor, String location, String pathIn, Credential credential, Boolean recursive, Boolean hidden, Map<String, String> props) throws XenonException {
+        FileSystem fs = FileSystem.create(adaptor, location, credential, props);
         Path start = new Path(pathIn);
         ListFilesOutput listing = new ListFilesOutput(start, fs.list(start, recursive), hidden);
         fs.close();
@@ -31,14 +31,14 @@ public class ListFilesCommand extends XenonCommand {
     }
 
     public ListFilesOutput run(Namespace res) throws XenonException {
-        String scheme = res.getString("scheme");
+        String adaptor = res.getString("adaptor");
         String location = res.getString("location");
         String path = res.getString("path");
         Boolean recursive = res.getBoolean("recursive");
         Boolean hidden = res.getBoolean("hidden");
         Credential credential = buildCredential(res);
-        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(scheme);
+        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        return listObjects(scheme, location, path, credential, recursive, hidden, props);
+        return listObjects(adaptor, location, path, credential, recursive, hidden, props);
     }
 }

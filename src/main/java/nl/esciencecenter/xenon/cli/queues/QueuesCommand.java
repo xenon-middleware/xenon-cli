@@ -19,13 +19,13 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class QueuesCommand extends XenonCommand {
     @Override
     public QueuesOutput run(Namespace res) throws XenonException {
-        String scheme = res.getString("scheme");
+        String adaptor = res.getString("adaptor");
         String location = res.getString("location");
         Credential credential = buildCredential(res);
 
-        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(scheme);
+        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        Scheduler scheduler = Scheduler.create(scheme, location, credential, props);
+        Scheduler scheduler = Scheduler.create(adaptor, location, credential, props);
         String[] queues = scheduler.getQueueNames();
         String defaultQueue = scheduler.getDefaultQueueName();
 

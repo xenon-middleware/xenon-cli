@@ -35,7 +35,7 @@ public class CopyInputTest {
         CopyInput copyInput = new CopyInput("file", null, "/tmp/bla", null);
         Gson gson = new GsonBuilder().create();
         String result = gson.toJson(copyInput);
-        String expected = "{\"scheme\":\"file\",\"path\":\"/tmp/bla\",\"stream\":false}";
+        String expected = "{\"adaptor\":\"file\",\"path\":\"/tmp/bla\",\"stream\":false}";
         assertEquals(expected, result);
     }
 }

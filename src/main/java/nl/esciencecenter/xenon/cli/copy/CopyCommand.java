@@ -36,10 +36,10 @@ public class CopyCommand extends XenonCommand {
 
     protected CopyOutput copy(CopyInput source, CopyInput target, Boolean recursive, CopyMode copymode) throws XenonException {
         if (recursive && source.isStream()) {
-            throw new NoSuchCopyException(source.getScheme(), "Unable to do recursive copy from stdin");
+            throw new NoSuchCopyException(source.getAdaptorName(), "Unable to do recursive copy from stdin");
         }
         if (recursive && target.isStream()) {
-            throw new NoSuchCopyException(target.getScheme(), "Unable to do recursive copy to stdout");
+            throw new NoSuchCopyException(target.getAdaptorName(), "Unable to do recursive copy to stdout");
         }
 
         Path sourcePath = source.getAbsolutePath();
@@ -49,7 +49,7 @@ public class CopyCommand extends XenonCommand {
 
         long bytesCopied;
         if (source.isStream() && !target.isStream()) {
-            bytesCopied = copyFromSystemIn(sourcePath, sourceFS, targetPath, targetFS, copymode, recursive);
+            bytesCopied = copyFromSystemIn(targetPath, targetFS, copymode, recursive);
         } else if (!source.isStream() && target.isStream()) {
             bytesCopied = copyToSystemOut(sourcePath, sourceFS);
         } else {
@@ -82,7 +82,7 @@ public class CopyCommand extends XenonCommand {
         }
     }
 
-    private long copyFromSystemIn(Path sourcePath, FileSystem sourceFS, Path targetPath, FileSystem targetFS, CopyMode copymode, Boolean recursive) throws XenonException {
+    private long copyFromSystemIn(Path targetPath, FileSystem targetFS, CopyMode copymode, Boolean recursive) throws XenonException {
         if (CopyMode.REPLACE.equals(copymode) && targetFS.exists(targetPath)) {
             targetFS.delete(targetPath, recursive);
         }
@@ -98,7 +98,7 @@ public class CopyCommand extends XenonCommand {
 
     @Override
     public CopyOutput run(Namespace res) throws XenonException {
-        String scheme = res.getString("scheme");
+        String adaptor = res.getString("adaptor");
         String sourceLocation = res.getString("location");
         String sourcePath = res.getString("source_path");
         Credential sourceCredential = buildCredential(res);
@@ -108,11 +108,11 @@ public class CopyCommand extends XenonCommand {
         CopyMode copymode = res.get("copymode");
         Boolean recursive = res.getBoolean("recursive");
 
-        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(scheme);
+        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
 
-        CopyInput source = new CopyInput(scheme, sourceLocation, sourcePath, sourceCredential, props);
-        CopyInput target = new CopyInput(scheme, targetLocation, targetPath, targetCredential, props);
+        CopyInput source = new CopyInput(adaptor, sourceLocation, sourcePath, sourceCredential, props);
+        CopyInput target = new CopyInput(adaptor, targetLocation, targetPath, targetCredential, props);
 
         CopyOutput result = this.copy(source, target, recursive, copymode);
 

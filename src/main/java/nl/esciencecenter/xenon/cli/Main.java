@@ -114,13 +114,13 @@ public class Main {
                 .version(PROGRAM_VERSION);
         newParser.addArgument("--version").action(Arguments.version());
         newParser.addArgument("--format").choices("cwljson").help("Output in JSON format");
-        addSchemeSubParsers(newParser);
+        addAdaptorSubParsers(newParser);
         ParserHelpers.addCredentialArguments(newParser);
         return newParser;
     }
 
-    private void addSchemeSubParsers(ArgumentParser parser) {
-        Subparsers subparsers = parser.addSubparsers().title("scheme");
+    private void addAdaptorSubParsers(ArgumentParser parser) {
+        Subparsers subparsers = parser.addSubparsers().title("adaptor");
         List<AdaptorDescription> adaptorDescriptions = new ArrayList<>();
         Collections.addAll(adaptorDescriptions, Scheduler.getAdaptorDescriptions());
         Collections.addAll(adaptorDescriptions, FileSystem.getAdaptorDescriptions());
@@ -131,18 +131,18 @@ public class Main {
     }
 
     private void adaptorSubCommands(Subparsers subparsers, AdaptorDescription adaptorDescription) {
-        Subparser schemeParser = addSubCommandScheme(subparsers, adaptorDescription);
-        String supportedLocationHelp = addArgumentLocation(adaptorDescription, schemeParser);
-        addArgumentProp(adaptorDescription, schemeParser);
-        Subparsers commandsParser = schemeParser.addSubparsers().title("commands");
+        Subparser adaptorParser = addSubCommandAdaptor(subparsers, adaptorDescription);
+        String supportedLocationHelp = addArgumentLocation(adaptorDescription, adaptorParser);
+        addArgumentProp(adaptorDescription, adaptorParser);
+        Subparsers commandsParser = adaptorParser.addSubparsers().title("commands");
         if (adaptorDescription instanceof FileSystemAdaptorDescription) {
-            filesSubCommands((FileSystemAdaptorDescription) adaptorDescription, supportedLocationHelp, commandsParser);
+            filesystemSubCommands((FileSystemAdaptorDescription) adaptorDescription, supportedLocationHelp, commandsParser);
         } else if (adaptorDescription instanceof SchedulerAdaptorDescription) {
-            jobsSubCommands((SchedulerAdaptorDescription) adaptorDescription, commandsParser);
+            schedulerSubCommands((SchedulerAdaptorDescription) adaptorDescription, commandsParser);
         }
     }
 
-    private void jobsSubCommands(SchedulerAdaptorDescription adaptorDescription, Subparsers commandsParser) {
+    private void schedulerSubCommands(SchedulerAdaptorDescription adaptorDescription, Subparsers commandsParser) {
         // exec
         new ExecParser().buildArgumentParser(commandsParser);
         if (!adaptorDescription.isEmbedded()) {
@@ -157,7 +157,7 @@ public class Main {
         }
     }
 
-    private void filesSubCommands(FileSystemAdaptorDescription adaptorDescription, String supportedLocationHelp, Subparsers commandsParser) {
+    private void filesystemSubCommands(FileSystemAdaptorDescription adaptorDescription, String supportedLocationHelp, Subparsers commandsParser) {
         // copy
         boolean isLocal = adaptorDescription.getName().equals("file");
         new CopyParser().buildArgumentParser(commandsParser, supportedLocationHelp, isLocal);
@@ -171,19 +171,18 @@ public class Main {
         new ListFilesParser().buildArgumentParser(commandsParser);
         // remove
         new RemoveFileParser().buildArgumentParser(commandsParser);
-        // TODO rename
     }
 
-    private Subparser addSubCommandScheme(Subparsers subparsers, AdaptorDescription adaptorDescription) {
+    private Subparser addSubCommandAdaptor(Subparsers subparsers, AdaptorDescription adaptorDescription) {
         return subparsers.addParser(adaptorDescription.getName())
                         .help(adaptorDescription.getDescription())
                         .description(adaptorDescription.getDescription())
-                        .setDefault("scheme", adaptorDescription.getName());
+                        .setDefault("adaptor", adaptorDescription.getName());
     }
 
-    private String addArgumentLocation(AdaptorDescription adaptorDescription, Subparser schemeParser) {
+    private String addArgumentLocation(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
         String supportedLocationHelp = getSupportedLocationHelp(adaptorDescription.getSupportedLocations());
-        Argument locationArgument = schemeParser.addArgument("--location").help("Location, " + supportedLocationHelp);
+        Argument locationArgument = adaptorParser.addArgument("--location").help("Location, " + supportedLocationHelp);
         boolean locationCanBeNull = Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(l -> l.equals("(null)"));
         if (!locationCanBeNull) {
             locationArgument.required(true);
@@ -191,8 +190,8 @@ public class Main {
         return supportedLocationHelp;
     }
 
-    private void addArgumentProp(AdaptorDescription adaptorDescription, Subparser schemeParser) {
-        schemeParser.addArgument("--prop")
+    private void addArgumentProp(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
+        adaptorParser.addArgument("--prop")
             .action(Arguments.append())
             .metavar("KEY=VALUE")
             .help("Supported adaptor properties, " + getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()))

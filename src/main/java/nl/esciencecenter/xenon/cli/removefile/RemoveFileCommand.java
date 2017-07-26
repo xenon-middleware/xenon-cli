@@ -20,22 +20,22 @@ import net.sourceforge.argparse4j.inf.Namespace;
 public class RemoveFileCommand extends XenonCommand {
     @Override
     public RemoveFileOutput run(Namespace res) throws XenonException {
-        String scheme = res.getString("scheme");
+        String adaptor = res.getString("adaptor");
         String location = res.getString("location");
         String path = res.getString("path");
         Boolean recursive = res.getBoolean("recursive");
         Credential credential = buildCredential(res);
-        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(scheme);
+        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        remove(scheme, location, path, credential, props, recursive);
+        remove(adaptor, location, path, credential, props, recursive);
         return new RemoveFileOutput(location, path);
     }
 
-    private void remove(String scheme, String location, String pathIn, Credential credential, Map<String, String> props, boolean recursive) throws XenonException {
-        FileSystem fs = FileSystem.create(scheme, location, credential, props);
+    private void remove(String adaptor, String location, String pathIn, Credential credential, Map<String, String> props, boolean recursive) throws XenonException {
+        FileSystem fs = FileSystem.create(adaptor, location, credential, props);
 
         Path path = new Path(pathIn);
-        if ("local".equals(scheme) || "file".equals(scheme) && !pathIn.startsWith("/")) {
+        if ("local".equals(adaptor) || "file".equals(adaptor) && !pathIn.startsWith("/")) {
             // Path is relative to working directory, make it absolute
             Path workingDirectory = new Path(System.getProperty("user.dir"));
             path = workingDirectory.resolve(pathIn);

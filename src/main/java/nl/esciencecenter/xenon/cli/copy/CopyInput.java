@@ -11,21 +11,21 @@ import nl.esciencecenter.xenon.filesystems.Path;
  * Data required for a source or target of a copy command
  */
 public class CopyInput {
-    private String scheme;
+    private String adaptor;
     private String location = null;
     private String path;
     private Credential credential = null;
     private boolean stream = false;
     private Map<String, String> properties = null;
 
-    public CopyInput(String scheme, String location, String path, Credential credential) {
-        this(scheme, location, path, credential, null);
+    public CopyInput(String adaptor, String location, String path, Credential credential) {
+        this(adaptor, location, path, credential, null);
     }
 
-    public CopyInput(String scheme, String location, String path, Credential credential, Map<String, String> properties) {
-        this.scheme = scheme;
+    public CopyInput(String adaptor, String location, String path, Credential credential, Map<String, String> properties) {
+        this.adaptor = adaptor;
         this.location = location;
-        if ("-".equals(path) && ("file".equals(scheme) || "local".equals(scheme))) {
+        if ("-".equals(path) && ("file".equals(adaptor) || "local".equals(adaptor))) {
             // can only stream stdin or stdout using local adaptor,
             // if not local adaptor will treat path as path, so will read/write remote file called '-'
             this.stream = true;
@@ -35,8 +35,8 @@ public class CopyInput {
         this.properties = properties;
     }
 
-    public String getScheme() {
-        return scheme;
+    public String getAdaptorName() {
+        return adaptor;
     }
 
     public String getLocation() {
@@ -59,21 +59,13 @@ public class CopyInput {
         return properties;
     }
 
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
     public boolean isLocal() {
-        return "local".equals(scheme) || "file".equals(scheme);
-    }
-
-    public boolean isAbsolute() {
-        return path.startsWith("/");
+        return "local".equals(adaptor) || "file".equals(adaptor);
     }
 
     public Path getAbsolutePath()  {
         Path path = new Path(getPath());
-        if ("local".equals(getScheme()) || "file".equals(getScheme()) && !(getPath().startsWith("~") || getPath().startsWith("/") || "-".equals(getPath()))) {
+        if ("local".equals(getAdaptorName()) || "file".equals(getAdaptorName()) && !(getPath().startsWith("~") || getPath().startsWith("/") || "-".equals(getPath()))) {
             // Path is relative to working directory, make it absolute
             Path workingDirectory = new Path(System.getProperty("user.dir"));
             path = workingDirectory.resolve(path);
@@ -82,6 +74,6 @@ public class CopyInput {
     }
 
     public FileSystem getFileSystem() throws XenonException {
-        return FileSystem.create(getScheme(), getLocation(), getCredential(), getProperties());
+        return FileSystem.create(getAdaptorName(), getLocation(), getCredential(), getProperties());
     }
 }
