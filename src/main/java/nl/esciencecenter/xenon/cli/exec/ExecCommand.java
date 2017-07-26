@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * Command to execute job in the foreground
  */
 public class ExecCommand extends XenonCommand {
-    final Logger logger = LoggerFactory.getLogger(ExecCommand.class);
+    private final Logger logger = LoggerFactory.getLogger(ExecCommand.class);
 
     @Override
     public Object run(Namespace res) throws XenonException {
@@ -42,17 +42,17 @@ public class ExecCommand extends XenonCommand {
         Streams streams = scheduler.submitInteractiveJob(description);
         StreamForwarder stdinForwarder = new StreamForwarder(System.in, streams.getStdin());
         StreamForwarder stderrForwarder = new StreamForwarder(streams.getStderr(), System.err);
-        scheduler.waitUntilDone(streams.getJobIdentifier(), waitTimeout);
         try {
             // Using copy instead of StreamForwarder to pipe stdout in main thread,
             // so close is called after all stdout has been produced
             pipe(streams.getStdout(), System.out);
             streams.getStdout().close();
         } catch (IOException e) {
-            logger.info("Copy stdout failed", e);
+            logger.warn("Copy stdout failed", e);
         }
         stdinForwarder.terminate(1000);
         stderrForwarder.terminate(1000);
+        scheduler.waitUntilDone(streams.getJobIdentifier(), waitTimeout);
         scheduler.close();
         // run has no output, because all output has already been sent to stdout and stderr.
         return null;
