@@ -10,8 +10,8 @@ public class ListFilesParser implements IParser {
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("list")
             .setDefault("command", new ListFilesCommand())
-            .help("List objects at path of location")
-            .description("List objects at path of location");
+            .help("List objects in path of location")
+            .description("List objects in path of location");
         subparser.addArgument("path").help("Start directory").required(true);
         subparser.addArgument("--recursive").help("List directories recursively").action(Arguments.storeTrue());
         subparser.addArgument("--hidden").help("Include hidden items").action(Arguments.storeTrue());

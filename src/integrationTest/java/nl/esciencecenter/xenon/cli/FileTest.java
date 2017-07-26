@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
-import nl.esciencecenter.xenon.filesystems.PathAlreadyExistsException;
 import nl.esciencecenter.xenon.filesystems.PathAttributes;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
@@ -37,6 +37,9 @@ public class FileTest {
 
     @Rule
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+
+    @Rule
+    public final SystemErrRule systemErrRule = new SystemErrRule().enableLog();
 
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
@@ -84,7 +87,7 @@ public class FileTest {
         File sourceDir = myfolder.newFolder("source");
         new File(sourceDir, "file1").createNewFile();
         File sourceDirDir = myfolder.newFolder("source", "dep1");
-        new File(sourceDirDir,"file2").createNewFile();
+        new File(sourceDirDir, "file2").createNewFile();
         File targetDir = new File(myfolder.getRoot(), "target");
 
         String[] args = {"file", "copy", "--recursive", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()};
@@ -100,7 +103,12 @@ public class FileTest {
 
     @Test
     public void copy_targetExists_throwsExecption() throws XenonException, IOException {
-        thrown.expect(PathAlreadyExistsException.class);
+        exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String expected = "file adaptor: Destination path already exists";
+            assertTrue(expected, systemErrRule.getLog().contains(expected));
+        });
+
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
         File targetFile = myfolder.newFile("target.txt");
@@ -131,15 +139,38 @@ public class FileTest {
         }
     }
 
-    @Test(expected = XenonException.class)
-    public void copy_RecursiveStdin_throwsExecption() throws XenonException {
+    @Test
+    public void copy_RecursiveStdin_throwsException() {
+        exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String expected = "file adaptor: Unable to do recursive copy from stdin";
+            assertTrue(expected, systemErrRule.getLog().contains(expected));
+        });
         String[] args = {"file", "copy", "--recursive", "-", myfolder.getRoot().getAbsolutePath()};
         Main main = new Main();
         main.run(args);
     }
 
-    @Test(expected = XenonException.class)
-    public void copyFile_RecursiveStdout_throwsExecption() throws XenonException {
+    @Test
+    public void copy_toStdout() throws IOException {
+        File sourceFile = myfolder.newFile("source.txt");
+        String message = "Hello World!\n";
+        Files.write(sourceFile.toPath(), message.getBytes());
+
+        String[] args = {"file", "copy", sourceFile.getAbsolutePath(), "-"};
+        Main main = new Main();
+        main.run(args);
+
+        assertEquals(message, systemOutRule.getLogWithNormalizedLineSeparator());
+    }
+
+    @Test
+    public void copyFile_RecursiveStdout_throwsException() {
+        exit.checkAssertionAfterwards(() -> {
+            String expected = "file adaptor: Unable to do recursive copy to stdout";
+            assertTrue(expected, systemErrRule.getLog().contains(expected));
+        });
+        exit.expectSystemExitWithStatus(1);
         String[] args = {"file", "copy", "--recursive", myfolder.getRoot().getAbsolutePath(), "-"};
         Main main = new Main();
         main.run(args);
@@ -172,9 +203,14 @@ public class FileTest {
     }
 
     @Test
-    public void list_aFile() throws IOException, XenonException {
-        thrown.expect(XenonException.class);
-        thrown.expectMessage("file adaptor: Failed to list directory");
+    public void list_aFile_exit1() throws IOException, XenonException {
+        exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String expected = "file adaptor: Failed to list directory";
+            String log = systemErrRule.getLog();
+            assertTrue(expected, log.contains(expected));
+        });
+
         File file1 = myfolder.newFile("file1");
         file1.createNewFile();
 
@@ -182,6 +218,7 @@ public class FileTest {
         String[] args = {"file", "list", path};
         Main main = new Main();
         main.run(args);
+
     }
 
     @Test
@@ -199,27 +236,29 @@ public class FileTest {
     @Test
     public void list_nonExistingPath_exit1() throws IOException {
         exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String expected = "Failed to list";
+            assertTrue(expected, systemErrRule.getLog().contains(expected));
+        });
         File file1 = myfolder.newFile("idontexist");
 
-        String[] args = { "file", "list", file1.getAbsolutePath()};
+        String[] args = {"file", "list", file1.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
-
-        String expected = "Failed to list";
-        assertTrue(expected, systemOutRule.getLog().contains(expected));
     }
 
     @Test
     public void list_nonExistingPathWithStacktrace_exit1() throws IOException {
         exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String expected = "Caused by:";
+            assertTrue(expected, systemErrRule.getLog().contains(expected));
+        });
         File file1 = myfolder.newFile("idontexist");
 
-        String[] args = { "--stacktrace", "file", "list", file1.getAbsolutePath()};
+        String[] args = {"--stacktrace", "file", "list", file1.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
-
-        String expected = "Caused by:";
-        assertTrue(expected, systemOutRule.getLog().contains(expected));
     }
 
 }
