@@ -21,9 +21,10 @@ import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
 import nl.esciencecenter.xenon.filesystems.PathAlreadyExistsException;
 import nl.esciencecenter.xenon.filesystems.PathAttributes;
 
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
@@ -34,8 +35,14 @@ public class FileTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @Rule
+    public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
+
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+
     @Test
-    public void copy_file() throws XenonException, ArgumentParserException, IOException {
+    public void copy_file() throws XenonException, IOException {
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
         File targetFile = new File(myfolder.getRoot(), "target.txt");
@@ -48,7 +55,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_recursiveFile() throws XenonException, ArgumentParserException, IOException {
+    public void copy_recursiveFile() throws XenonException, IOException {
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
         File targetFile = new File(myfolder.getRoot(), "target.txt");
@@ -61,7 +68,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_dir() throws XenonException, ArgumentParserException, IOException {
+    public void copy_dir() throws XenonException, IOException {
         File sourceDir = myfolder.newFolder("source");
         File targetDir = new File(myfolder.getRoot(), "target");
 
@@ -73,7 +80,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_recursiveDir() throws XenonException, ArgumentParserException, IOException {
+    public void copy_recursiveDir() throws XenonException, IOException {
         File sourceDir = myfolder.newFolder("source");
         new File(sourceDir, "file1").createNewFile();
         File sourceDirDir = myfolder.newFolder("source", "dep1");
@@ -92,7 +99,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_targetExists_throwsExecption() throws XenonException, ArgumentParserException, IOException {
+    public void copy_targetExists_throwsExecption() throws XenonException, IOException {
         thrown.expect(PathAlreadyExistsException.class);
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
@@ -105,7 +112,7 @@ public class FileTest {
     }
 
     @Test
-    public void copy_fromStdin() throws XenonException, ArgumentParserException, IOException {
+    public void copy_fromStdin() throws XenonException, IOException {
         Path targetFile = Paths.get(myfolder.getRoot().getAbsolutePath(), "target.txt");
         InputStream oldIn = System.in;
         String sourceContent = "my content";
@@ -125,21 +132,21 @@ public class FileTest {
     }
 
     @Test(expected = XenonException.class)
-    public void copy_RecursiveStdin_throwsExecption() throws XenonException, ArgumentParserException {
+    public void copy_RecursiveStdin_throwsExecption() throws XenonException {
         String[] args = {"file", "copy", "--recursive", "-", myfolder.getRoot().getAbsolutePath()};
         Main main = new Main();
         main.run(args);
     }
 
     @Test(expected = XenonException.class)
-    public void copyFile_RecursiveStdout_throwsExecption() throws XenonException, ArgumentParserException {
+    public void copyFile_RecursiveStdout_throwsExecption() throws XenonException {
         String[] args = {"file", "copy", "--recursive", myfolder.getRoot().getAbsolutePath(), "-"};
         Main main = new Main();
         main.run(args);
     }
 
     @Test
-    public void list_aDirectory() throws IOException, XenonException, ArgumentParserException {
+    public void list_aDirectory() throws IOException, XenonException {
         myfolder.newFile("file1").createNewFile();
         myfolder.newFile(".hidden1").createNewFile();
         File dir1 = myfolder.newFolder("dir1");
@@ -165,7 +172,7 @@ public class FileTest {
     }
 
     @Test
-    public void list_aFile() throws IOException, XenonException, ArgumentParserException {
+    public void list_aFile() throws IOException, XenonException {
         thrown.expect(XenonException.class);
         thrown.expectMessage("file adaptor: Failed to list directory");
         File file1 = myfolder.newFile("file1");
@@ -178,7 +185,7 @@ public class FileTest {
     }
 
     @Test
-    public void removeFile_touchedFile_fileShouldNotExist() throws IOException, XenonException, ArgumentParserException {
+    public void removeFile_touchedFile_fileShouldNotExist() throws IOException, XenonException {
         File file1 = myfolder.newFile("file1");
         file1.createNewFile();
 
@@ -187,6 +194,32 @@ public class FileTest {
         main.run(args);
 
         assertFalse(file1.exists());
+    }
+
+    @Test
+    public void list_nonExistingPath_exit1() throws IOException {
+        exit.expectSystemExitWithStatus(1);
+        File file1 = myfolder.newFile("idontexist");
+
+        String[] args = { "file", "list", file1.getAbsolutePath()};
+        Main main = new Main();
+        main.run(args);
+
+        String expected = "Failed to list";
+        assertTrue(expected, systemOutRule.getLog().contains(expected));
+    }
+
+    @Test
+    public void list_nonExistingPathWithStacktrace_exit1() throws IOException {
+        exit.expectSystemExitWithStatus(1);
+        File file1 = myfolder.newFile("idontexist");
+
+        String[] args = { "--stacktrace", "file", "list", file1.getAbsolutePath()};
+        Main main = new Main();
+        main.run(args);
+
+        String expected = "Caused by:";
+        assertTrue(expected, systemOutRule.getLog().contains(expected));
     }
 
 }

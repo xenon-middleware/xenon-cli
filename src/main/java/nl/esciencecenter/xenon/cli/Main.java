@@ -1,7 +1,7 @@
 package nl.esciencecenter.xenon.cli;
 
-import static nl.esciencecenter.xenon.cli.Utils.parseArgumentListAsMap;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
+import static nl.esciencecenter.xenon.cli.Utils.parseArgumentListAsMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +31,8 @@ import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 import nl.esciencecenter.xenon.schedulers.SchedulerAdaptorDescription;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -41,7 +43,6 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -50,7 +51,6 @@ import org.slf4j.LoggerFactory;
 public class Main {
     private static final String PROGRAM_NAME = "xenon";
     private static final String PROGRAM_VERSION = "2.0.0";
-    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
     private final ArgumentParser parser;
     private Namespace res = new Namespace(new HashMap<>());
 
@@ -66,31 +66,55 @@ public class Main {
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public ArgumentParser getParser() {
-        return parser;
-    }
-
     public Namespace getRes() {
         return res;
     }
 
-    public Main() throws XenonException {
+    public Main() {
         parser = buildArgumentParser();
     }
 
-    public Object run(String[] args) throws XenonException {
+    public Object run(String[] args) {
         try {
             res = parser.parseArgs(args);
         } catch (ArgumentParserException e) {
             parser.handleError(e);
-            return null;
+            System.exit(2);
         }
+        configureLogger();
         ICommand subCommand = res.get("command");
         return run(subCommand);
     }
 
-    public Object run(ICommand subCommand) throws XenonException {
-        return subCommand.run(res);
+    private void configureLogger() {
+        Integer verboseness = res.getInt("verbose");
+        if (verboseness > 0) {
+            Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+            root.setLevel(Level.INFO);
+            if (verboseness == 2) {
+                root.setLevel(Level.DEBUG);
+            } else if (verboseness > 2) {
+                root.setLevel(Level.TRACE);
+            }
+        }
+    }
+
+    public Object run(ICommand subCommand) {
+        try {
+            return subCommand.run(res);
+        } catch (XenonException e) {
+            handleError(e);
+            return null;
+        }
+    }
+
+    private void handleError(XenonException e) {
+        if (res.getBoolean("stacktrace")) {
+            e.printStackTrace();
+        } else {
+            System.err.println(e.getMessage());
+        }
+        System.exit(1);
     }
 
     private void print(Object output) {
@@ -98,7 +122,7 @@ public class Main {
         print(output, format);
     }
 
-    public void print(Object output, String format) {
+    void print(Object output, String format) {
         if ("cwljson".equals(format)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             System.out.print(gson.toJson(output));
@@ -110,10 +134,12 @@ public class Main {
     public ArgumentParser buildArgumentParser() {
         ArgumentParser newParser = ArgumentParsers.newArgumentParser(PROGRAM_NAME, true, "-", "@")
                 .defaultHelp(true)
-                .description("Files and Jobs operations with Xenon")
+                .description("Operations on filesystems and schedulers with Xenon")
                 .version(PROGRAM_VERSION);
         newParser.addArgument("--version").action(Arguments.version());
         newParser.addArgument("--format").choices("cwljson").help("Output in JSON format");
+        newParser.addArgument("--stacktrace").help("Print out the stacktrace for all exceptions").action(Arguments.storeTrue());
+        newParser.addArgument("--verbose", "-v").help("Repeat for more verbose logging").action(Arguments.count());
         addAdaptorSubParsers(newParser);
         ParserHelpers.addCredentialArguments(newParser);
         return newParser;
@@ -174,8 +200,13 @@ public class Main {
     }
 
     private Subparser addSubCommandAdaptor(Subparsers subparsers, AdaptorDescription adaptorDescription) {
+        String adaptorType = "scheduler ";
+        if (adaptorDescription instanceof FileSystemAdaptorDescription) {
+            adaptorType = "filesystem";
+        }
+        String help = adaptorType + "    " + adaptorDescription.getDescription();
         return subparsers.addParser(adaptorDescription.getName())
-                        .help(adaptorDescription.getDescription())
+                        .help(help)
                         .description(adaptorDescription.getDescription())
                         .setDefault("adaptor", adaptorDescription.getName());
     }
@@ -191,11 +222,13 @@ public class Main {
     }
 
     private void addArgumentProp(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
-        adaptorParser.addArgument("--prop")
-            .action(Arguments.append())
-            .metavar("KEY=VALUE")
-            .help("Supported adaptor properties, " + getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()))
-            .dest("props");
+        if (adaptorDescription.getSupportedProperties().length > 0) {
+            adaptorParser.addArgument("--prop")
+                .action(Arguments.append())
+                .metavar("KEY=VALUE")
+                .help("Supported adaptor properties, " + getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()))
+                .dest("props");
+        }
     }
 
     private String getSupportedPropertiesHelp(XenonPropertyDescription[] descriptions) {

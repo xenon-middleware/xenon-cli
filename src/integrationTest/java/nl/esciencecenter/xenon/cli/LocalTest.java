@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import nl.esciencecenter.xenon.XenonException;
 
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -17,7 +16,7 @@ public class LocalTest {
     public TemporaryFolder myfolder = new TemporaryFolder();
 
     @Test
-    public void exec_touchFile_fileExists() throws IOException, XenonException, ArgumentParserException {
+    public void exec_touchFile_fileExists() throws IOException, XenonException {
         File file1 = myfolder.newFile("file1");
         String[] args = {"local", "exec", "/bin/touch", file1.getAbsolutePath()};
         Main main = new Main();

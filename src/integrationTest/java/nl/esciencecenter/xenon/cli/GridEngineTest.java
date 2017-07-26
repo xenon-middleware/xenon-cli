@@ -3,7 +3,6 @@ package nl.esciencecenter.xenon.cli;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -16,7 +15,6 @@ import nl.esciencecenter.xenon.cli.submit.SubmitOutput;
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.connection.DockerPort;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -25,7 +23,7 @@ import org.junit.contrib.java.lang.system.SystemOutRule;
 
 public class GridEngineTest {
     @ClassRule
-    public static DockerComposeRule docker = DockerComposeRule.builder()
+    public static final DockerComposeRule docker = DockerComposeRule.builder()
             .file("src/integrationTest/resources/sge-docker-compose.yml")
             .saveLogsTo("build/dockerLogs/SgeTest")
             .waitingForService("sge", HealthChecks.toHaveAllPortsOpen())
@@ -35,12 +33,12 @@ public class GridEngineTest {
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
     private Main main;
 
-    public static String getLocation() {
+    private static String getLocation() {
         DockerPort sge = docker.containers().container("sge").port(22);
         return sge.inFormat("$HOST:$EXTERNAL_PORT");
     }
 
-    public static String[] argsBuilder(String... args) {
+    private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
                 "--username", "xenon",
@@ -57,7 +55,7 @@ public class GridEngineTest {
     }
     
     @Test
-    public void queues() throws IOException, XenonException, ArgumentParserException {
+    public void queues() throws XenonException {
         String[] args= argsBuilder(
                 "queues"
         );
@@ -68,7 +66,7 @@ public class GridEngineTest {
     }
 
     @Test
-    public void list_nojobs_emptylist() throws IOException, XenonException, ArgumentParserException {
+    public void list_nojobs_emptylist() throws XenonException {
         String[] args= argsBuilder(
                 "list"
         );
@@ -79,7 +77,7 @@ public class GridEngineTest {
     }
 
     @Test(expected = XenonException.class)
-    public void remove_nojobs_throwsException() throws IOException, XenonException, ArgumentParserException {
+    public void remove_nojobs_throwsException() throws XenonException {
         String[] args= argsBuilder(
                 "remove",
                 "1234"
@@ -88,7 +86,7 @@ public class GridEngineTest {
     }
 
     @Test
-    public void submit() throws IOException, XenonException, ArgumentParserException {
+    public void submit() throws XenonException {
         String[] args= argsBuilder(
                 "submit",
                 "--stdout", "stdout1.txt",

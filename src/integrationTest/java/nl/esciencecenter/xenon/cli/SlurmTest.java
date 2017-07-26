@@ -1,50 +1,47 @@
 package nl.esciencecenter.xenon.cli;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
 
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.connection.DockerPort;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
 public class SlurmTest {
+    private static final String ADAPTOR_NAME = "slurm";
     @ClassRule
-    public static DockerComposeRule docker = DockerComposeRule.builder()
+    public static final DockerComposeRule docker = DockerComposeRule.builder()
         .file("src/integrationTest/resources/slurm-docker-compose.yml")
         .saveLogsTo("build/dockerLogs/SlurmTest")
-        .waitingForService("slurm", HealthChecks.toHaveAllPortsOpen())
+        .waitingForService(ADAPTOR_NAME, HealthChecks.toHaveAllPortsOpen())
         .build();
 
     @Rule
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
     private Main main;
 
-    public static String getLocation() {
-        DockerPort slurm = docker.containers().container("slurm").port(22);
+    private static String getLocation() {
+        DockerPort slurm = docker.containers().container(ADAPTOR_NAME).port(22);
         return slurm.inFormat("$HOST:$EXTERNAL_PORT");
     }
 
-    public static String[] argsBuilder(String... args) {
+    private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
             "--username", "xenon",
             "--password", "javagat",
-            "slurm",
+            ADAPTOR_NAME,
             "--location", location,
             "--prop", "xenon.adaptors.slurm.ignore.version=true"
         };
@@ -57,19 +54,7 @@ public class SlurmTest {
     }
 
     @Test
-    public void list_nojobs_emptylist() throws IOException, XenonException, ArgumentParserException {
-        String[] args= argsBuilder(
-                "list"
-        );
-        ListJobsOutput output = (ListJobsOutput) main.run(args);
-
-        ListJobsOutput expected = new ListJobsOutput(getLocation(), null, new ArrayList<>());
-        assertEquals(expected, output);
-    }
-
-    @Ignore("Sometimes works, but if not gives XenonException: slurm adaptor: Failed to submit interactive job. Interactive job status is DONE exit code = 0")
-    @Test
-    public void exec() throws IOException, XenonException, ArgumentParserException {
+    public void exec() throws XenonException {
         String[] args= argsBuilder(
             "exec",
             "/bin/echo",
@@ -80,11 +65,12 @@ public class SlurmTest {
         );
         main.run(args);
 
-        assertEquals("Hello World!", systemOutRule.getLog());
+        String expected = "Hello World!";
+        assertTrue("Stdout contains string", systemOutRule.getLog().contains(expected));
     }
 
     @Test
-    public void queues() throws IOException, XenonException, ArgumentParserException {
+    public void queues() throws XenonException {
         String[] args= argsBuilder("queues");
         QueuesOutput result = (QueuesOutput) main.run(args);
 

@@ -1,30 +1,30 @@
 package nl.esciencecenter.xenon.cli;
 
 
-import com.github.geowarin.junit.DockerRule;
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.credentials.PasswordCredential;
-import nl.esciencecenter.xenon.filesystems.FileSystem;
-import nl.esciencecenter.xenon.filesystems.Path;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertTrue;
+import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.credentials.Credential;
+import nl.esciencecenter.xenon.credentials.PasswordCredential;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.filesystems.Path;
+
+import com.github.geowarin.junit.DockerRule;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class SftpTest {
-    public static String PORT = "22/tcp";
+    private static final String PORT = "22/tcp";
 
     @ClassRule
-    public static DockerRule server = DockerRule.builder()
+    public static final DockerRule server = DockerRule.builder()
             .image("nlesc/xenon-ssh")
             .ports("22")
             .waitForPort(PORT)
@@ -33,11 +33,11 @@ public class SftpTest {
     @Rule
     public TemporaryFolder myfolder = new TemporaryFolder();
 
-    public static String getLocation() {
+    private static String getLocation() {
         return server.getDockerHost() + ":" + server.getHostPort(PORT);
     }
 
-    public static String[] argsBuilder(String... args) {
+    private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
                 "--username", "xenon",
@@ -49,7 +49,7 @@ public class SftpTest {
     }
 
     @Test
-    public void upload() throws IOException, XenonException, ArgumentParserException {
+    public void upload() throws IOException, XenonException {
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
 
@@ -70,7 +70,7 @@ public class SftpTest {
     }
 
     @Test
-    public void download() throws XenonException, ArgumentParserException {
+    public void download() throws XenonException {
         String sourcePath = "/home/xenon/filesystem-test-fixture/links/file0";
         File targetFile = new File(myfolder.getRoot(), "target.txt");
         String[] args = argsBuilder("download", sourcePath, targetFile.getAbsolutePath());
