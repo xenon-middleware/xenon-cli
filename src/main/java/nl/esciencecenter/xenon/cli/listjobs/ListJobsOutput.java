@@ -9,7 +9,7 @@ import java.util.Objects;
 public class ListJobsOutput {
     private final String location;
     private final String queue;
-    private final List<String> jobs;
+    public final List<String> jobs;
 
     ListJobsOutput(String location, String queue, List<String> jobIdentifiers) {
         this.location = location;
