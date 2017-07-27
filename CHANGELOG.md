@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+* Subcommands
+** mkdir
+** rename
 * Status details to jobs list
 * --verbose and --stacktrace arguments
 * In `xenon --help`, added type column to list of adaptors

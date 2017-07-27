@@ -210,7 +210,6 @@ public class FileTest {
         String[] args = {"file", "list", path};
         Main main = new Main();
         main.run(args);
-
     }
 
     @Test
@@ -250,6 +249,74 @@ public class FileTest {
 
         String[] args = {"--stacktrace", "file", "list", file1.getAbsolutePath()};
         Main main = new Main();
+        main.run(args);
+    }
+
+    @Test
+    public void createDirectory_noParent() throws IOException {
+        File dir = myfolder.getRoot().toPath().resolve("somedir").toFile();
+        String[] args = {"file", "mkdir", dir.getAbsolutePath()};
+        Main main = new Main();
+
+        main.run(args);
+
+        assertTrue("somedir dir created", dir.isDirectory());
+    }
+
+    @Test
+    public void createDirectory_withParent() throws IOException {
+        File dir = myfolder.getRoot().toPath().resolve("somedir").toFile();
+        String[] args = {"file", "mkdir", "--parents", dir.getAbsolutePath()};
+        Main main = new Main();
+
+        main.run(args);
+
+        assertTrue("somedir dir exists", dir.isDirectory());
+    }
+
+    @Test
+    public void createDirectory_withoutParent_NoSuchPathException() throws IOException {
+        exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String log = systemErrRule.getLog();
+            assertTrue("NoSuchPathException message", log.contains("file adaptor: Path does not exist:"));
+            assertTrue("Parent dir", log.contains("somedir"));
+        });
+        File dir = myfolder.getRoot().toPath().resolve("somedir").resolve("otherdir").toFile();
+        String[] args = {"file", "mkdir", dir.getAbsolutePath()};
+        Main main = new Main();
+
+        main.run(args);
+    }
+
+    @Test
+    public void rename_file() throws IOException {
+        File source = myfolder.newFile("file1");
+        source.createNewFile();
+        File target = myfolder.getRoot().toPath().resolve("file2").toFile();
+
+        String[] args = {"file", "rename", source.getAbsolutePath(), target.getAbsolutePath()};
+        Main main = new Main();
+
+        main.run(args);
+
+        assertTrue("Target exists", target.isFile());
+    }
+
+    @Test
+    public void rename_targetAlreadyExists_PathAlreadyExistsException() throws IOException {
+        exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String log = systemErrRule.getLog();
+            assertTrue("PathAlreadyExistsException message", log.contains("file adaptor: Path already exists:"));
+            assertTrue("Target", log.contains("file2"));
+        });
+        File source = myfolder.newFile("file1");
+        File target = myfolder.newFile("file2");
+
+        String[] args = {"file", "rename", source.getAbsolutePath(), target.getAbsolutePath()};
+        Main main = new Main();
+
         main.run(args);
     }
 

@@ -19,12 +19,14 @@ import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.copy.CopyParser;
 import nl.esciencecenter.xenon.cli.copy.DownloadParser;
 import nl.esciencecenter.xenon.cli.copy.UploadParser;
+import nl.esciencecenter.xenon.cli.createdir.CreateDirectoryParser;
 import nl.esciencecenter.xenon.cli.exec.ExecParser;
 import nl.esciencecenter.xenon.cli.listfiles.ListFilesParser;
 import nl.esciencecenter.xenon.cli.listjobs.ListJobsParser;
 import nl.esciencecenter.xenon.cli.queues.QueuesParser;
 import nl.esciencecenter.xenon.cli.removefile.RemoveFileParser;
 import nl.esciencecenter.xenon.cli.removejob.RemoveJobParser;
+import nl.esciencecenter.xenon.cli.rename.RenameParser;
 import nl.esciencecenter.xenon.cli.submit.SubmitParser;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
@@ -199,8 +201,12 @@ public class Main {
         }
         // list
         new ListFilesParser().buildArgumentParser(commandsParser);
+        // createdir
+        new CreateDirectoryParser().buildArgumentParser(commandsParser);
         // remove
         new RemoveFileParser().buildArgumentParser(commandsParser);
+        // rename
+        new RenameParser().buildArgumentParser(commandsParser);
     }
 
     private Subparser addSubCommandAdaptor(Subparsers subparsers, AdaptorDescription adaptorDescription) {
