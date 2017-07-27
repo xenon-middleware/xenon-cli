@@ -1,14 +1,14 @@
 package nl.esciencecenter.xenon.cli.listjobs;
 
-import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
 import static nl.esciencecenter.xenon.cli.Utils.createScheduler;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.XenonCommand;
-import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.schedulers.JobStatus;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 
@@ -28,10 +28,11 @@ public class ListJobsCommand extends XenonCommand {
             if (queues == null) {
                 queues = new ArrayList<>();
             }
-            identifiers = Arrays.asList(scheduler.getJobs(queues.toArray(new String[0])));
+            // TODO getJobs sometimes returns empty strings, they are filtered out, but should be fixed in Xenon
+            identifiers = Arrays.stream(scheduler.getJobs(queues.toArray(new String[0]))).filter(c -> !"".equals(c)).collect(Collectors.toList());
         }
 
-        JobStatus[] statuses = scheduler.getJobStatuses(identifiers.toArray(new String[0]));
+        List<JobStatus> statuses = Arrays.asList(scheduler.getJobStatuses(identifiers.toArray(new String[0])));
 
         scheduler.close();
 

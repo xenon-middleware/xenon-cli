@@ -1,26 +1,47 @@
 package nl.esciencecenter.xenon.cli.listjobs;
 
-import nl.esciencecenter.xenon.schedulers.JobStatus;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+
+import nl.esciencecenter.xenon.schedulers.JobStatus;
 
 /**
  * Listing of jobs
  */
 public class ListJobsOutput {
-    public final JobStatus[] statuses;
+    public final List<JobStatus> statuses;
 
 
-    public ListJobsOutput(JobStatus[] statuses) {
+    public ListJobsOutput(List<JobStatus> statuses) {
         this.statuses = statuses;
     }
 
     @Override
     public String toString() {
-        String sep = System.getProperty("line.separator");
-        return String.join(sep, Arrays.stream(statuses).toString()) + sep;
+        StringBuilder sb = new StringBuilder();
+        String sep = "\t";
+        String lsep = System.getProperty("line.separator");
+        sb.append(String.join(
+            sep,
+            "Job identifier",
+            "State", "Running",
+            "Done", "Error",
+            "Exit code",
+            "Information"
+        )).append(lsep);
+        for (JobStatus status: statuses) {
+            sb.append(String.join(
+                sep,
+                status.getJobIdentifier(),
+                status.getState(),
+                String.valueOf(status.isRunning()),
+                String.valueOf(status.isDone()),
+                status.hasException() ? status.getException().getMessage() : "",
+                status.getExitCode() != null ? status.getExitCode().toString() : "",
+                status.getSchedulerSpecficInformation() != null ? status.getSchedulerSpecficInformation().toString() : ""
+            )).append(lsep);
+        }
+        return sb.toString();
     }
 
     @Override
@@ -37,6 +58,6 @@ public class ListJobsOutput {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.asList(statuses));
+        return Objects.hash(statuses);
     }
 }
