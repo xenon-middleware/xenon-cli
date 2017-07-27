@@ -3,8 +3,13 @@ package nl.esciencecenter.xenon.cli;
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.connection.DockerPort;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
+import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
+import nl.esciencecenter.xenon.cli.removejob.RemoveJobOutput;
+import nl.esciencecenter.xenon.cli.submit.SubmitOutput;
+import nl.esciencecenter.xenon.credentials.PasswordCredential;
+import nl.esciencecenter.xenon.schedulers.Scheduler;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -12,19 +17,22 @@ import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class SlurmTest {
     private static final String ADAPTOR_NAME = "slurm";
     @ClassRule
     public static final DockerComposeRule docker = DockerComposeRule.builder()
-        .file("src/integrationTest/resources/slurm-docker-compose.yml")
-        .saveLogsTo("build/dockerLogs/SlurmTest")
-        .waitingForService(ADAPTOR_NAME, HealthChecks.toHaveAllPortsOpen())
-        .build();
+            .file("src/integrationTest/resources/slurm-docker-compose.yml")
+            .saveLogsTo("build/dockerLogs/SlurmTest")
+            .waitingForService(ADAPTOR_NAME, HealthChecks.toHaveAllPortsOpen())
+            .build();
 
     @Rule
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
@@ -38,11 +46,11 @@ public class SlurmTest {
     private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
-            "--username", "xenon",
-            "--password", "javagat",
-            ADAPTOR_NAME,
-            "--location", location,
-            "--prop", "xenon.adaptors.slurm.ignore.version=true"
+                "--username", "xenon",
+                "--password", "javagat",
+                ADAPTOR_NAME,
+                "--location", location,
+                "--prop", "xenon.adaptors.slurm.ignore.version=true"
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }
@@ -53,19 +61,27 @@ public class SlurmTest {
     }
 
     @Test
-    public void exec_stdout() {
-        String[] args = argsBuilder(
-            "exec",
-            "/bin/echo",
-            "--",
-            "-n",
-            "Hello",
-            "World!"
+    public void submitListRemoveList() throws XenonException {
+        String[] submitArgs = argsBuilder(
+                "submit",
+                "/bin/sleep",
+                "120"
         );
-        main.run(args);
+        SubmitOutput submitOutput = (SubmitOutput) main.run(submitArgs);
 
-        String expected = "Hello World!";
-        assertTrue("Stdout contains string", systemOutRule.getLog().contains(expected));
+        String[] listArgs = argsBuilder("list");
+        ListJobsOutput listOutput = (ListJobsOutput) main.run(listArgs);
+        assertTrue("List contains running job", listOutput.jobs.contains(submitOutput.jobId));
+
+        String[] removeArgs = argsBuilder(
+                "remove",
+                submitOutput.jobId
+        );
+        main.run(removeArgs);
+
+        String[] listArgs2 = argsBuilder("list");
+        ListJobsOutput listOutput2 = (ListJobsOutput) main.run(listArgs2);
+        assertFalse("List does not contains cancelled job", listOutput2.jobs.contains(submitOutput.jobId));
     }
 
     @Test
