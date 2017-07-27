@@ -44,7 +44,7 @@ public class ListFilesOutput {
     @Override
     public String toString() {
         String sep = System.getProperty("line.separator");
-        return String.join(sep, objects) + sep;
+        return String.join(sep, objects);
     }
 
     @Override
