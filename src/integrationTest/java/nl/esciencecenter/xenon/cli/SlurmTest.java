@@ -1,5 +1,7 @@
 package nl.esciencecenter.xenon.cli;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.connection.DockerPort;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
@@ -71,7 +73,11 @@ public class SlurmTest {
 
         String[] listArgs = argsBuilder("list");
         ListJobsOutput listOutput = (ListJobsOutput) main.run(listArgs);
-        assertTrue("List contains running job", listOutput.jobs.contains(submitOutput.jobId));
+        Gson gson = new GsonBuilder().create();
+        String result = gson.toJson(listOutput);
+        assertEquals("", result);
+
+//        assertTrue("List contains running job", listOutput.jobs.contains(submitOutput.jobId));
 
         String[] removeArgs = argsBuilder(
                 "remove",
@@ -81,7 +87,7 @@ public class SlurmTest {
 
         String[] listArgs2 = argsBuilder("list");
         ListJobsOutput listOutput2 = (ListJobsOutput) main.run(listArgs2);
-        assertFalse("List does not contains cancelled job", listOutput2.jobs.contains(submitOutput.jobId));
+//        assertFalse("List does not contains cancelled job", listOutput2.jobs.contains(submitOutput.jobId));
     }
 
     @Test

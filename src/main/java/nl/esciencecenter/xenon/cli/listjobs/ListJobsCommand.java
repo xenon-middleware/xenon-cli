@@ -4,13 +4,12 @@ import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
 import static nl.esciencecenter.xenon.cli.Utils.createScheduler;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
+import nl.esciencecenter.xenon.schedulers.JobStatus;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -22,17 +21,20 @@ public class ListJobsCommand extends XenonCommand {
     @Override
     public ListJobsOutput run(Namespace res) throws XenonException {
         Scheduler scheduler = createScheduler(res);
-        String queue = res.getString("queue");
+        List<String> queues = res.getList("queue");
+        List<String> identifiers = res.getList("identifier");
 
-        String[] jobIdentifiers;
-        if (queue == null) {
-            jobIdentifiers = scheduler.getJobs();
-        } else {
-            jobIdentifiers = scheduler.getJobs(queue);
+        if (identifiers == null) {
+            if (queues == null) {
+                queues = new ArrayList<>();
+            }
+            identifiers = Arrays.asList(scheduler.getJobs(queues.toArray(new String[0])));
         }
+
+        JobStatus[] statuses = scheduler.getJobStatuses(identifiers.toArray(new String[0]));
 
         scheduler.close();
 
-        return new ListJobsOutput(scheduler.getLocation(), queue, Arrays.asList(jobIdentifiers));
+        return new ListJobsOutput(statuses);
     }
 }

@@ -1,5 +1,8 @@
 package nl.esciencecenter.xenon.cli.listjobs;
 
+import nl.esciencecenter.xenon.schedulers.JobStatus;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -7,38 +10,33 @@ import java.util.Objects;
  * Listing of jobs
  */
 public class ListJobsOutput {
-    private final String location;
-    private final String queue;
-    private final List<String> jobs;
+    public final JobStatus[] statuses;
 
-    ListJobsOutput(String location, String queue, List<String> jobIdentifiers) {
-        this.location = location;
-        this.queue = queue;
-        this.jobs = jobIdentifiers;
+
+    public ListJobsOutput(JobStatus[] statuses) {
+        this.statuses = statuses;
     }
 
     @Override
     public String toString() {
         String sep = System.getProperty("line.separator");
-        return String.join(sep, jobs) + sep;
+        return String.join(sep, Arrays.stream(statuses).toString()) + sep;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }    
+        }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
         ListJobsOutput that = (ListJobsOutput) o;
-        return Objects.equals(location, that.location) &&
-                Objects.equals(queue, that.queue) &&
-                Objects.equals(jobs, that.jobs);
+        return Objects.equals(statuses, that.statuses);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(location, queue, jobs);
+        return Objects.hash(Arrays.asList(statuses));
     }
 }
