@@ -52,6 +52,10 @@ public class CopyCommand extends XenonCommand {
         } else {
             bytesCopied = copy(sourcePath, sourceFS, targetPath, targetFS, recursive, copymode).bytesCopied();
         }
+
+        sourceFS.close();
+        targetFS.close();
+
         return new CopyOutput(source, target, bytesCopied);
     }
 
@@ -91,7 +95,6 @@ public class CopyCommand extends XenonCommand {
             throw new XenonRuntimeException("file", e.getMessage(), e);
         }
     }
-
 
     @Override
     public CopyOutput run(Namespace res) throws XenonException {
