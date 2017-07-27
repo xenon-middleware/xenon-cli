@@ -1,29 +1,25 @@
 package nl.esciencecenter.xenon.cli;
 
-import com.palantir.docker.compose.DockerComposeRule;
-import com.palantir.docker.compose.connection.DockerPort;
-import com.palantir.docker.compose.connection.waiting.HealthChecks;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
-import nl.esciencecenter.xenon.cli.removejob.RemoveJobOutput;
 import nl.esciencecenter.xenon.cli.submit.SubmitOutput;
-import nl.esciencecenter.xenon.credentials.PasswordCredential;
-import nl.esciencecenter.xenon.schedulers.Scheduler;
+
+import com.palantir.docker.compose.DockerComposeRule;
+import com.palantir.docker.compose.connection.DockerPort;
+import com.palantir.docker.compose.connection.waiting.HealthChecks;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class SlurmTest {
     private static final String ADAPTOR_NAME = "slurm";
@@ -68,20 +64,18 @@ public class SlurmTest {
                 "120"
         );
         SubmitOutput submitOutput = (SubmitOutput) main.run(submitArgs);
+        assertNotNull("Job id is filled", submitOutput.jobId);
 
         String[] listArgs = argsBuilder("list");
         ListJobsOutput listOutput = (ListJobsOutput) main.run(listArgs);
-        assertTrue("List contains running job", listOutput.jobs.contains(submitOutput.jobId));
+        boolean containsId = listOutput.statuses.stream().anyMatch(c -> submitOutput.jobId.equals(c.getJobIdentifier()));
+        assertTrue("List contains running job", containsId);
 
         String[] removeArgs = argsBuilder(
                 "remove",
                 submitOutput.jobId
         );
         main.run(removeArgs);
-
-        String[] listArgs2 = argsBuilder("list");
-        ListJobsOutput listOutput2 = (ListJobsOutput) main.run(listArgs2);
-        assertFalse("List does not contains cancelled job", listOutput2.jobs.contains(submitOutput.jobId));
     }
 
     @Test
@@ -99,7 +93,8 @@ public class SlurmTest {
         ListJobsOutput jobs = (ListJobsOutput) main.run(args);
 
         String result = jobs.toString();
-        String expected = "\n";
+        String sep = System.getProperty("line.separator");
+        String expected = "Job identifier\tState\tRunning\tDone\tError\tExit code\tInformation" + sep;
         assertEquals(expected, result);
     }
 
@@ -109,7 +104,8 @@ public class SlurmTest {
         ListJobsOutput jobs = (ListJobsOutput) main.run(args);
 
         String result = jobs.toString();
-        String expected = "\n";
+        String sep = System.getProperty("line.separator");
+        String expected = "Job identifier\tState\tRunning\tDone\tError\tExit code\tInformation" + sep;
         assertEquals(expected, result);
     }
 }

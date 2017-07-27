@@ -1,5 +1,6 @@
 package nl.esciencecenter.xenon.cli.listjobs;
 
+import net.sourceforge.argparse4j.impl.Arguments;
 import nl.esciencecenter.xenon.cli.IParser;
 
 import net.sourceforge.argparse4j.inf.Subparser;
@@ -12,7 +13,8 @@ public class ListJobsParser implements IParser {
             .setDefault("command", new ListJobsCommand())
             .help("List jobs of scheduler")
             .description("List jobs of scheduler");
-        subparser.addArgument("--queue").help("Only list jobs belonging to this queue");
+        subparser.addArgument("--queue").help("Only list jobs belonging to this queue").action(Arguments.append());
+        subparser.addArgument("--identifier").help("Only list jobs with this identifier").action(Arguments.append());
         return subparser;
     }
 }
