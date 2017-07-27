@@ -182,9 +182,9 @@ public class Main {
             new ListJobsParser().buildArgumentParser(commandsParser);
             // remove
             new RemoveJobParser().buildArgumentParser(commandsParser);
-            // queues
-            new QueuesParser().buildArgumentParser(commandsParser);
         }
+        // queues
+        new QueuesParser().buildArgumentParser(commandsParser);
     }
 
     private void filesystemSubCommands(FileSystemAdaptorDescription adaptorDescription, String supportedLocationHelp, Subparsers commandsParser) {
