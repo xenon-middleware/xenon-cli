@@ -3,6 +3,7 @@ package nl.esciencecenter.xenon.cli.listfiles;
 import nl.esciencecenter.xenon.filesystems.Path;
 import nl.esciencecenter.xenon.filesystems.PathAttributes;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -12,7 +13,7 @@ public class ListFilesLongOutput {
     public final List<LongListItem> files;
 
     ListFilesLongOutput(Path start, Stream<PathAttributes> stream) {
-        this.files = stream.map(o -> new LongListItem(o, start)).collect(Collectors.toList());
+        this.files = stream.map(o -> new LongListItem(o, start)).sorted(Comparator.comparing(d -> d.relativePath)).collect(Collectors.toList());
     }
 
     @Override

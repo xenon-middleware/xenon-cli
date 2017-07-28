@@ -9,7 +9,8 @@ import net.sourceforge.argparse4j.inf.Subparsers;
 public class ListFilesParser implements IParser {
     public Subparser buildArgumentParser(Subparsers subparsers) {
         String sep = System.getProperty("line.separator");
-        String epilog = "Listing format by default is one file/directory per line." + sep +
+        String epilog = "Listing is sorted lexicographically." + sep +
+                "Listing format by default is one file/directory per line." + sep +
                 sep +
                 "The `--long` format is tab separated, includes a header and contains the following columns:" + sep +
                 "* Type, can be '-' for regular file, 'd' for directory, 'l' for symbolic link, 'o' for other" + sep +

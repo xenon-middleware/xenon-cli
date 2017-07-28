@@ -15,7 +15,7 @@ public class ListFilesOutput {
     private final List<String> files;
 
     public ListFilesOutput(Path start, Stream<PathAttributes> stream) {
-        files = stream.map(item -> start.relativize(item.getPath()).getRelativePath()).collect(Collectors.toList());
+        files = stream.map(item -> start.relativize(item.getPath()).getRelativePath()).sorted().collect(Collectors.toList());
     }
 
     @Override

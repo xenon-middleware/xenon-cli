@@ -68,18 +68,28 @@ public class ListTest {
 
     @Test
     public void list_showHidden() {
-        runFileList("dir3\nfile1\n.hidden2\n.hidden6\n", "--hidden", start);
+        runFileList(".hidden2\n.hidden6\ndir3\nfile1\n", "--hidden", start);
     }
 
     @Test
     public void list_recursive() {
-        runFileList("dir3\nfile1\ndir3/file4\ndir3/dir7\n", "--recursive", start);
+        runFileList("dir3\n" +
+                "dir3/dir7\n" +
+                "dir3/file4\n" +
+                "file1\n", "--recursive", start);
     }
 
     @Test
     public void list_recursiveAndShowHidden() {
-        String expected = "dir3\nfile1\n.hidden2\n.hidden6\ndir3/file4\ndir3/dir7\ndir3/.file5\n.hidden6/file4" +
-                "\n.hidden6/.file5\n";
+        String expected = ".hidden2\n" +
+                ".hidden6\n" +
+                ".hidden6/.file5\n" +
+                ".hidden6/file4\n" +
+                "dir3\n" +
+                "dir3/.file5\n" +
+                "dir3/dir7\n" +
+                "dir3/file4\n" +
+                "file1\n";
         runFileList(expected, "--recursive", "--hidden", start);
     }
 
