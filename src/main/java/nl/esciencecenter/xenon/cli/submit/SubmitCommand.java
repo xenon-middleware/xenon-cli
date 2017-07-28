@@ -1,20 +1,13 @@
 package nl.esciencecenter.xenon.cli.submit;
 
-import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
-import static nl.esciencecenter.xenon.cli.Utils.createScheduler;
-import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
-
-import java.util.Map;
-import java.util.Set;
-
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.XenonCommand;
-import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 
-import net.sourceforge.argparse4j.inf.Namespace;
+import static nl.esciencecenter.xenon.cli.Utils.createScheduler;
+import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
 
 /**
  * Command to submit job to scheduler

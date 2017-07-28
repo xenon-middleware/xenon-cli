@@ -70,23 +70,23 @@ public class LongListItem {
     }
 
     private Set<PosixFilePermission> buildPermissions(PathAttributes attribs) {
-        Set<PosixFilePermission> permissions = new HashSet<>();
+        Set<PosixFilePermission> newPermissions = new HashSet<>();
         try {
             if (attribs.getPermissions() != null) {
-                permissions = attribs.getPermissions();
+                newPermissions = attribs.getPermissions();
             }
         } catch (AttributeNotSupportedException e) {
             if (attribs.isExecutable()) {
-                permissions.add(PosixFilePermission.OTHERS_EXECUTE);
+                newPermissions.add(PosixFilePermission.OTHERS_EXECUTE);
             }
             if (attribs.isReadable()) {
-                permissions.add(PosixFilePermission.OTHERS_READ);
+                newPermissions.add(PosixFilePermission.OTHERS_READ);
             }
             if (attribs.isWritable()) {
-                permissions.add(PosixFilePermission.OTHERS_WRITE);
+                newPermissions.add(PosixFilePermission.OTHERS_WRITE);
             }
         }
-        return permissions;
+        return newPermissions;
     }
 
     public String toString() {

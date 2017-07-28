@@ -1,26 +1,18 @@
 package nl.esciencecenter.xenon.cli.exec;
 
-import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
-import static nl.esciencecenter.xenon.cli.Utils.createScheduler;
-import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
-import static nl.esciencecenter.xenon.cli.Utils.pipe;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
-
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.utils.StreamForwarder;
 import nl.esciencecenter.xenon.cli.XenonCommand;
-import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 import nl.esciencecenter.xenon.schedulers.Streams;
-
-import net.sourceforge.argparse4j.inf.Namespace;
+import nl.esciencecenter.xenon.utils.StreamForwarder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
+import static nl.esciencecenter.xenon.cli.Utils.*;
 
 /**
  * Command to execute job in the foreground
