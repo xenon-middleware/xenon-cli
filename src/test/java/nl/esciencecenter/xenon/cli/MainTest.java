@@ -1,34 +1,19 @@
 package nl.esciencecenter.xenon.cli;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
-
-import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
-import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
+
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 public class MainTest {
     @Rule
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
-
-    @Rule
-    public final SystemErrRule systemErrRule = new SystemErrRule().enableLog();
-
-    @Rule
-    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
     public void buildXenonProperties() throws Exception {
@@ -45,17 +30,6 @@ public class MainTest {
         assertEquals(expected, result);
     }
 
-    @Test
-    public void mainRootHelp() throws XenonException {
-        exit.expectSystemExitWithStatus(2);
-        exit.checkAssertionAfterwards(() -> {
-            assertTrue("System out starts with 'usage: xenon'", systemOutRule.getLog().startsWith("usage: xenon"));
-        });
-
-        String[] args = {"--help"};
-        Main main = new Main();
-        main.run(args);
-    }
 
     @Test
     public void print_defaultFormat() throws XenonException {
@@ -85,18 +59,5 @@ public class MainTest {
             "  ]\n" +
             "}";
         assertEquals(expected, stdout);
-    }
-
-    @Test
-    public void run_argumentparserexception_usageinstdout() throws XenonException {
-        exit.expectSystemExitWithStatus(2);
-        exit.checkAssertionAfterwards(() -> {
-            String expected = "error: invalid choice: 'badadaptorname'";
-            assertTrue("Stderr contains: " + expected, systemErrRule.getLog().contains(expected));
-        });
-        Main main = new Main();
-
-        String[] badCommands = new String[]{"badadaptorname"};
-        main.run(badCommands);
     }
 }
