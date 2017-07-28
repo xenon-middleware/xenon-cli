@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ** mkdir
 ** rename
 * Status details to jobs list
+* --long format for files list (#16)
 * --verbose and --stacktrace arguments
 * In `xenon --help`, added type column to list of adaptors
 
