@@ -45,8 +45,7 @@ public class SlurmTest {
                 "--username", "xenon",
                 "--password", "javagat",
                 ADAPTOR_NAME,
-                "--location", location,
-                "--prop", "xenon.adaptors.slurm.ignore.version=true"
+                "--location", location
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }
