@@ -30,8 +30,7 @@ public class CopyParser implements IParser {
         }
         Argument targetPath = subparser.addArgument("target-path").required(true);
         if (isLocal) {
-            targetPath.help("Target path, use '-' for stdout")
-                .type(Arguments.fileType().acceptSystemIn().verifyCanWriteParent());
+            targetPath.help("Target path, use '-' for stdout");
         } else {
             targetPath.help("Target path");
         }
