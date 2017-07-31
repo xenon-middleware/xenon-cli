@@ -12,8 +12,7 @@ hints:
   dockerImageId: nlesc/xenon-cli
 baseCommand: xenon
 arguments:
-- prefix: --format
-  valueFrom: cwljson
+- prefix: --json
   position: 0
 - valueFrom: list
   position: 3
