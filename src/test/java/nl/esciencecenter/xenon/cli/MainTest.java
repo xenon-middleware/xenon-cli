@@ -1,15 +1,21 @@
 package nl.esciencecenter.xenon.cli;
 
-import net.sourceforge.argparse4j.inf.Namespace;
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
+
+import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
-
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
 
 public class MainTest {
     @Rule
@@ -36,7 +42,7 @@ public class MainTest {
         QueuesOutput queues = new QueuesOutput(new String[]{"quick", "default"}, "default");
         Main main = new Main();
 
-        main.print(queues, "default");
+        main.print(queues, false);
 
         String stdout = systemOutRule.getLogWithNormalizedLineSeparator();
         String expected = "Available queues: quick, default\nDefault queue: default\n";
@@ -44,11 +50,11 @@ public class MainTest {
     }
 
     @Test
-    public void print_cwljsonFormat() throws XenonException {
+    public void print_jsonFormat() throws XenonException {
         QueuesOutput queues = new QueuesOutput(new String[]{"quick", "default"}, "default");
         Main main = new Main();
 
-        main.print(queues, "cwljson");
+        main.print(queues, true);
 
         String stdout = systemOutRule.getLogWithNormalizedLineSeparator();
         String expected = "{\n" +

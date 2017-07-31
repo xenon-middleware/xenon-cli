@@ -124,12 +124,12 @@ public class Main {
     }
 
     private void print(Object output) {
-        String format = res.getString("format");
-        print(output, format);
+        Boolean jsonFormat = res.getBoolean("json");
+        print(output, jsonFormat);
     }
 
-    void print(Object output, String format) {
-        if ("cwljson".equals(format)) {
+    void print(Object output, Boolean jsonFormat) {
+        if (jsonFormat) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             System.out.print(gson.toJson(output));
         } else if (output != null) {
@@ -143,7 +143,7 @@ public class Main {
                 .description("Operations on filesystems and schedulers with Xenon")
                 .version(PROGRAM_VERSION);
         newParser.addArgument("--version").action(Arguments.version());
-        newParser.addArgument("--format").choices("cwljson").help("Output in JSON format");
+        newParser.addArgument("--json").help("Output in JSON format").action(Arguments.storeTrue());
         newParser.addArgument("--stacktrace").help("Print out the stacktrace for all exceptions").action(Arguments.storeTrue());
         newParser.addArgument("--verbose", "-v").help("Repeat for more verbose logging").action(Arguments.count());
         addAdaptorSubParsers(newParser);

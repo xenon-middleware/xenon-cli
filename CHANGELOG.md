@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * Subcommands
-** mkdir
-** rename
+  * mkdir
+  * rename
 * Status details to jobs list
 * --long format for files list (#16)
 * --verbose and --stacktrace arguments
@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * Upgraded to Xenon 2.0.0
+* Renamed `--format cwljson` argument to `--json`
 
 ## [1.0.3] - 2017-07-20
 

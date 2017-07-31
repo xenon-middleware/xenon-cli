@@ -1,24 +1,25 @@
 package nl.esciencecenter.xenon.cli.file;
 
-import com.google.gson.Gson;
-import nl.esciencecenter.xenon.adaptors.filesystems.PathAttributesImplementation;
-import nl.esciencecenter.xenon.cli.listfiles.ListFilesLongOutput;
-import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
-import nl.esciencecenter.xenon.cli.listfiles.LongListItem;
-import nl.esciencecenter.xenon.filesystems.Path;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.contrib.java.lang.system.SystemOutRule;
-import org.junit.rules.TemporaryFolder;
+import static nl.esciencecenter.xenon.cli.Main.main;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.stream.Stream;
 
-import static nl.esciencecenter.xenon.cli.Main.main;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import nl.esciencecenter.xenon.adaptors.filesystems.PathAttributesImplementation;
+import nl.esciencecenter.xenon.cli.listfiles.ListFilesLongOutput;
+import nl.esciencecenter.xenon.cli.listfiles.ListFilesOutput;
+import nl.esciencecenter.xenon.cli.listfiles.LongListItem;
+import nl.esciencecenter.xenon.filesystems.Path;
+
+import com.google.gson.Gson;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
+import org.junit.rules.TemporaryFolder;
 
 public class ListTest {
     @Rule
@@ -106,7 +107,7 @@ public class ListTest {
 
     @Test
     public void list_jsonFormat() {
-        String[] args = new String[] {"--format", "cwljson", "file", "list", start};
+        String[] args = new String[] {"--json", "file", "list", start};
 
         main(args);
 
@@ -125,7 +126,7 @@ public class ListTest {
 
     @Test
     public void list_jsonLongFormat() {
-        String[] args = new String[] {"--format", "cwljson", "file", "list", "--long", start};
+        String[] args = new String[] {"--json", "file", "list", "--long", start};
         main(args);
 
         // convert stdout to object via json deserialization
