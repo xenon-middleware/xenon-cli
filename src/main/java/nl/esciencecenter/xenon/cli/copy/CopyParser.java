@@ -20,7 +20,7 @@ public class CopyParser implements IParser {
         if (isLocal) {
             sourcePath
                 .help("Source path, use '-' for stdin")
-                .type(Arguments.fileType().acceptSystemIn().verifyCanRead());
+                .type(Arguments.fileType().acceptSystemIn());
         } else {
             sourcePath.help("Source path");
         }
