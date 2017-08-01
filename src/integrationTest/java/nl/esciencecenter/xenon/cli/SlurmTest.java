@@ -42,10 +42,10 @@ public class SlurmTest {
     private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
-                "--username", "xenon",
-                "--password", "javagat",
                 ADAPTOR_NAME,
-                "--location", location
+                "--location", location,
+                "--username", "xenon",
+                "--password", "javagat"
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }

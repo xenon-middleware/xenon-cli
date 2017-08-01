@@ -148,7 +148,6 @@ public class Main {
         newParser.addArgument("--stacktrace").help("Print out the stacktrace for all exceptions").action(Arguments.storeTrue());
         newParser.addArgument("--verbose", "-v").help("Repeat for more verbose logging").action(Arguments.count());
         addAdaptorSubParsers(newParser);
-        ParserHelpers.addCredentialArguments(newParser);
         return newParser;
     }
 
@@ -166,6 +165,7 @@ public class Main {
     private void adaptorSubCommands(Subparsers subparsers, AdaptorDescription adaptorDescription) {
         Subparser adaptorParser = addSubCommandAdaptor(subparsers, adaptorDescription);
         String supportedLocationHelp = addArgumentLocation(adaptorDescription, adaptorParser);
+        ParserHelpers.addCredentialArguments(adaptorParser);
         addArgumentProp(adaptorDescription, adaptorParser);
         Subparsers commandsParser = adaptorParser.addSubparsers().title("commands");
         if (adaptorDescription instanceof FileSystemAdaptorDescription) {

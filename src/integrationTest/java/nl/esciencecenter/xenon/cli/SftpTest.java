@@ -25,10 +25,10 @@ public class SftpTest {
 
     @ClassRule
     public static final DockerRule server = DockerRule.builder()
-            .image("nlesc/xenon-ssh")
-            .ports("22")
-            .waitForPort(PORT)
-            .build();
+        .image("nlesc/xenon-ssh")
+        .ports("22")
+        .waitForPort(PORT)
+        .build();
 
     @Rule
     public TemporaryFolder myfolder = new TemporaryFolder();
@@ -40,10 +40,10 @@ public class SftpTest {
     private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
-                "--username", "xenon",
-                "--password", "javagat",
-                "sftp",
-                "--location", location
+            "sftp",
+            "--location", location,
+            "--username", "xenon",
+            "--password", "javagat"
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }
@@ -54,10 +54,10 @@ public class SftpTest {
         sourceFile.createNewFile();
 
         String targetPath = "/tmp/target.txt";
-        String[] args= argsBuilder(
-                "upload",
-                sourceFile.getAbsolutePath(),
-                targetPath
+        String[] args = argsBuilder(
+            "upload",
+            sourceFile.getAbsolutePath(),
+            targetPath
         );
         Main main = new Main();
         main.run(args);
