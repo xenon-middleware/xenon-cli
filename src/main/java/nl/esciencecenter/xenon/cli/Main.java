@@ -1,5 +1,6 @@
 package nl.esciencecenter.xenon.cli;
 
+import static nl.esciencecenter.xenon.adaptors.shared.local.LocalUtil.isWindows;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
 import static nl.esciencecenter.xenon.cli.Utils.parseArgumentListAsMap;
 
@@ -129,10 +130,13 @@ public class Main {
     }
 
     void print(Object output, Boolean jsonFormat) {
+        if (output == null) {
+            return;
+        }
         if (jsonFormat) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             System.out.print(gson.toJson(output));
-        } else if (output != null) {
+        } else {
             System.out.println(output);
         }
     }
@@ -142,20 +146,28 @@ public class Main {
                 .defaultHelp(true)
                 .description("Operations on filesystems and schedulers with Xenon")
                 .version(PROGRAM_VERSION);
-        newParser.addArgument("--version").action(Arguments.version());
+        newParser.addArgument("--version").action(Arguments.version()).help("Prints version and exists");
         newParser.addArgument("--json").help("Output in JSON format").action(Arguments.storeTrue());
         newParser.addArgument("--stacktrace").help("Print out the stacktrace for all exceptions").action(Arguments.storeTrue());
         newParser.addArgument("--verbose", "-v").help("Repeat for more verbose logging").action(Arguments.count());
-        addAdaptorSubParsers(newParser);
-        ParserHelpers.addCredentialArguments(newParser);
+
+        Subparsers subparsers = newParser.addSubparsers();
+        String filesystemHelp = "Filesystem represent a (possibly remote) file system that can be used to access data.";
+        Subparser filesystemAdaptorParser = subparsers.addParser("filesystem")
+            .help(filesystemHelp).description(filesystemHelp);
+        addAdaptorSubParsers(filesystemAdaptorParser, FileSystem.getAdaptorDescriptions());
+        String schedulerHelp = "Scheduler represents a (possibly remote) scheduler that can be used to submit jobs and retrieve queue information.";
+        Subparser schedulerAdaptorParser = subparsers.addParser("scheduler")
+            .help(schedulerHelp).description(schedulerHelp);
+        addAdaptorSubParsers(schedulerAdaptorParser, Scheduler.getAdaptorDescriptions());
+
         return newParser;
     }
 
-    private void addAdaptorSubParsers(ArgumentParser parser) {
+    private void addAdaptorSubParsers(Subparser parser, AdaptorDescription[] adaptorDescriptionArray) {
         Subparsers subparsers = parser.addSubparsers().title("adaptor");
         List<AdaptorDescription> adaptorDescriptions = new ArrayList<>();
-        Collections.addAll(adaptorDescriptions, Scheduler.getAdaptorDescriptions());
-        Collections.addAll(adaptorDescriptions, FileSystem.getAdaptorDescriptions());
+        Collections.addAll(adaptorDescriptions, adaptorDescriptionArray);
         adaptorDescriptions.sort(Comparator.comparing(AdaptorDescription::getName));
         for (AdaptorDescription adaptorDescription : adaptorDescriptions) {
             adaptorSubCommands(subparsers, adaptorDescription);
@@ -165,6 +177,9 @@ public class Main {
     private void adaptorSubCommands(Subparsers subparsers, AdaptorDescription adaptorDescription) {
         Subparser adaptorParser = addSubCommandAdaptor(subparsers, adaptorDescription);
         String supportedLocationHelp = addArgumentLocation(adaptorDescription, adaptorParser);
+        if (!isLocalAdaptor(adaptorDescription)) {
+            ParserHelpers.addCredentialArguments(adaptorParser);
+        }
         addArgumentProp(adaptorDescription, adaptorParser);
         Subparsers commandsParser = adaptorParser.addSubparsers().title("commands");
         if (adaptorDescription instanceof FileSystemAdaptorDescription) {
@@ -191,7 +206,7 @@ public class Main {
 
     private void filesystemSubCommands(FileSystemAdaptorDescription adaptorDescription, String supportedLocationHelp, Subparsers commandsParser) {
         // copy
-        boolean isLocal = adaptorDescription.getName().equals("file");
+        boolean isLocal = isLocalAdaptor(adaptorDescription);
         new CopyParser().buildArgumentParser(commandsParser, supportedLocationHelp, isLocal);
         if (!isLocal) {
             // upload
@@ -210,25 +225,28 @@ public class Main {
     }
 
     private Subparser addSubCommandAdaptor(Subparsers subparsers, AdaptorDescription adaptorDescription) {
-        String adaptorType = "scheduler ";
-        if (adaptorDescription instanceof FileSystemAdaptorDescription) {
-            adaptorType = "filesystem";
-        }
-        String help = adaptorType + "    " + adaptorDescription.getDescription();
+        String help = adaptorDescription.getDescription();
         return subparsers.addParser(adaptorDescription.getName())
                         .help(help)
-                        .description(adaptorDescription.getDescription())
+                        .description(help)
                         .setDefault("adaptor", adaptorDescription.getName());
     }
 
     private String addArgumentLocation(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
         String supportedLocationHelp = getSupportedLocationHelp(adaptorDescription.getSupportedLocations());
-        Argument locationArgument = adaptorParser.addArgument("--location").help("Location, " + supportedLocationHelp);
-        boolean locationCanBeNull = Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(l -> l.equals("(null)"));
-        if (!locationCanBeNull) {
-            locationArgument.required(true);
+        boolean isLocal = isLocalAdaptor(adaptorDescription);
+        if (!isLocal || isWindows()) {
+            Argument locationArgument = adaptorParser.addArgument("--location").help("Location, " + supportedLocationHelp);
+            boolean locationCanBeNull = Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(l -> l.equals("(null)"));
+            if (!locationCanBeNull) {
+                locationArgument.required(true);
+            }
         }
         return supportedLocationHelp;
+    }
+
+    private boolean isLocalAdaptor(AdaptorDescription adaptorDescription) {
+        return adaptorDescription.getName().equals("file") || adaptorDescription.getName().equals("local");
     }
 
     private void addArgumentProp(AdaptorDescription adaptorDescription, Subparser adaptorParser) {

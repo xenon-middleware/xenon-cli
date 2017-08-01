@@ -1,5 +1,6 @@
 package nl.esciencecenter.xenon.cli.copy;
 
+import static nl.esciencecenter.xenon.adaptors.shared.local.LocalUtil.isWindows;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.addCopyModeArguments;
 
 import nl.esciencecenter.xenon.cli.IParser;
@@ -24,9 +25,11 @@ public class CopyParser implements IParser {
         } else {
             sourcePath.help("Source path");
         }
-        Argument targetLocation = subparser.addArgument("target-location").help("Target location, " + supportedLocationHelp);
-        if (isLocal) {
-            targetLocation.nargs("?");
+        if (!isLocal || isWindows()) {
+            Argument targetLocation = subparser.addArgument("target-location").help("Target location, " + supportedLocationHelp);
+            if (isLocal) {
+                targetLocation.nargs("?");
+            }
         }
         Argument targetPath = subparser.addArgument("target-path").required(true);
         if (isLocal) {

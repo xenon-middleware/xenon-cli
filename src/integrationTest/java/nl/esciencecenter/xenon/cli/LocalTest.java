@@ -16,7 +16,7 @@ public class LocalTest {
     @Test
     public void exec_touchFile_fileExists() throws IOException {
         File file1 = myfolder.newFile("file1");
-        String[] args = {"local", "exec", "/bin/touch", file1.getAbsolutePath()};
+        String[] args = {"scheduler", "local", "exec", "/bin/touch", file1.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
 

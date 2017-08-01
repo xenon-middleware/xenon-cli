@@ -13,7 +13,6 @@ import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 
 import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Subparser;
@@ -31,16 +30,15 @@ public class ParserHelpers {
     }
 
     public static void addCredentialArguments(ArgumentParser parser, String prefix) {
-        ArgumentGroup credGroup = parser.addArgumentGroup("optional credential arguments");
-        credGroup.addArgument("--" + prefix + "username").help("Username");
-        credGroup.addArgument("--" + prefix + "password").help("Password or passphrase");
-        credGroup.addArgument("--" + prefix + "certfile").help("Certificate private key file");
+        parser.addArgument("--" + prefix + "username").help("Username");
+        parser.addArgument("--" + prefix + "password").help("Password or passphrase");
+        parser.addArgument("--" + prefix + "certfile").help("Certificate private key file");
     }
 
     public static MutuallyExclusiveGroup addCopyModeArguments(ArgumentParser parser) {
         MutuallyExclusiveGroup group = parser.addMutuallyExclusiveGroup("optional copy mode arguments");
-        group.addArgument("--overwrite")
-            .help("Overwrite existing files at target location")
+        group.addArgument("--replace")
+            .help("Replace existing files at target location")
             .type(CopyMode.class)
             .action(Arguments.storeConst())
             .dest("copymode")

@@ -31,10 +31,11 @@ public class SshTest {
     private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
-                "--username", "xenon",
-                "--password", "javagat",
+                "scheduler",
                 "ssh",
-                "--location", location
+                "--location", location,
+                "--username", "xenon",
+                "--password", "javagat"
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }
