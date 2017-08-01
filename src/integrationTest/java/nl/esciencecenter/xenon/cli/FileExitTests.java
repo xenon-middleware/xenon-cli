@@ -1,5 +1,10 @@
 package nl.esciencecenter.xenon.cli;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
@@ -7,11 +12,6 @@ import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
-
-import java.io.File;
-import java.io.IOException;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests using file adaptor, which cause System.exit
@@ -39,7 +39,7 @@ public class FileExitTests {
     public void list_aFile_exit1() throws IOException {
         exit.expectSystemExitWithStatus(1);
         exit.checkAssertionAfterwards(() -> {
-            String expected = "file adaptor: Failed to list directory";
+            String expected = "file adaptor: Path is not a directory";
             String log = systemErrRule.getLog();
             assertTrue(expected, log.contains(expected));
         });
@@ -56,7 +56,7 @@ public class FileExitTests {
     public void list_nonExistingPath_exit1() throws IOException {
         exit.expectSystemExitWithStatus(1);
         exit.checkAssertionAfterwards(() -> {
-            String expected = "Failed to list";
+            String expected = "file adaptor: Path is not a directory";
             assertTrue(expected, systemErrRule.getLog().contains(expected));
         });
         File file1 = myfolder.newFile("idontexist");
@@ -70,8 +70,9 @@ public class FileExitTests {
     public void list_nonExistingPathWithStacktrace_exit1() throws IOException {
         exit.expectSystemExitWithStatus(1);
         exit.checkAssertionAfterwards(() -> {
-            String expected = "Caused by:";
-            assertTrue(expected, systemErrRule.getLog().contains(expected));
+            String expected = "at nl.esciencecenter.xenon.filesystems";
+            String log = systemErrRule.getLog();
+            assertTrue(expected, log.contains(expected));
         });
         File file1 = myfolder.newFile("idontexist");
 
