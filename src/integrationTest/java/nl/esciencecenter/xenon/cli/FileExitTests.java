@@ -47,7 +47,7 @@ public class FileExitTests {
         File file1 = myfolder.newFile("file1");
 
         String path = file1.getAbsolutePath();
-        String[] args = {"file", "list", path};
+        String[] args = {"filesystem", "file", "list", path};
         Main main = new Main();
         main.run(args);
     }
@@ -61,7 +61,7 @@ public class FileExitTests {
         });
         File file1 = myfolder.newFile("idontexist");
 
-        String[] args = {"file", "list", file1.getAbsolutePath()};
+        String[] args = {"filesystem", "file", "list", file1.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
     }
@@ -76,7 +76,7 @@ public class FileExitTests {
         });
         File file1 = myfolder.newFile("idontexist");
 
-        String[] args = {"--stacktrace", "file", "list", file1.getAbsolutePath()};
+        String[] args = {"--stacktrace", "filesystem", "file", "list", file1.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
     }
@@ -92,7 +92,7 @@ public class FileExitTests {
         File sourceFile = myfolder.newFile("source.txt");
         File targetFile = myfolder.newFile("target.txt");
 
-        String[] args = {"file", "copy", sourceFile.getAbsolutePath(), targetFile.getAbsolutePath()};
+        String[] args = {"filesystem", "file", "copy", sourceFile.getAbsolutePath(), targetFile.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
     }
@@ -104,7 +104,7 @@ public class FileExitTests {
             String expected = "file adaptor: Unable to do recursive copy from stdin";
             assertTrue(expected, systemErrRule.getLog().contains(expected));
         });
-        String[] args = {"file", "copy", "--recursive", "-", myfolder.getRoot().getAbsolutePath()};
+        String[] args = {"filesystem", "file", "copy", "--recursive", "-", myfolder.getRoot().getAbsolutePath()};
         Main main = new Main();
         main.run(args);
     }
@@ -116,7 +116,7 @@ public class FileExitTests {
             assertTrue(expected, systemErrRule.getLog().contains(expected));
         });
         exit.expectSystemExitWithStatus(1);
-        String[] args = {"file", "copy", "--recursive", myfolder.getRoot().getAbsolutePath(), "-"};
+        String[] args = {"filesystem", "file", "copy", "--recursive", myfolder.getRoot().getAbsolutePath(), "-"};
         Main main = new Main();
         main.run(args);
     }
@@ -130,12 +130,11 @@ public class FileExitTests {
             assertTrue("Parent dir", log.contains("somedir"));
         });
         File dir = myfolder.getRoot().toPath().resolve("somedir").resolve("otherdir").toFile();
-        String[] args = {"file", "mkdir", dir.getAbsolutePath()};
+        String[] args = {"filesystem", "file", "mkdir", dir.getAbsolutePath()};
         Main main = new Main();
 
         main.run(args);
     }
-
 
     @Test
     public void rename_targetAlreadyExists_PathAlreadyExistsException() throws IOException {
@@ -148,7 +147,7 @@ public class FileExitTests {
         File source = myfolder.newFile("file1");
         File target = myfolder.newFile("file2");
 
-        String[] args = {"file", "rename", source.getAbsolutePath(), target.getAbsolutePath()};
+        String[] args = {"filesystem", "file", "rename", source.getAbsolutePath(), target.getAbsolutePath()};
         Main main = new Main();
 
         main.run(args);

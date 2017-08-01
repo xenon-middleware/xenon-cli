@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
 import nl.esciencecenter.xenon.cli.submit.SubmitOutput;
@@ -26,7 +25,6 @@ public class SlurmTest {
     @ClassRule
     public static final DockerComposeRule docker = DockerComposeRule.builder()
             .file("src/integrationTest/resources/slurm-docker-compose.yml")
-            .saveLogsTo("build/dockerLogs/SlurmTest")
             .waitingForService(ADAPTOR_NAME, HealthChecks.toHaveAllPortsOpen())
             .build();
 
@@ -42,6 +40,7 @@ public class SlurmTest {
     private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
+                "scheduler",
                 ADAPTOR_NAME,
                 "--location", location,
                 "--username", "xenon",
@@ -56,7 +55,7 @@ public class SlurmTest {
     }
 
     @Test
-    public void submitListRemoveList() throws XenonException {
+    public void submitListRemoveList() {
         String[] submitArgs = argsBuilder(
                 "submit",
                 "/bin/sleep",

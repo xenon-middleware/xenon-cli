@@ -31,6 +31,7 @@ public class SshTest {
     private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
+                "scheduler",
                 "ssh",
                 "--location", location,
                 "--username", "xenon",

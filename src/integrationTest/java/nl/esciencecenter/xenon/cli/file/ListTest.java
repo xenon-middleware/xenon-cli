@@ -45,10 +45,11 @@ public class ListTest {
     }
 
     private void runFileList(String expectedOutput, String ...args) {
-        String[] myArgs = new String[2 + args.length];
-        myArgs[0] = "file";
-        myArgs[1] = "list";
-        System.arraycopy(args, 0, myArgs, 2, args.length);
+        String[] myArgs = new String[3 + args.length];
+        myArgs[0] = "filesystem";
+        myArgs[1] = "file";
+        myArgs[2] = "list";
+        System.arraycopy(args, 0, myArgs, 3, args.length);
 
         main(myArgs);
 
@@ -96,7 +97,7 @@ public class ListTest {
 
     @Test
     public void list_longFormat() {
-        String[] args = new String[] {"file", "list", "--long", start};
+        String[] args = new String[] {"filesystem", "file", "list", "--long", start};
         main(args);
 
         String output = systemOutRule.getLogWithNormalizedLineSeparator();
@@ -107,7 +108,7 @@ public class ListTest {
 
     @Test
     public void list_jsonFormat() {
-        String[] args = new String[] {"--json", "file", "list", start};
+        String[] args = new String[] {"--json", "filesystem", "file", "list", start};
 
         main(args);
 
@@ -126,7 +127,7 @@ public class ListTest {
 
     @Test
     public void list_jsonLongFormat() {
-        String[] args = new String[] {"--json", "file", "list", "--long", start};
+        String[] args = new String[] {"--json", "filesystem", "file", "list", "--long", start};
         main(args);
 
         // convert stdout to object via json deserialization

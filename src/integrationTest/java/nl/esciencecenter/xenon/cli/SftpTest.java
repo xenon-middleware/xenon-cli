@@ -40,6 +40,7 @@ public class SftpTest {
     private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
+            "filesystem",
             "sftp",
             "--location", location,
             "--username", "xenon",

@@ -147,15 +147,24 @@ public class Main {
         newParser.addArgument("--json").help("Output in JSON format").action(Arguments.storeTrue());
         newParser.addArgument("--stacktrace").help("Print out the stacktrace for all exceptions").action(Arguments.storeTrue());
         newParser.addArgument("--verbose", "-v").help("Repeat for more verbose logging").action(Arguments.count());
-        addAdaptorSubParsers(newParser);
+
+        Subparsers subparsers = newParser.addSubparsers();
+        String filesystemHelp = "Filesystem represent a (possibly remote) file system that can be used to access data.";
+        Subparser filesystemAdaptorParser = subparsers.addParser("filesystem")
+            .help(filesystemHelp).description(filesystemHelp);
+        addAdaptorSubParsers(filesystemAdaptorParser, FileSystem.getAdaptorDescriptions());
+        String schedulerHelp = "Scheduler represents a (possibly remote) scheduler that can be used to submit jobs and retrieve queue information.";
+        Subparser schedulerAdaptorParser = subparsers.addParser("scheduler")
+            .help(schedulerHelp).description(schedulerHelp);
+        addAdaptorSubParsers(schedulerAdaptorParser, Scheduler.getAdaptorDescriptions());
+
         return newParser;
     }
 
-    private void addAdaptorSubParsers(ArgumentParser parser) {
+    private void addAdaptorSubParsers(Subparser parser, AdaptorDescription[] adaptorDescriptionArray) {
         Subparsers subparsers = parser.addSubparsers().title("adaptor");
         List<AdaptorDescription> adaptorDescriptions = new ArrayList<>();
-        Collections.addAll(adaptorDescriptions, Scheduler.getAdaptorDescriptions());
-        Collections.addAll(adaptorDescriptions, FileSystem.getAdaptorDescriptions());
+        Collections.addAll(adaptorDescriptions, adaptorDescriptionArray);
         adaptorDescriptions.sort(Comparator.comparing(AdaptorDescription::getName));
         for (AdaptorDescription adaptorDescription : adaptorDescriptions) {
             adaptorSubCommands(subparsers, adaptorDescription);
@@ -211,14 +220,10 @@ public class Main {
     }
 
     private Subparser addSubCommandAdaptor(Subparsers subparsers, AdaptorDescription adaptorDescription) {
-        String adaptorType = "scheduler ";
-        if (adaptorDescription instanceof FileSystemAdaptorDescription) {
-            adaptorType = "filesystem";
-        }
-        String help = adaptorType + "    " + adaptorDescription.getDescription();
+        String help = adaptorDescription.getDescription();
         return subparsers.addParser(adaptorDescription.getName())
                         .help(help)
-                        .description(adaptorDescription.getDescription())
+                        .description(help)
                         .setDefault("adaptor", adaptorDescription.getName());
     }
 

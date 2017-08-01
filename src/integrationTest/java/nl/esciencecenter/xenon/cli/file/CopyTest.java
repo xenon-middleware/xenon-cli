@@ -1,10 +1,7 @@
 package nl.esciencecenter.xenon.cli.file;
 
-import nl.esciencecenter.xenon.cli.Main;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.contrib.java.lang.system.SystemOutRule;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -15,8 +12,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import nl.esciencecenter.xenon.cli.Main;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.contrib.java.lang.system.SystemOutRule;
+import org.junit.rules.TemporaryFolder;
 
 public class CopyTest {
     @Rule
@@ -30,7 +31,7 @@ public class CopyTest {
         File sourceFile = myFolder.newFile("source.txt");
         File targetFile = new File(myFolder.getRoot(), "target.txt");
 
-        String[] args = {"file", "copy", sourceFile.getAbsolutePath(), targetFile.getAbsolutePath()};
+        String[] args = {"filesystem", "file", "copy", sourceFile.getAbsolutePath(), targetFile.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
 
@@ -42,7 +43,7 @@ public class CopyTest {
         File sourceFile = myFolder.newFile("source.txt");
         File targetFile = new File(myFolder.getRoot(), "target.txt");
 
-        String[] args = {"file", "copy", "--recursive", sourceFile.getAbsolutePath(), targetFile.getAbsolutePath()};
+        String[] args = {"filesystem", "file", "copy", "--recursive", sourceFile.getAbsolutePath(), targetFile.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
 
@@ -54,7 +55,7 @@ public class CopyTest {
         File sourceDir = myFolder.newFolder("source");
         File targetDir = new File(myFolder.getRoot(), "target");
 
-        String[] args = {"file", "copy", "--recursive", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()};
+        String[] args = {"filesystem", "file", "copy", "--recursive", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
 
@@ -69,7 +70,7 @@ public class CopyTest {
         assertTrue("Setup source/file2 fixture",new File(sourceDirDir, "file2").createNewFile());
         File targetDir = new File(myFolder.getRoot(), "target");
 
-        String[] args = {"file", "copy", "--recursive", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()};
+        String[] args = {"filesystem", "file", "copy", "--recursive", sourceDir.getAbsolutePath(), targetDir.getAbsolutePath()};
         Main main = new Main();
         main.run(args);
 
@@ -89,7 +90,7 @@ public class CopyTest {
         System.setIn(sourceIn);
 
         try {
-            String[] args = {"file", "copy", "-", targetFile.toString()};
+            String[] args = {"filesystem", "file", "copy", "-", targetFile.toString()};
             Main main = new Main();
             main.run(args);
 
@@ -106,7 +107,7 @@ public class CopyTest {
         String message = "Hello World!\n";
         Files.write(sourceFile.toPath(), message.getBytes());
 
-        String[] args = {"file", "copy", sourceFile.getAbsolutePath(), "-"};
+        String[] args = {"filesystem", "file", "copy", sourceFile.getAbsolutePath(), "-"};
         Main main = new Main();
         main.run(args);
 

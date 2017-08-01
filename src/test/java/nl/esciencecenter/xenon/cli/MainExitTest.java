@@ -1,13 +1,14 @@
 package nl.esciencecenter.xenon.cli;
 
+import static org.junit.Assert.assertTrue;
+
 import nl.esciencecenter.xenon.XenonException;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import org.junit.contrib.java.lang.system.SystemErrRule;
 import org.junit.contrib.java.lang.system.SystemOutRule;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests on main class, which cause System.exit
@@ -44,7 +45,7 @@ public class MainExitTest {
         });
         Main main = new Main();
 
-        String[] badCommands = new String[]{"badadaptorname"};
+        String[] badCommands = new String[]{"filesystem", "badadaptorname"};
         main.run(badCommands);
     }
 }

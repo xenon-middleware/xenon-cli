@@ -1,10 +1,11 @@
 package nl.esciencecenter.xenon.cli;
 
-import nl.esciencecenter.xenon.filesystems.Path;
-import org.junit.Test;
-
 import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import nl.esciencecenter.xenon.filesystems.Path;
+
+import org.junit.Test;
 
 public class UtilsTest {
     @Test(expected = IllegalAccessError.class)
@@ -52,7 +53,6 @@ public class UtilsTest {
         assertEquals(expected, result);
     }
 
-
     @Test
     public void getAbsolutePath_localRelative() throws Exception {
         Path result = getAbsolutePath("local", "foo");
@@ -68,5 +68,4 @@ public class UtilsTest {
         Path expected = new Path(System.getProperty("user.dir") + "/foo");
         assertEquals(expected, result);
     }
-
 }
