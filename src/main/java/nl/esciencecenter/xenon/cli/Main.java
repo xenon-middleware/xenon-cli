@@ -143,7 +143,7 @@ public class Main {
                 .defaultHelp(true)
                 .description("Operations on filesystems and schedulers with Xenon")
                 .version(PROGRAM_VERSION);
-        newParser.addArgument("--version").action(Arguments.version());
+        newParser.addArgument("--version").action(Arguments.version()).help("Prints version and exists");
         newParser.addArgument("--json").help("Output in JSON format").action(Arguments.storeTrue());
         newParser.addArgument("--stacktrace").help("Print out the stacktrace for all exceptions").action(Arguments.storeTrue());
         newParser.addArgument("--verbose", "-v").help("Repeat for more verbose logging").action(Arguments.count());
