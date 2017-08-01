@@ -130,10 +130,13 @@ public class Main {
     }
 
     void print(Object output, Boolean jsonFormat) {
+        if (output == null) {
+            return;
+        }
         if (jsonFormat) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             System.out.print(gson.toJson(output));
-        } else if (output != null) {
+        } else {
             System.out.println(output);
         }
     }
