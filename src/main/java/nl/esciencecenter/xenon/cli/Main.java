@@ -177,7 +177,9 @@ public class Main {
     private void adaptorSubCommands(Subparsers subparsers, AdaptorDescription adaptorDescription) {
         Subparser adaptorParser = addSubCommandAdaptor(subparsers, adaptorDescription);
         String supportedLocationHelp = addArgumentLocation(adaptorDescription, adaptorParser);
-        ParserHelpers.addCredentialArguments(adaptorParser);
+        if (!isLocalAdaptor(adaptorDescription)) {
+            ParserHelpers.addCredentialArguments(adaptorParser);
+        }
         addArgumentProp(adaptorDescription, adaptorParser);
         Subparsers commandsParser = adaptorParser.addSubparsers().title("commands");
         if (adaptorDescription instanceof FileSystemAdaptorDescription) {
