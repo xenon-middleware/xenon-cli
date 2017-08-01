@@ -37,8 +37,8 @@ public class ParserHelpers {
 
     public static MutuallyExclusiveGroup addCopyModeArguments(ArgumentParser parser) {
         MutuallyExclusiveGroup group = parser.addMutuallyExclusiveGroup("optional copy mode arguments");
-        group.addArgument("--overwrite")
-            .help("Overwrite existing files at target location")
+        group.addArgument("--replace")
+            .help("Replace existing files at target location")
             .type(CopyMode.class)
             .action(Arguments.storeConst())
             .dest("copymode")
