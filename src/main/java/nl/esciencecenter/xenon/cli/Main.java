@@ -1,5 +1,6 @@
 package nl.esciencecenter.xenon.cli;
 
+import static nl.esciencecenter.xenon.adaptors.shared.local.LocalUtil.isWindows;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
 import static nl.esciencecenter.xenon.cli.Utils.parseArgumentListAsMap;
 
@@ -191,7 +192,7 @@ public class Main {
 
     private void filesystemSubCommands(FileSystemAdaptorDescription adaptorDescription, String supportedLocationHelp, Subparsers commandsParser) {
         // copy
-        boolean isLocal = adaptorDescription.getName().equals("file");
+        boolean isLocal = isLocalAdaptor(adaptorDescription);
         new CopyParser().buildArgumentParser(commandsParser, supportedLocationHelp, isLocal);
         if (!isLocal) {
             // upload
@@ -223,12 +224,19 @@ public class Main {
 
     private String addArgumentLocation(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
         String supportedLocationHelp = getSupportedLocationHelp(adaptorDescription.getSupportedLocations());
-        Argument locationArgument = adaptorParser.addArgument("--location").help("Location, " + supportedLocationHelp);
-        boolean locationCanBeNull = Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(l -> l.equals("(null)"));
-        if (!locationCanBeNull) {
-            locationArgument.required(true);
+        boolean isLocal = isLocalAdaptor(adaptorDescription);
+        if (!isLocal || isWindows()) {
+            Argument locationArgument = adaptorParser.addArgument("--location").help("Location, " + supportedLocationHelp);
+            boolean locationCanBeNull = Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(l -> l.equals("(null)"));
+            if (!locationCanBeNull) {
+                locationArgument.required(true);
+            }
         }
         return supportedLocationHelp;
+    }
+
+    private boolean isLocalAdaptor(AdaptorDescription adaptorDescription) {
+        return adaptorDescription.getName().equals("file") || adaptorDescription.getName().equals("local");
     }
 
     private void addArgumentProp(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
