@@ -8,10 +8,9 @@ import net.sourceforge.argparse4j.inf.Subparsers;
 public class QueuesParser implements IParser {
     @Override
     public Subparser buildArgumentParser(Subparsers subparsers) {
-        Subparser subparser = subparsers.addParser("queues")
+        return subparsers.addParser("queues")
             .setDefault("command", new QueuesCommand())
             .help("List of available queues")
             .description("List of available queues");
-        return subparser;
     }
 }
