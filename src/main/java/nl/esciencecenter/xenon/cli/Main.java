@@ -29,6 +29,7 @@ import nl.esciencecenter.xenon.cli.removefile.RemoveFileParser;
 import nl.esciencecenter.xenon.cli.removejob.RemoveJobParser;
 import nl.esciencecenter.xenon.cli.rename.RenameParser;
 import nl.esciencecenter.xenon.cli.submit.SubmitParser;
+import nl.esciencecenter.xenon.cli.wait.WaitParser;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
@@ -199,6 +200,8 @@ public class Main {
             new ListJobsParser().buildArgumentParser(commandsParser);
             // remove
             new RemoveJobParser().buildArgumentParser(commandsParser);
+            // wait
+            new WaitParser().buildArgumentParser(commandsParser);
         }
         // queues
         new QueuesParser().buildArgumentParser(commandsParser);
