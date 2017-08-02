@@ -21,18 +21,18 @@ Add `xenon*/bin` to your PATH environment variable for easy usage.
 # Usage
 
 ```
-xenon file list /etc
-xenon sftp --location localhost list /etc
-xenon sftp --location localhost upload /etc/passwd /tmp/copy-of-passwd
-xenon ssh --location localhost exec /bin/hostname
+xenon filesystem file list /etc
+xenon filesystem sftp --location localhost list /etc
+xenon filesystem sftp --location localhost upload /etc/passwd /tmp/copy-of-passwd
+xenon scheduler ssh --location localhost exec /bin/hostname
 echo "sleep 30;echo Hello" | xenon sftp --location localhost upload - /tmp/myjob.sh
-xenon slurm --location localhost submit /bin/sh /tmp/myjob.sh
+xenon scheduler slurm --location localhost submit /bin/sh /tmp/myjob.sh
 ```
 
 To keep password or passphrase invisible in process list put the password in a text file (eg. 'password.txt') and then use '@password.txt' as argument.
 For example:
 ```
-xenon --username $USER --password @password.txt sftp --location localhost list $PWD/src
+xenon filesystem sftp --location localhost --username $USER --password @password.txt list $PWD/src
 ```
 
 # Build

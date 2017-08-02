@@ -14,37 +14,39 @@ baseCommand: xenon
 arguments:
 - prefix: --json
   position: 0
+- valueFrom: filesystem
+  position: 1
 - valueFrom: download
-  position: 3
+  position: 4
 inputs:
   certfile:
     type: File?
     doc: Certificate file
     inputBinding:
       prefix: --certfile
-      position: 0
+      position: 3
   username:
     type: string?
     inputBinding:
       prefix: --username
-      position: 0
+      position: 3
   password:
     type: string?
     doc: Password, watch out do not use on systems with untrusted users
     inputBinding:
       prefix: --password
-      position: 0
-  scheme:
+      position: 3
+  adaptor:
     type: string
-    doc: Scheme, eg. file, sftp, ftp
+    doc: Adaptor name, eg. file, sftp, ftp
     inputBinding:
-      position: 1
+      position: 2
   location:
     type: string?
     doc: List contents of path at location
     inputBinding:
       prefix: --location
-      position: 2
+      position: 3
 # TODO prop should be optional, atm is must be set
 #  prop:
 #    doc: Xenon adaptor properties
@@ -54,25 +56,25 @@ inputs:
 #      inputBinding:
 #        prefix: --prop
 #    inputBinding:
-#      position: 2
-  overwrite:
-    type: boolean
-    inputBinding:
-      prefix: --overwrite
-      position: 4
+#      position: 3
   ignore:
     type: boolean
     inputBinding:
       prefix: --ignore
-      position: 4
+      position: 5
+  replace:
+    type: boolean
+    inputBinding:
+      prefix: --replace
+      position: 5
   source:
     type: string
     inputBinding:
-      position: 5
+      position: 6
   target:
     type: string
     inputBinding:
-      position: 6
+      position: 7
 outputs:
   target:
     type: File
