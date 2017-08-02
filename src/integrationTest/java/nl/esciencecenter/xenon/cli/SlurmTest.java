@@ -55,9 +55,10 @@ public class SlurmTest {
     }
 
     @Test
-    public void submitListRemoveList() {
+    public void submitListRemoveList_long() {
         String[] submitArgs = argsBuilder(
                 "submit",
+                "--long",
                 "/bin/sleep",
                 "120"
         );
@@ -72,6 +73,28 @@ public class SlurmTest {
         String[] removeArgs = argsBuilder(
                 "remove",
                 submitOutput.jobId
+        );
+        main.run(removeArgs);
+    }
+
+    @Test
+    public void submitListRemoveList() {
+        String[] submitArgs = argsBuilder(
+            "submit",
+            "/bin/sleep",
+            "120"
+        );
+        String jobId = (String) main.run(submitArgs);
+        assertNotNull("Job id is filled", jobId);
+
+        String[] listArgs = argsBuilder("list");
+        ListJobsOutput listOutput = (ListJobsOutput) main.run(listArgs);
+        boolean containsId = listOutput.statuses.stream().anyMatch(c -> jobId.equals(c.getJobIdentifier()));
+        assertTrue("List contains running job", containsId);
+
+        String[] removeArgs = argsBuilder(
+            "remove",
+            jobId
         );
         main.run(removeArgs);
     }

@@ -3,6 +3,7 @@ package nl.esciencecenter.xenon.cli.submit;
 import nl.esciencecenter.xenon.cli.IParser;
 import nl.esciencecenter.xenon.cli.ParserHelpers;
 
+import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 
@@ -21,7 +22,7 @@ public class SubmitParser implements IParser {
         subparser.addArgument("--stdout").help("Path to file which is used as stdout for executable");
         subparser.addArgument("--stderr").help("Path to file which is used as stderr for executable");
 
+        subparser.addArgument("--long", "-l").help("Output long format").action(Arguments.storeTrue());
         return subparser;
     }
-
 }
