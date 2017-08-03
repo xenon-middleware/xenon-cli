@@ -18,7 +18,6 @@ import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.credentials.DefaultCredential;
 import nl.esciencecenter.xenon.credentials.PasswordCredential;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
-import nl.esciencecenter.xenon.filesystems.Path;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 
@@ -114,20 +113,6 @@ public class Utils {
             len = in.read(buffer);
         }
         return bytes;
-    }
-
-    private static boolean isRelativeLocalPath(String adaptorName, String path) {
-        return ("local".equals(adaptorName) || "file".equals(adaptorName)) && !(path.startsWith("~") || path.startsWith("/") || "-".equals(path));
-    }
-
-    public static Path getAbsolutePath(String adaptorName, String path)  {
-        Path apath = new Path(path);
-        if (isRelativeLocalPath(adaptorName, path)) {
-            // Path is relative to working directory, make it absolute
-            Path workingDirectory = new Path(System.getProperty("user.dir"));
-            apath = workingDirectory.resolve(apath);
-        }
-        return apath;
     }
 
     public static Scheduler createScheduler(Namespace res) throws XenonException {

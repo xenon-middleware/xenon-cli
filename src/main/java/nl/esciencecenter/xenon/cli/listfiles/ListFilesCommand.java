@@ -1,18 +1,19 @@
 package nl.esciencecenter.xenon.cli.listfiles;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.cli.XenonCommand;
-import nl.esciencecenter.xenon.filesystems.FileSystem;
-import nl.esciencecenter.xenon.filesystems.Path;
-import nl.esciencecenter.xenon.filesystems.PathAttributes;
+import static nl.esciencecenter.xenon.cli.Utils.createFileSystem;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static nl.esciencecenter.xenon.cli.Utils.*;
+import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.cli.XenonCommand;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.filesystems.Path;
+import nl.esciencecenter.xenon.filesystems.PathAttributes;
+
+import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Command to list objects at path of location
@@ -32,7 +33,7 @@ public class ListFilesCommand extends XenonCommand {
     }
 
     private Object listObjects(FileSystem fs, String pathIn, Boolean recursive, Boolean showhidden, Boolean longFormat) throws XenonException {
-        Path start = getAbsolutePath(fs.getAdaptorName(), pathIn);
+        Path start = new Path(pathIn);
         Iterable<PathAttributes> iterable = fs.list(start, recursive);
 
         // apply filters

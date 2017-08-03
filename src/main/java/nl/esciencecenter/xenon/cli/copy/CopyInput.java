@@ -7,8 +7,6 @@ import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
 
-import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
-
 /**
  * Data required for a source or target of a copy command
  */
@@ -62,7 +60,7 @@ public class CopyInput {
     }
 
     public Path getPath()  {
-        return getAbsolutePath(adaptor, path);
+        return new Path();
     }
 
     FileSystem getFileSystem() throws XenonException {
