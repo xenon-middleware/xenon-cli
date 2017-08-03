@@ -38,14 +38,14 @@ public class ParserHelpers {
     public static MutuallyExclusiveGroup addCopyModeArguments(ArgumentParser parser) {
         MutuallyExclusiveGroup group = parser.addMutuallyExclusiveGroup("optional copy mode arguments");
         group.addArgument("--replace")
-            .help("Replace existing files at target location")
+            .help("If a file already exists at the target location, replace that file with the file from the source location")
             .type(CopyMode.class)
             .action(Arguments.storeConst())
             .dest("copymode")
             .setConst(CopyMode.REPLACE)
             .setDefault(CopyMode.CREATE);
         group.addArgument("--ignore")
-            .help("Ignore existing files at target location")
+            .help("If a file already exists at the target location, skip copying of that file")
             .type(CopyMode.class)
             .action(Arguments.storeConst())
             .dest("copymode")
