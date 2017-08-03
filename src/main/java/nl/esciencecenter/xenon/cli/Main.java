@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Main {
     private static final String PROGRAM_NAME = "xenon";
-    private static final String PROGRAM_VERSION = "2.0.0";
+    private static final String PROGRAM_VERSION = "1.1.0";
     private final ArgumentParser parser;
     private Namespace res = new Namespace(new HashMap<>());
 
