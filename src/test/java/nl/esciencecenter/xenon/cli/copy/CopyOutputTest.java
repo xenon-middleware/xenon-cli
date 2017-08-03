@@ -21,7 +21,7 @@ public class CopyOutputTest {
     public void test_toString() throws Exception {
         String output = copyOutput.toString();
 
-        String expected = "Copied '/source' from location '/' to '/target' to location 'localhost', 100 bytes copied";
+        String expected = "Copied '/source' from location '/' to '/target' at location 'localhost', 100 bytes copied";
         assertEquals(expected, output);
     }
 
@@ -40,7 +40,7 @@ public class CopyOutputTest {
         copyOutput = new CopyOutput(source, target, 100L);
         String output = copyOutput.toString();
 
-        String expected = "Copied '/source' from location 'local' to '/target' to location 'localhost', 100 bytes copied";
+        String expected = "Copied '/source' from location 'local' to '/target' at location 'localhost', 100 bytes copied";
         assertEquals(expected, output);
     }
 
@@ -51,7 +51,7 @@ public class CopyOutputTest {
         copyOutput = new CopyOutput(source, target, 100L);
         String output = copyOutput.toString();
 
-        String expected = "Copied '/source' from location 'localhost' to '/target' to location 'local', 100 bytes copied";
+        String expected = "Copied '/source' from location 'localhost' to '/target' at location 'local', 100 bytes copied";
         assertEquals(expected, output);
     }
 
