@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Subcommands
   * mkdir
   * rename
+  * wait
 * Status details to jobs list
 * --long format for files list (#16)
 * --verbose and --stacktrace arguments

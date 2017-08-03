@@ -17,7 +17,7 @@ plugins {
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
-version = '1.0.3'
+version = '1.1.0-rc1'
 group = 'nlesc'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
