@@ -1,6 +1,7 @@
 package nl.esciencecenter.xenon.cli.createdir;
 
 import static nl.esciencecenter.xenon.cli.Utils.createFileSystem;
+import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.XenonCommand;
@@ -14,7 +15,7 @@ public class CreateDirectoryCommand extends XenonCommand {
     public CreateDirectoryOutput run(Namespace res) throws XenonException {
         FileSystem fs = createFileSystem(res);
         String pathIn = res.getString("path");
-        Path dir = new Path(pathIn);
+        Path dir = getAbsolutePath(fs.getAdaptorName(), pathIn);
         Boolean createParent = res.getBoolean("parents");
         if (createParent) {
             fs.createDirectories(dir);

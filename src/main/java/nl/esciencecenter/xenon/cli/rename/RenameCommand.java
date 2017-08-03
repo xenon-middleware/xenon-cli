@@ -1,6 +1,7 @@
 package nl.esciencecenter.xenon.cli.rename;
 
 import static nl.esciencecenter.xenon.cli.Utils.createFileSystem;
+import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.XenonCommand;
@@ -15,8 +16,8 @@ public class RenameCommand extends XenonCommand {
         FileSystem fs = createFileSystem(res);
         String sourceIn = res.getString("source");
         String targetIn = res.getString("target");
-        Path source = new Path(sourceIn);
-        Path target = new Path(targetIn);
+        Path source = getAbsolutePath(fs.getAdaptorName(), sourceIn);
+        Path target = getAbsolutePath(fs.getAdaptorName(), targetIn);
 
         fs.rename(source, target);
 
