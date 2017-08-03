@@ -60,7 +60,7 @@ public class CopyInput {
     }
 
     public Path getPath()  {
-        return new Path();
+        return new Path(path);
     }
 
     FileSystem getFileSystem() throws XenonException {
