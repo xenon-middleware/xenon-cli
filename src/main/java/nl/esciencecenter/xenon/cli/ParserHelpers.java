@@ -86,7 +86,7 @@ public class ParserHelpers {
         subparser.addArgument("--node-count").type(Integer.class).help("Number of nodes to reserve").setDefault(1);
         subparser.addArgument("--procs-per-node").type(Integer.class).help("Number of processes started on each node").setDefault(1);
         subparser.addArgument("--working-directory")
-            .help("Path at location where executable should be executed. If not given will local working directory or when remove will use home directory");
+            .help("Path at location where executable should be executed. If location is local system, default value is the current working directory. If location is remote, default value is remote system's entry path");
     }
 
     public static Set<String> getAllowedFileSystemPropertyKeys(String adaptor) throws XenonException {
