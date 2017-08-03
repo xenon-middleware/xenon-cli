@@ -38,14 +38,14 @@ public class ParserHelpers {
     public static MutuallyExclusiveGroup addCopyModeArguments(ArgumentParser parser) {
         MutuallyExclusiveGroup group = parser.addMutuallyExclusiveGroup("optional copy mode arguments");
         group.addArgument("--replace")
-            .help("Replace existing files at target location")
+            .help("If a file already exists at the target location, replace that file with the file from the source location")
             .type(CopyMode.class)
             .action(Arguments.storeConst())
             .dest("copymode")
             .setConst(CopyMode.REPLACE)
             .setDefault(CopyMode.CREATE);
         group.addArgument("--ignore")
-            .help("Ignore existing files at target location")
+            .help("If a file already exists at the target location, skip copying of that file")
             .type(CopyMode.class)
             .action(Arguments.storeConst())
             .dest("copymode")
@@ -86,7 +86,7 @@ public class ParserHelpers {
         subparser.addArgument("--node-count").type(Integer.class).help("Number of nodes to reserve").setDefault(1);
         subparser.addArgument("--procs-per-node").type(Integer.class).help("Number of processes started on each node").setDefault(1);
         subparser.addArgument("--working-directory")
-            .help("Path at location where executable should be executed. If not given will local working directory or when remove will use home directory");
+            .help("Path at location where executable should be executed. If location is local system, default value is the current working directory. If location is remote, default value is remote system's entry path");
     }
 
     public static Set<String> getAllowedFileSystemPropertyKeys(String adaptor) throws XenonException {

@@ -14,7 +14,7 @@ public class UploadParser extends CopyCommand {
             .description("Upload local file to target");
         subparser.addArgument("source")
             .type(Arguments.fileType().acceptSystemIn().verifyCanRead())
-            .help("Local source path, use '-' for stdin")
+            .help("Source path at location, use '-' for stdin")
             .required(true);
         subparser.addArgument("target").help("Target path").required(true);
         subparser.addArgument("--recursive").help("Upload directories recursively").action(Arguments.storeTrue());

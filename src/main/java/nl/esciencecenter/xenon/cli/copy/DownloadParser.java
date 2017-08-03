@@ -13,7 +13,7 @@ public class DownloadParser extends CopyParser {
             .setDefault("command", new DownloadCommand())
             .help("Download source file to local file")
             .description("Download source file to local file");
-        subparser.addArgument("source").help("Local source path").required(true);
+        subparser.addArgument("source").help("Source path at location").required(true);
         subparser.addArgument("target")
             .type(Arguments.fileType().acceptSystemIn())
             .help("Target path, use '-' for stdout")
