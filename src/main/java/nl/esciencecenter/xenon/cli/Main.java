@@ -1,19 +1,17 @@
 package nl.esciencecenter.xenon.cli;
 
-import static nl.esciencecenter.xenon.adaptors.shared.local.LocalUtil.isWindows;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
-import static nl.esciencecenter.xenon.cli.Utils.parseArgumentListAsMap;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.Argument;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+import net.sourceforge.argparse4j.inf.Subparsers;
 import nl.esciencecenter.xenon.AdaptorDescription;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonPropertyDescription;
@@ -34,27 +32,26 @@ import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 import nl.esciencecenter.xenon.schedulers.SchedulerAdaptorDescription;
-
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import net.sourceforge.argparse4j.ArgumentParsers;
-import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.Argument;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.ArgumentParserException;
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
-import net.sourceforge.argparse4j.inf.Subparsers;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static nl.esciencecenter.xenon.adaptors.shared.local.LocalUtil.isWindows;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
+import static nl.esciencecenter.xenon.cli.Utils.parseArgumentListAsMap;
 
 /**
  * Parse arguments and runs sub-commands.
  */
 public class Main {
-    private static final String PROGRAM_NAME = "xenon";
-    private static final String PROGRAM_VERSION = "1.1.0";
     private final ArgumentParser parser;
     private Namespace res = new Namespace(new HashMap<>());
 
@@ -143,10 +140,10 @@ public class Main {
     }
 
     public ArgumentParser buildArgumentParser() {
-        ArgumentParser newParser = ArgumentParsers.newArgumentParser(PROGRAM_NAME, true, "-", "@")
+        ArgumentParser newParser = ArgumentParsers.newArgumentParser(BuildConfig.NAME, true, "-", "@")
                 .defaultHelp(true)
                 .description("Operations on filesystems and schedulers with Xenon")
-                .version(PROGRAM_VERSION);
+                .version("Xenon CLI v" + BuildConfig.VERSION + ", Xenon Library v" + BuildConfig.XENON_LIB_VERSION);
         newParser.addArgument("--version").action(Arguments.version()).help("Prints version and exists");
         newParser.addArgument("--json").help("Output in JSON format").action(Arguments.storeTrue());
         newParser.addArgument("--stacktrace").help("Print out the stacktrace for all exceptions").action(Arguments.storeTrue());

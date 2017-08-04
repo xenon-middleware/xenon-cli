@@ -14,11 +14,13 @@ plugins {
     id 'com.palantir.docker' version '0.13.0'
     // integration tests
     id 'org.unbroken-dome.test-sets' version '1.4.1'
+    // xenon --version reads version from this file
+    id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
 version = '1.1.0-rc1'
-group = 'nlesc'
+group = 'nl.esciencecenter.xenon.cli'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
 sourceCompatibility = 1.8
@@ -37,12 +39,14 @@ testSets {
     integrationTest
 }
 
+ext.xenonLibVersion = '2.0.0-rc1'
+
 dependencies {
     runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.11'
 
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
-    compile 'com.github.NLeSC:Xenon:2.0.0-rc1'
+    compile "com.github.NLeSC:Xenon:${xenonLibVersion}"
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'
@@ -125,3 +129,8 @@ sonarqube {
     }
 }
 project.tasks["sonarqube"].dependsOn "check"
+
+buildConfig {
+    appName = project.applicationName
+    buildConfigField 'String', 'XENON_LIB_VERSION', "${xenonLibVersion}"
+}
