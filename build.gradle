@@ -17,7 +17,7 @@ plugins {
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
-version = '1.1.0-rc1'
+version = '1.1.0-rc2'
 group = 'nlesc'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
@@ -42,7 +42,7 @@ dependencies {
 
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
-    compile 'com.github.NLeSC:Xenon:2.0.0-rc1'
+    compile 'com.github.NLeSC:Xenon:2.0.0-rc2'
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'
