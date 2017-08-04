@@ -10,6 +10,7 @@ public class WaitParser implements IParser {
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("wait")
             .setDefault("command", new WaitCommand())
+            .defaultHelp(true)
             .help("Wait for job to complete")
             .description("Wait for job to complete");
         subparser.addArgument("--timeout").help("Maximum number of milliseconds to wait, by default waits forever").setDefault(0L).type(Long.class);

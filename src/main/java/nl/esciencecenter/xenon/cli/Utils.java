@@ -1,17 +1,6 @@
 package nl.esciencecenter.xenon.cli;
 
-import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.CertificateCredential;
 import nl.esciencecenter.xenon.credentials.Credential;
@@ -22,7 +11,17 @@ import nl.esciencecenter.xenon.filesystems.Path;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 
-import net.sourceforge.argparse4j.inf.Namespace;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
 
 /**
  * Helpers for Xenon.jobs based commands

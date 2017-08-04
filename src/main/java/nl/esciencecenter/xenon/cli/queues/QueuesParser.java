@@ -10,6 +10,7 @@ public class QueuesParser implements IParser {
     public Subparser buildArgumentParser(Subparsers subparsers) {
         return subparsers.addParser("queues")
             .setDefault("command", new QueuesCommand())
+            .defaultHelp(true)
             .help("List of available queues")
             .description("List of available queues");
     }

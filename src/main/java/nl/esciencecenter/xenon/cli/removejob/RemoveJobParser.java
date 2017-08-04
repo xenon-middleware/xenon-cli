@@ -10,6 +10,7 @@ public class RemoveJobParser implements IParser {
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("remove")
             .setDefault("command", new RemoveJobCommand())
+            .defaultHelp(true)
             .help("Remove job from scheduler")
             .description("Remove job from scheduler");
         subparser.addArgument("job-identifier").help("Job identifier").required(true);

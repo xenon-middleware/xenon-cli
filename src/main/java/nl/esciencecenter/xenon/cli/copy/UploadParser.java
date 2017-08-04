@@ -1,15 +1,16 @@
 package nl.esciencecenter.xenon.cli.copy;
 
-import static nl.esciencecenter.xenon.cli.ParserHelpers.addCopyModeArguments;
-
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
+
+import static nl.esciencecenter.xenon.cli.ParserHelpers.addCopyModeArguments;
 
 public class UploadParser extends CopyCommand {
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("upload")
             .setDefault("command", new UploadCommand())
+            .defaultHelp(true)
             .help("Upload local file to target")
             .description("Upload local file to target");
         subparser.addArgument("source")

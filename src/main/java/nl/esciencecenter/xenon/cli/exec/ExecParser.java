@@ -12,6 +12,7 @@ public class ExecParser implements IParser {
         //   exec <executable> <args> <environment> <job options> <max time> <queue> <working directory> <std* attached to local streams>
         Subparser subparser = subparsers.addParser("exec")
             .setDefault("command", new ExecCommand())
+            .defaultHelp(true)
             .help("Execute job at location")
             .description("Execute job at location");
 

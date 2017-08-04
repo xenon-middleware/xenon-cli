@@ -11,6 +11,7 @@ public class CreateDirectoryParser implements IParser {
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("mkdir")
             .setDefault("command", new CreateDirectoryCommand())
+            .defaultHelp(true)
             .help("Create directory at location")
             .description("Create directory at location");
         subparser.addArgument("path").help("Path of directory").required(true);

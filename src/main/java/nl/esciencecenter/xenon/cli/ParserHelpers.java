@@ -1,10 +1,9 @@
 package nl.esciencecenter.xenon.cli;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
+import net.sourceforge.argparse4j.inf.Subparser;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.filesystems.CopyMode;
@@ -12,10 +11,10 @@ import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 
-import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.ArgumentParser;
-import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
-import net.sourceforge.argparse4j.inf.Subparser;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Utilities to construct argument parser
@@ -30,7 +29,7 @@ public class ParserHelpers {
     }
 
     public static void addCredentialArguments(ArgumentParser parser, String prefix) {
-        parser.addArgument("--" + prefix + "username").help("Username");
+        parser.addArgument("--" + prefix + "username").help("Username").setDefault(System.getProperty("user.name"));
         parser.addArgument("--" + prefix + "password").help("Password or passphrase");
         parser.addArgument("--" + prefix + "certfile").help("Certificate private key file");
     }

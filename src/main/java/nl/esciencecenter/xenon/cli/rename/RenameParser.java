@@ -10,6 +10,7 @@ public class RenameParser implements IParser {
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("rename")
             .setDefault("command", new RenameCommand())
+            .defaultHelp(true)
             .help("Copy path from location to target location")
             .description("Copy path from location to target location");
         subparser.addArgument("source").help("Source path").required(true);

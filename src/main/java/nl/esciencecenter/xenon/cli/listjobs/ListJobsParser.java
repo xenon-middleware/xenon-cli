@@ -11,6 +11,7 @@ public class ListJobsParser implements IParser {
     public Subparser buildArgumentParser(Subparsers subparsers) {
         Subparser subparser = subparsers.addParser("list")
             .setDefault("command", new ListJobsCommand())
+            .defaultHelp(true)
             .help("List jobs of scheduler")
             .description("List jobs of scheduler");
         subparser.addArgument("--queue").help("Only list jobs belonging to this queue").action(Arguments.append());

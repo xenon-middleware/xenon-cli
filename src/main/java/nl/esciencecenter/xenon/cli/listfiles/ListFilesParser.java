@@ -23,6 +23,7 @@ public class ListFilesParser implements IParser {
                 "* Name, path of file/directory" + sep;
         Subparser subparser = subparsers.addParser("list")
             .setDefault("command", new ListFilesCommand())
+            .defaultHelp(true)
             .help("List objects in path of location")
             .description("List objects in path of location").epilog(epilog);
         subparser.addArgument("path").help("Start directory").required(true);

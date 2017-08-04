@@ -13,6 +13,7 @@ public class SubmitParser implements IParser {
         //   exec <executable> <args> <environment> <job options> <max time> <queue> <working directory> <std* attached to local streams>
         Subparser subparser = subparsers.addParser("submit")
             .setDefault("command", new SubmitCommand())
+            .defaultHelp(true)
             .help("Submit job at location")
             .description("Submit job at location");
 
