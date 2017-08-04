@@ -37,9 +37,9 @@ public class ExecCommand extends XenonCommand {
         } catch (IOException e) {
             logger.warn("Copy stdout failed", e);
         }
+        scheduler.waitUntilDone(streams.getJobIdentifier(), waitTimeout);
         stdinForwarder.terminate(1000);
         stderrForwarder.terminate(1000);
-        scheduler.waitUntilDone(streams.getJobIdentifier(), waitTimeout);
         scheduler.close();
         // run has no output, because all output has already been sent to stdout and stderr.
         return null;
