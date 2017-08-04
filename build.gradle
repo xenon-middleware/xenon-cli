@@ -39,7 +39,7 @@ testSets {
     integrationTest
 }
 
-ext.xenonLibVersion = '2.0.0-rc1'
+ext.xenonLibVersion = '2.0.0-rc2'
 
 dependencies {
     runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.11'
