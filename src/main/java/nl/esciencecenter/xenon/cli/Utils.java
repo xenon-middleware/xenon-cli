@@ -1,5 +1,17 @@
 package nl.esciencecenter.xenon.cli;
 
+import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.CertificateCredential;
@@ -10,18 +22,6 @@ import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
 
 /**
  * Helpers for Xenon.jobs based commands
@@ -115,18 +115,12 @@ public class Utils {
         return bytes;
     }
 
-    private static boolean isRelativeLocalPath(String adaptorName, String path) {
-        return ("local".equals(adaptorName) || "file".equals(adaptorName)) && !(path.startsWith("~") || path.startsWith("/") || "-".equals(path));
-    }
-
-    public static Path getAbsolutePath(String adaptorName, String path)  {
-        Path apath = new Path(path);
-        if (isRelativeLocalPath(adaptorName, path)) {
-            // Path is relative to working directory, make it absolute
-            Path workingDirectory = new Path(System.getProperty("user.dir"));
-            apath = workingDirectory.resolve(apath);
+    public static Path getAbsolutePath(Path pathRelativeOrAbsolute, FileSystem fs) {
+        if (pathRelativeOrAbsolute.isAbsolute() || "-".equals(pathRelativeOrAbsolute.toString())) {
+            return pathRelativeOrAbsolute;
+        } else {
+            return fs.getEntryPath().resolve(pathRelativeOrAbsolute).normalize();
         }
-        return apath;
     }
 
     public static Scheduler createScheduler(Namespace res) throws XenonException {

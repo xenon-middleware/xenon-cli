@@ -1,12 +1,12 @@
 package nl.esciencecenter.xenon.cli.listfiles;
 
-import nl.esciencecenter.xenon.filesystems.Path;
-import nl.esciencecenter.xenon.filesystems.PathAttributes;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import nl.esciencecenter.xenon.filesystems.Path;
+import nl.esciencecenter.xenon.filesystems.PathAttributes;
 
 /**
  * Listing of files and directories of a location
@@ -15,7 +15,7 @@ public class ListFilesOutput {
     private final List<String> files;
 
     public ListFilesOutput(Path start, Stream<PathAttributes> stream) {
-        files = stream.map(item -> start.relativize(item.getPath()).getRelativePath()).sorted().collect(Collectors.toList());
+        files = stream.map(item -> start.relativize(item.getPath()).toString()).sorted().collect(Collectors.toList());
     }
 
     @Override

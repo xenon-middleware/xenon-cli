@@ -1,5 +1,7 @@
 package nl.esciencecenter.xenon.cli.copy;
 
+import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
+
 import java.util.Map;
 
 import nl.esciencecenter.xenon.XenonException;
@@ -7,12 +9,11 @@ import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
 
-import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
-
 /**
  * Data required for a source or target of a copy command
  */
 public class CopyInput {
+    private FileSystem fileSystem;
     private String adaptor;
     private String location = null;
     private String path;
@@ -20,11 +21,11 @@ public class CopyInput {
     private boolean stream = false;
     private Map<String, String> properties = null;
 
-    CopyInput(String adaptor, String location, String path, Credential credential) {
+    CopyInput(String adaptor, String location, String path, Credential credential) throws XenonException {
         this(adaptor, location, path, credential, null);
     }
 
-    CopyInput(String adaptor, String location, String path, Credential credential, Map<String, String> properties) {
+    CopyInput(String adaptor, String location, String path, Credential credential, Map<String, String> properties) throws XenonException {
         this.adaptor = adaptor;
         this.location = location;
         if ("-".equals(path) && ("file".equals(adaptor) || "local".equals(adaptor))) {
@@ -35,6 +36,7 @@ public class CopyInput {
         this.path = path;
         this.credential = credential;
         this.properties = properties;
+        this.fileSystem = FileSystem.create(getAdaptorName(), getLocation(), getCredential(), getProperties());
     }
 
     String getAdaptorName() {
@@ -62,10 +64,10 @@ public class CopyInput {
     }
 
     public Path getPath()  {
-        return getAbsolutePath(adaptor, path);
+        return getAbsolutePath(new Path(path), fileSystem);
     }
 
     FileSystem getFileSystem() throws XenonException {
-        return FileSystem.create(getAdaptorName(), getLocation(), getCredential(), getProperties());
+        return fileSystem;
     }
 }

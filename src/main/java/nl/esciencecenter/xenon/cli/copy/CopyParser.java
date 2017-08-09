@@ -1,14 +1,14 @@
 package nl.esciencecenter.xenon.cli.copy;
 
+import static nl.esciencecenter.xenon.cli.ParserHelpers.addCopyModeArguments;
+import static nl.esciencecenter.xenon.utils.LocalFileSystemUtils.isWindows;
+
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 import nl.esciencecenter.xenon.cli.IParser;
 import nl.esciencecenter.xenon.cli.ParserHelpers;
-
-import static nl.esciencecenter.xenon.adaptors.shared.local.LocalUtil.isWindows;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.addCopyModeArguments;
 
 public class CopyParser implements IParser {
     public Subparser buildArgumentParser(Subparsers subparsers, String supportedLocationHelp, Boolean isLocal) {

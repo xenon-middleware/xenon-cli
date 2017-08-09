@@ -1,13 +1,13 @@
 package nl.esciencecenter.xenon.cli.listfiles;
 
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
+
 import nl.esciencecenter.xenon.filesystems.AttributeNotSupportedException;
 import nl.esciencecenter.xenon.filesystems.Path;
 import nl.esciencecenter.xenon.filesystems.PathAttributes;
 import nl.esciencecenter.xenon.filesystems.PosixFilePermission;
-
-import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
 
 public class LongListItem {
     public final String relativePath;
@@ -26,8 +26,8 @@ public class LongListItem {
     private final boolean isOther;
 
     LongListItem(PathAttributes attribs, Path start) {
-        relativePath = start.relativize(attribs.getPath()).getRelativePath();
-        absolutePath = attribs.getPath().getAbsolutePath();
+        relativePath = start.relativize(attribs.getPath()).toString();
+        absolutePath = attribs.getPath().toString();
         size = attribs.getSize();
         permissions = buildPermissions(attribs);
         owner = buildOwner(attribs);

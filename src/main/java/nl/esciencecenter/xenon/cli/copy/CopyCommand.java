@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.Set;
 
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonRuntimeException;
 import nl.esciencecenter.xenon.cli.Utils;
@@ -19,8 +20,6 @@ import nl.esciencecenter.xenon.filesystems.CopyStatus;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.NoSuchCopyException;
 import nl.esciencecenter.xenon.filesystems.Path;
-
-import net.sourceforge.argparse4j.inf.Namespace;
 
 /**
  * Copy source file/directory to target location command
@@ -64,10 +63,10 @@ public class CopyCommand extends XenonCommand {
         CopyStatus status = sourceFS.waitUntilDone(copyId, DEFAULT_COPY_TIMEOUT);
         if (status.hasException()) {
             Throwable e = status.getException();
-            if (e instanceof XenonException) {
+            if (e != null) {
                 throw (XenonException) e;
             } else {
-                throw new XenonException(sourceFS.getAdaptorName(), e.getMessage(), e);
+                    throw new XenonException(sourceFS.getAdaptorName(), e.getMessage(), e);
             }
         }
         return status;
