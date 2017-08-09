@@ -29,7 +29,7 @@ public class MainTest {
         Namespace ns = new Namespace(attrs);
 
         Set<String> allowedKeys = new HashSet<>(Arrays.asList("KEY1", "KEY2"));
-        Map<String, String> result = Main.buildXenonProperties(ns, allowedKeys);
+        Map<String, String> result = Utils.buildXenonProperties(ns, allowedKeys);
         Map<String, String> expected = new HashMap<>();
         expected.put("KEY1", "VAL1");
         expected.put("KEY2", "VAL2");

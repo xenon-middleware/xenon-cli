@@ -54,31 +54,52 @@ public class SftpTest {
         File sourceFile = myfolder.newFile("source.txt");
         sourceFile.createNewFile();
 
-        String targetPath = "/tmp/target.txt";
+        String targetPath = "/tmp/uploaded.txt";
         String[] args = argsBuilder(
-            "upload",
-            sourceFile.getAbsolutePath(),
-            targetPath
+                "upload",
+                sourceFile.getAbsolutePath(),
+                targetPath
         );
         Main main = new Main();
         main.run(args);
 
-        // Check file has been uploaded with Xenon
+        assertRemoteFileExists(targetPath);
+    }
+
+    private void assertRemoteFileExists(String targetPath) throws XenonException {
         Credential cred = new PasswordCredential("xenon", "javagat".toCharArray());
-        FileSystem fs = FileSystem.create("sftp", getLocation(), cred);
-        Path path = new Path(targetPath);
-        assertTrue(fs.exists(path));
-        fs.close();
+        FileSystem fs = null;
+        try {
+            fs = FileSystem.create("sftp", getLocation(), cred);
+            Path path = new Path(targetPath);
+            assertTrue(fs.exists(path));
+        } finally {
+            if (fs != null) {
+                fs.close();
+            }
+        }
     }
 
     @Test
     public void download() {
         String sourcePath = "/home/xenon/filesystem-test-fixture/links/file0";
-        File targetFile = new File(myfolder.getRoot(), "target.txt");
+        File targetFile = new File(myfolder.getRoot(), "downloaded.txt");
         String[] args = argsBuilder("download", sourcePath, targetFile.getAbsolutePath());
         Main main = new Main();
         main.run(args);
 
         assertTrue(targetFile.exists());
+    }
+
+    @Test
+    public void copy() throws XenonException {
+        String sourcePath = "/home/xenon/filesystem-test-fixture/links/file0";
+        String targetPath = "/tmp/copied.txt";
+
+        String[] args = argsBuilder("copy", sourcePath, targetPath);
+        Main main = new Main();
+        main.run(args);
+
+        assertRemoteFileExists(targetPath);
     }
 }

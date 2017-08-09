@@ -13,7 +13,8 @@ import nl.esciencecenter.xenon.filesystems.Path;
  * Data required for a source or target of a copy command
  */
 public class CopyInput {
-    private FileSystem fileSystem;
+
+    private transient FileSystem fileSystem;
     private String adaptor;
     private String location = null;
     private String path;
@@ -21,7 +22,7 @@ public class CopyInput {
     private boolean stream = false;
     private Map<String, String> properties = null;
 
-    CopyInput(String adaptor, String location, String path, Credential credential) throws XenonException {
+    public CopyInput(String adaptor, String location, String path, Credential credential) throws XenonException {
         this(adaptor, location, path, credential, null);
     }
 
@@ -67,7 +68,7 @@ public class CopyInput {
         return getAbsolutePath(new Path(path), fileSystem);
     }
 
-    FileSystem getFileSystem() throws XenonException {
+    public FileSystem getFileSystem() {
         return fileSystem;
     }
 }

@@ -18,12 +18,20 @@ public class CopyOutput {
     public String toString() {
         String sourceLocation = source.getLocation();
         if (source.isLocal() && sourceLocation == null) {
-            sourceLocation = "local";
+            sourceLocation = "file";
         }
         String targetLocation = target.getLocation();
         if (target.isLocal() && targetLocation == null) {
-            targetLocation = "local";
+            targetLocation = "file";
         }
         return String.format("Copied '%s' from location '%s' to '%s' at location '%s', %d bytes copied", source.getPath(), sourceLocation, target.getPath(), targetLocation, bytesCopied);
+    }
+
+    public CopyInput getTarget() {
+        return target;
+    }
+
+    public CopyInput getSource() {
+        return source;
     }
 }

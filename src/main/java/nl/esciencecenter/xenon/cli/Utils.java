@@ -1,6 +1,5 @@
 package nl.esciencecenter.xenon.cli;
 
-import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
 
@@ -11,8 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.sourceforge.argparse4j.inf.Namespace;
+import nl.esciencecenter.xenon.AdaptorDescription;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.CertificateCredential;
 import nl.esciencecenter.xenon.credentials.Credential;
@@ -149,8 +150,21 @@ public class Utils {
 
     static Credential createCredential(Namespace res, String prefix) {
         String username = res.getString(prefix + "username");
+        if (username == null && !"".equals(prefix)) {
+            username = res.getString("username");
+        }
         String passwordAsString = res.getString(prefix + "password");
+        if (passwordAsString == null && !"".equals(prefix)) {
+            passwordAsString = res.getString("password");
+        }
         String certfile = res.getString(prefix + "certfile");
+        if (certfile == null && !"".equals(prefix)) {
+            certfile = res.getString("certfile");
+        }
+        return createCredential(username, passwordAsString, certfile);
+    }
+
+    private static Credential createCredential(String username, String passwordAsString, String certfile) {
         char[] password = null;
         if (passwordAsString != null) {
             password = passwordAsString.toCharArray();
@@ -164,5 +178,23 @@ public class Utils {
         } else {
             return new DefaultCredential();
         }
+    }
+
+    public static boolean isLocalAdaptor(AdaptorDescription adaptorDescription) {
+        return adaptorDescription.getName().equals("file") || adaptorDescription.getName().equals("local");
+    }
+
+    public static Map<String,String> buildXenonProperties(Namespace res, Set<String> allowedKeys) {
+        return buildXenonProperties(res.getList("props"), allowedKeys);
+    }
+
+    public static Map<String,String> buildTargetXenonProperties(Namespace res, Set<String> allowedKeys) {
+        return buildXenonProperties(res.getList("--target-props"), allowedKeys);
+    }
+
+    private static Map<String, String> buildXenonProperties(List<String> props,Set<String> allowedKeys) {
+        return parseArgumentListAsMap(props).entrySet().stream()
+            .filter(p -> allowedKeys.contains(p.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }

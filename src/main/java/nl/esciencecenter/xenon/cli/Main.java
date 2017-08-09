@@ -1,7 +1,6 @@
 package nl.esciencecenter.xenon.cli;
 
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
-import static nl.esciencecenter.xenon.cli.Utils.parseArgumentListAsMap;
 import static nl.esciencecenter.xenon.utils.LocalFileSystemUtils.isWindows;
 
 import java.util.ArrayList;
@@ -10,9 +9,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -28,7 +24,6 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 import nl.esciencecenter.xenon.AdaptorDescription;
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.cli.copy.CopyParser;
 import nl.esciencecenter.xenon.cli.copy.DownloadParser;
 import nl.esciencecenter.xenon.cli.copy.UploadParser;
@@ -59,12 +54,6 @@ public class Main {
         Main main = new Main();
         Object output = main.run(args);
         main.print(output);
-    }
-
-    public static Map<String,String> buildXenonProperties(Namespace res, Set<String> allowedKeys) {
-        return parseArgumentListAsMap(res.getList("props")).entrySet().stream()
-            .filter(p -> allowedKeys.contains(p.getKey()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public Namespace getRes() {
@@ -174,14 +163,14 @@ public class Main {
 
     private void adaptorSubCommands(Subparsers subparsers, AdaptorDescription adaptorDescription) {
         Subparser adaptorParser = addSubCommandAdaptor(subparsers, adaptorDescription);
-        String supportedLocationHelp = addArgumentLocation(adaptorDescription, adaptorParser);
-        if (!isLocalAdaptor(adaptorDescription)) {
+        addArgumentLocation(adaptorDescription, adaptorParser);
+        if (!Utils.isLocalAdaptor(adaptorDescription)) {
             ParserHelpers.addCredentialArguments(adaptorParser);
         }
         addArgumentProp(adaptorDescription, adaptorParser);
         Subparsers commandsParser = adaptorParser.addSubparsers().title("commands");
         if (adaptorDescription instanceof FileSystemAdaptorDescription) {
-            filesystemSubCommands((FileSystemAdaptorDescription) adaptorDescription, supportedLocationHelp, commandsParser);
+            filesystemSubCommands((FileSystemAdaptorDescription) adaptorDescription, commandsParser);
         } else if (adaptorDescription instanceof SchedulerAdaptorDescription) {
             schedulerSubCommands((SchedulerAdaptorDescription) adaptorDescription, commandsParser);
         }
@@ -204,10 +193,10 @@ public class Main {
         new QueuesParser().buildArgumentParser(commandsParser);
     }
 
-    private void filesystemSubCommands(FileSystemAdaptorDescription adaptorDescription, String supportedLocationHelp, Subparsers commandsParser) {
+    private void filesystemSubCommands(FileSystemAdaptorDescription adaptorDescription, Subparsers commandsParser) {
         // copy
-        boolean isLocal = isLocalAdaptor(adaptorDescription);
-        new CopyParser().buildArgumentParser(commandsParser, supportedLocationHelp, isLocal);
+        new CopyParser().setAdaptorDescription(adaptorDescription).buildArgumentParser(commandsParser);
+        boolean isLocal = Utils.isLocalAdaptor(adaptorDescription);
         if (!isLocal) {
             // upload
             new UploadParser().buildArgumentParser(commandsParser);
@@ -233,9 +222,9 @@ public class Main {
                         .setDefault("adaptor", adaptorDescription.getName());
     }
 
-    private String addArgumentLocation(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
+    private void addArgumentLocation(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
         String supportedLocationHelp = getSupportedLocationHelp(adaptorDescription.getSupportedLocations());
-        boolean isLocal = isLocalAdaptor(adaptorDescription);
+        boolean isLocal = Utils.isLocalAdaptor(adaptorDescription);
         if (!isLocal || isWindows()) {
             Argument locationArgument = adaptorParser.addArgument("--location").help("Location, " + supportedLocationHelp);
             boolean locationCanBeNull = Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(l -> l.equals("(null)"));
@@ -243,27 +232,16 @@ public class Main {
                 locationArgument.required(true);
             }
         }
-        return supportedLocationHelp;
-    }
-
-    private boolean isLocalAdaptor(AdaptorDescription adaptorDescription) {
-        return adaptorDescription.getName().equals("file") || adaptorDescription.getName().equals("local");
     }
 
     private void addArgumentProp(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
         if (adaptorDescription.getSupportedProperties().length > 0) {
+            String sep = System.getProperty("line.separator");
             adaptorParser.addArgument("--prop")
                 .action(Arguments.append())
                 .metavar("KEY=VALUE")
-                .help("Supported adaptor properties, " + getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()))
+                .help("Adaptor properties, can be given multiple times, " + ParserHelpers.getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()))
                 .dest("props");
         }
-    }
-
-    private String getSupportedPropertiesHelp(XenonPropertyDescription[] descriptions) {
-        String sep = System.getProperty("line.separator");
-        List<String> helps = Arrays.stream(descriptions).map(ParserHelpers::getAdaptorPropertyHelp).collect(Collectors.toList());
-        helps.add(0, "Supported properties:");
-        return String.join(sep, helps);
     }
 }

@@ -1,6 +1,12 @@
 package nl.esciencecenter.xenon.cli;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import net.sourceforge.argparse4j.impl.Arguments;
+import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Subparser;
@@ -11,11 +17,6 @@ import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 /**
  * Utilities to construct argument parser
  */
@@ -25,13 +26,15 @@ public class ParserHelpers {
     }
 
     static void addCredentialArguments(ArgumentParser parser) {
-        addCredentialArguments(parser, "");
+        parser.addArgument("--username").help("Username").setDefault(System.getProperty("user.name"));
+        parser.addArgument("--password").help("Password or passphrase");
+        parser.addArgument("--certfile").help("Certificate private key file");
     }
 
-    public static void addCredentialArguments(ArgumentParser parser, String prefix) {
-        parser.addArgument("--" + prefix + "username").help("Username").setDefault(System.getProperty("user.name"));
-        parser.addArgument("--" + prefix + "password").help("Password or passphrase");
-        parser.addArgument("--" + prefix + "certfile").help("Certificate private key file");
+    public static void addTargetCredentialArguments(ArgumentGroup parser) {
+        parser.addArgument("--target-username").help("Username for target location (default: --username value)");
+        parser.addArgument("--target-password").help("Password or passphrase for target location (default: --password value)");
+        parser.addArgument("--target-certfile").help("Certificate private key file for target location (default: --certfile value)");
     }
 
     public static MutuallyExclusiveGroup addCopyModeArguments(ArgumentParser parser) {
@@ -53,9 +56,9 @@ public class ParserHelpers {
         return group;
     }
 
-    static String getSupportedLocationHelp(String[] supportedLocations) {
+    public static String getSupportedLocationHelp(String[] supportedLocations) {
         List<String> helps = Arrays.stream(supportedLocations).map(location -> "- " + location).collect(Collectors.toList());
-        helps.add(0, "Supported locations:");
+        helps.add(0, "supported locations:");
         String sep = System.getProperty("line.separator");
         return String.join(sep, helps);
     }
@@ -94,5 +97,12 @@ public class ParserHelpers {
 
     public static Set<String> getAllowedSchedulerPropertyKeys(String adaptor) throws XenonException {
         return Arrays.stream(Scheduler.getAdaptorDescription(adaptor).getSupportedProperties()).map(XenonPropertyDescription::getName).collect(Collectors.toSet());
+    }
+
+    public static String getSupportedPropertiesHelp(XenonPropertyDescription[] descriptions) {
+        String sep = System.getProperty("line.separator");
+        List<String> helps = Arrays.stream(descriptions).map(ParserHelpers::getAdaptorPropertyHelp).collect(Collectors.toList());
+        helps.add(0, "supported properties:");
+        return String.join(sep, helps);
     }
 }

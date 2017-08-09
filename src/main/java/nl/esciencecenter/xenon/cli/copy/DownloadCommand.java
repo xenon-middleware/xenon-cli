@@ -1,6 +1,6 @@
 package nl.esciencecenter.xenon.cli.copy;
 
-import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.Utils.buildXenonProperties;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
 
 import java.util.Map;

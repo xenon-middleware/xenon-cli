@@ -1,35 +1,38 @@
 package nl.esciencecenter.xenon.cli.copy;
 
 import static nl.esciencecenter.xenon.cli.ParserHelpers.addCopyModeArguments;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.addTargetCredentialArguments;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
 import static nl.esciencecenter.xenon.utils.LocalFileSystemUtils.isWindows;
 
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Argument;
+import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 import nl.esciencecenter.xenon.cli.IParser;
 import nl.esciencecenter.xenon.cli.ParserHelpers;
+import nl.esciencecenter.xenon.cli.Utils;
+import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
 
 public class CopyParser implements IParser {
-    public Subparser buildArgumentParser(Subparsers subparsers, String supportedLocationHelp, Boolean isLocal) {
+    private FileSystemAdaptorDescription adaptorDescription;
+
+    public Subparser buildArgumentParser(Subparsers subparsers) {
+        boolean isLocal = Utils.isLocalAdaptor(adaptorDescription);
+
         Subparser subparser = subparsers.addParser("copy")
-            .setDefault("command", new CopyCommand())
-            .defaultHelp(true)
-            .help("Copy path from location to target location")
-            .description("Copy path from location to target location");
+                .setDefault("command", new CopyCommand())
+                .defaultHelp(true)
+                .help("Copy path from location to target location")
+                .description("Copy path from location to target location");
         Argument sourcePath = subparser.addArgument("source-path").required(true);
         if (isLocal) {
             sourcePath
-                .help("Source path, use '-' for stdin")
-                .type(Arguments.fileType().acceptSystemIn());
+                    .help("Source path, use '-' for stdin")
+                    .type(Arguments.fileType().acceptSystemIn());
         } else {
             sourcePath.help("Source path");
-        }
-        if (!isLocal || isWindows()) {
-            Argument targetLocation = subparser.addArgument("target-location").help("Target location, " + supportedLocationHelp);
-            if (isLocal) {
-                targetLocation.nargs("?");
-            }
         }
         Argument targetPath = subparser.addArgument("target-path").required(true);
         if (isLocal) {
@@ -37,15 +40,44 @@ public class CopyParser implements IParser {
         } else {
             targetPath.help("Target path");
         }
-        if (!isLocal) {
-            ParserHelpers.addCredentialArguments(subparser, "target-");
+        ArgumentGroup targetparser = subparser.addArgumentGroup("target")
+                .description("If location of target path ('target_path') is not the same as --location, then set --target-* arguments");
+        if (!isLocal || isWindows()) {
+            String supportedLocationHelp = getSupportedLocationHelp(adaptorDescription.getSupportedLocations());
+            String sep = System.getProperty("line.separator");
+            Argument targetLocation = targetparser.addArgument("--target-location")
+                    .help("Target location of " + adaptorDescription.getName() + " adaptor, " +
+                            supportedLocationHelp +
+                            sep + "(default: --location value)");
+            if (isLocal) {
+                targetLocation.setDefault("c:");
+            }
         }
+        if (!isLocal) {
+            addTargetCredentialArguments(targetparser);
+        }
+        addTargetArgumentProp(adaptorDescription, targetparser);
+
         subparser.addArgument("--recursive").help("Copy directories recursively").action(Arguments.storeTrue());
         addCopyModeArguments(subparser);
         return subparser;
     }
 
-    public Subparser buildArgumentParser(Subparsers subparsers) {
-        return buildArgumentParser(subparsers, "", false);
+    private void addTargetArgumentProp(FileSystemAdaptorDescription adaptorDescription, ArgumentGroup subparser) {
+        if (adaptorDescription.getSupportedProperties().length > 0) {
+            String sep = System.getProperty("line.separator");
+            subparser.addArgument("--target-prop")
+                    .action(Arguments.append())
+                    .metavar("KEY=VALUE")
+                    .help("Adaptor properties for target location, can be given multiple times, " +
+                            ParserHelpers.getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()) +
+                            sep + "(default: --prop value)")
+                    .dest("props");
+        }
+    }
+
+    public CopyParser setAdaptorDescription(FileSystemAdaptorDescription adaptorDescription) {
+        this.adaptorDescription = adaptorDescription;
+        return this;
     }
 }

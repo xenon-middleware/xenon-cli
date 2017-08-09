@@ -24,12 +24,6 @@ public class CopyInputTest {
     }
 
     @Test
-    public void isStream_sshdash_false() throws Exception {
-        CopyInput copyInput = new CopyInput("ssh", "somewhere", "-", null);
-        assertFalse(copyInput.isStream());
-    }
-
-    @Test
     public void toJson() throws XenonException {
         CopyInput copyInput = new CopyInput("file", null, "/tmp/bla", null);
         Gson gson = new GsonBuilder().create();

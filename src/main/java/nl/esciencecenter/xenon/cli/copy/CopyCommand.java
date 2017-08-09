@@ -1,6 +1,7 @@
 package nl.esciencecenter.xenon.cli.copy;
 
-import static nl.esciencecenter.xenon.cli.Main.buildXenonProperties;
+import static nl.esciencecenter.xenon.cli.Utils.buildTargetXenonProperties;
+import static nl.esciencecenter.xenon.cli.Utils.buildXenonProperties;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
 
 import java.io.IOException;
@@ -102,16 +103,23 @@ public class CopyCommand extends XenonCommand {
         String sourcePath = res.getString("source_path");
         Credential sourceCredential = buildCredential(res);
         String targetLocation = res.getString("target_location");
+        if (targetLocation == null) {
+            targetLocation = sourceLocation;
+        }
         String targetPath = res.getString("target_path");
         Credential targetCredential = buildCredential(res, "target_");
         CopyMode copymode = res.get("copymode");
         Boolean recursive = res.getBoolean("recursive");
 
         Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
-        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        Map<String, String> sourceProps = buildXenonProperties(res, allowedKeys);
+        Map<String, String> targetProps = buildTargetXenonProperties(res, allowedKeys);
+        if (targetProps.isEmpty() && !sourceProps.isEmpty()) {
+            targetProps = sourceProps;
+        }
 
-        CopyInput source = new CopyInput(adaptor, sourceLocation, sourcePath, sourceCredential, props);
-        CopyInput target = new CopyInput(adaptor, targetLocation, targetPath, targetCredential, props);
+        CopyInput source = new CopyInput(adaptor, sourceLocation, sourcePath, sourceCredential, sourceProps);
+        CopyInput target = new CopyInput(adaptor, targetLocation, targetPath, targetCredential, targetProps);
 
         CopyOutput result = this.copy(source, target, recursive, copymode);
 
