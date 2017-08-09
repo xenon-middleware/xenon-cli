@@ -40,13 +40,16 @@ public class CopyParser implements IParser {
         } else {
             targetPath.help("Target path");
         }
+        String sep = System.getProperty("line.separator");
         ArgumentGroup targetparser = subparser.addArgumentGroup("target")
-                .description("If location of target path ('target_path') is not the same as --location, then set --target-* arguments");
+                .description("If location of target path ('target_path') is not the same as --location, then set --target-* arguments. " + sep + sep +
+                        "The target location always makes use of the " + adaptorDescription.getName() + " adaptor. " +
+                        "To copy between the file adaptor (aka local files) and " + adaptorDescription.getName() + " adaptor use xenon upload or xenon download commands. " +
+                        "To copy between different adaptors use the local filesystem as intermediate storage and a sequence of xenon download, upload and remove commands.");
         if (!isLocal || isWindows()) {
             String supportedLocationHelp = getSupportedLocationHelp(adaptorDescription.getSupportedLocations());
-            String sep = System.getProperty("line.separator");
             Argument targetLocation = targetparser.addArgument("--target-location")
-                    .help("Target location of " + adaptorDescription.getName() + " adaptor, " +
+                    .help("Target location, " +
                             supportedLocationHelp +
                             sep + "(default: --location value)");
             if (isLocal) {
