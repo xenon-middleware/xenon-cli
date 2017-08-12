@@ -1,7 +1,6 @@
 package nl.esciencecenter.xenon.cli.removefile;
 
 import static nl.esciencecenter.xenon.cli.Utils.createFileSystem;
-import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
 
 import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
@@ -23,7 +22,7 @@ public class RemoveFileCommand extends XenonCommand {
     }
 
     private void remove(FileSystem fs, String pathIn, Boolean recursive) throws XenonException {
-        Path path = getAbsolutePath(new Path(pathIn), fs);
+        Path path = new Path(pathIn);
         fs.delete(path, recursive);
 
         fs.close();

@@ -6,9 +6,7 @@ import com.github.geowarin.junit.DockerRule;
 import nl.esciencecenter.xenon.cli.copy.CopyInput;
 import nl.esciencecenter.xenon.credentials.PasswordCredential;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 public class CopyInputTest {
     private static final String PORT = "22/tcp";
@@ -19,9 +17,6 @@ public class CopyInputTest {
             .ports("22")
             .waitForPort(PORT)
             .build();
-
-    @Rule
-    public TemporaryFolder myfolder = new TemporaryFolder();
 
     private static String getLocation() {
         return server.getDockerHost() + ":" + server.getHostPort(PORT);

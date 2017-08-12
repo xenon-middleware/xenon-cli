@@ -1,7 +1,6 @@
 package nl.esciencecenter.xenon.cli.listfiles;
 
 import static nl.esciencecenter.xenon.cli.Utils.createFileSystem;
-import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,13 +32,19 @@ public class ListFilesCommand extends XenonCommand {
     }
 
     private Object listObjects(FileSystem fs, String pathIn, Boolean recursive, Boolean showhidden, Boolean longFormat) throws XenonException {
-        Path start = getAbsolutePath(new Path(pathIn), fs);
+        Path start = new Path(pathIn);
         Iterable<PathAttributes> iterable = fs.list(start, recursive);
 
         // apply filters
         Stream<PathAttributes> stream = fsListToStream(iterable);
         if (!showhidden) {
             stream = filterHidden(stream);
+        }
+
+        if (!start.isAbsolute()) {
+            // list items need to be made relative to start,
+            // the start must be absolute to relativize()
+            start = fs.getWorkingDirectory().resolve(start);
         }
 
         // format

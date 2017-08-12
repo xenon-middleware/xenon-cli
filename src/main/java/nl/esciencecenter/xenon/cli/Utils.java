@@ -20,7 +20,6 @@ import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.credentials.DefaultCredential;
 import nl.esciencecenter.xenon.credentials.PasswordCredential;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
-import nl.esciencecenter.xenon.filesystems.Path;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 
@@ -114,14 +113,6 @@ public class Utils {
             len = in.read(buffer);
         }
         return bytes;
-    }
-
-    public static Path getAbsolutePath(Path pathRelativeOrAbsolute, FileSystem fs) {
-        if (pathRelativeOrAbsolute.isAbsolute() || "-".equals(pathRelativeOrAbsolute.toString())) {
-            return pathRelativeOrAbsolute;
-        } else {
-            return fs.getEntryPath().resolve(pathRelativeOrAbsolute).normalize();
-        }
     }
 
     public static Scheduler createScheduler(Namespace res) throws XenonException {

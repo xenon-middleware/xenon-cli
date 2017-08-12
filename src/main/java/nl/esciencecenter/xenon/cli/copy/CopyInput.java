@@ -1,7 +1,5 @@
 package nl.esciencecenter.xenon.cli.copy;
 
-import static nl.esciencecenter.xenon.cli.Utils.getAbsolutePath;
-
 import java.util.Map;
 
 import nl.esciencecenter.xenon.XenonException;
@@ -13,8 +11,6 @@ import nl.esciencecenter.xenon.filesystems.Path;
  * Data required for a source or target of a copy command
  */
 public class CopyInput {
-
-    private transient FileSystem fileSystem;
     private String adaptor;
     private String location = null;
     private String path;
@@ -22,11 +18,11 @@ public class CopyInput {
     private boolean stream = false;
     private Map<String, String> properties = null;
 
-    public CopyInput(String adaptor, String location, String path, Credential credential) throws XenonException {
+    public CopyInput(String adaptor, String location, String path, Credential credential) {
         this(adaptor, location, path, credential, null);
     }
 
-    CopyInput(String adaptor, String location, String path, Credential credential, Map<String, String> properties) throws XenonException {
+    CopyInput(String adaptor, String location, String path, Credential credential, Map<String, String> properties) {
         this.adaptor = adaptor;
         this.location = location;
         if ("-".equals(path) && ("file".equals(adaptor) || "local".equals(adaptor))) {
@@ -37,7 +33,6 @@ public class CopyInput {
         this.path = path;
         this.credential = credential;
         this.properties = properties;
-        this.fileSystem = FileSystem.create(getAdaptorName(), getLocation(), getCredential(), getProperties());
     }
 
     String getAdaptorName() {
@@ -65,10 +60,10 @@ public class CopyInput {
     }
 
     public Path getPath()  {
-        return getAbsolutePath(new Path(path), fileSystem);
+        return new Path(path);
     }
 
-    public FileSystem getFileSystem() {
-        return fileSystem;
+    public FileSystem getFileSystem() throws XenonException {
+        return FileSystem.create(getAdaptorName(), getLocation(), getCredential(), getProperties());
     }
 }
