@@ -120,7 +120,7 @@ tasks.withType(Test) {
 sonarqube {
     properties {
         property 'sonar.host.url', 'https://sonarqube.com'
-        property 'sonar.organization', project.group
+        property 'sonar.organization', "nlesc"
         property 'sonar.language', 'java'
         property 'sonar.links.homepage', 'https://github.com/NLeSC/xenon-cli'
         properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
