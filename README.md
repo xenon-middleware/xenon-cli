@@ -12,7 +12,7 @@ Command line interface which uses the [Xenon library](https://nlesc.github.io/Xe
 
 Goto https://github.com/NLeSC/xenon-cli/releases and download a tarball (or zipfile).
 The tarball can be installed with:
-```
+```bash
 tar -xf build/distributions/xenon*.tar
 xenon*/bin/xenon --help
 ```
@@ -20,7 +20,7 @@ Add `xenon*/bin` to your PATH environment variable for easy usage.
 
 # Usage
 
-```
+```bash
 # List files on local filesystem
 xenon filesystem file list /etc
 # List files on remote filesystem using sftp
@@ -34,6 +34,8 @@ echo "sleep 30;echo Hello" | xenon sftp --location localhost upload - /tmp/myjob
 # Submit to a remote Slurm batch scheduler
 xenon scheduler slurm --location localhost submit /bin/sh /tmp/myjob.sh
 ```
+
+The above commands use your current username and keys from ~/.ssh.
 
 To keep password or passphrase invisible in process list put the password in a text file (eg. 'password.txt') and then use '@password.txt' as argument.
 For example:
