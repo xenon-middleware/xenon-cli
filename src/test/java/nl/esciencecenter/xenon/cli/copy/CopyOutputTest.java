@@ -4,11 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.credentials.DefaultCredential;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import nl.esciencecenter.xenon.credentials.DefaultCredential;
 
 public class CopyOutputTest {
     private CopyOutput copyOutput;
@@ -18,12 +17,6 @@ public class CopyOutputTest {
         CopyInput source = new CopyInput("file", "/", "/source", new DefaultCredential());
         CopyInput target = new CopyInput("file", "/", "/target", new DefaultCredential());
         copyOutput = new CopyOutput(source, target, 100L);
-    }
-
-    @After
-    public void tearDown() throws XenonException {
-        copyOutput.getSource().getFileSystem().close();
-        copyOutput.getTarget().getFileSystem().close();
     }
 
     @Test
