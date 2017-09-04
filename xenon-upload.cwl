@@ -10,10 +10,10 @@ hints:
 - class: DockerRequirement
   # xenon-cli Docker container needs to be manually build before
   dockerImageId: nlesc/xenon-cli
-baseCommand: xenon
+baseCommand:
+- xenon
+- '--json'
 arguments:
-- prefix: --json
-  position: 0
 - valueFrom: filesystem
   position: 1
 - valueFrom: upload

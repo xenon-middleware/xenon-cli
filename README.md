@@ -21,11 +21,17 @@ Add `xenon*/bin` to your PATH environment variable for easy usage.
 # Usage
 
 ```
+# List files on local filesystem
 xenon filesystem file list /etc
+# List files on remote filesystem using sftp
 xenon filesystem sftp --location localhost list /etc
+# Copy local file to remote filesystem
 xenon filesystem sftp --location localhost upload /etc/passwd /tmp/copy-of-passwd
+# Execute a program remotely using ssh
 xenon scheduler ssh --location localhost exec /bin/hostname
+# Pipe to a remote file
 echo "sleep 30;echo Hello" | xenon sftp --location localhost upload - /tmp/myjob.sh
+# Submit to a remote Slurm batch scheduler
 xenon scheduler slurm --location localhost submit /bin/sh /tmp/myjob.sh
 ```
 
@@ -67,14 +73,16 @@ docker run -ti --rm nlesc/xenon-cli --user $USER -v $PWD:/work --adaptor ssh upl
 
 ## Common Workflow Language
 
-Run Xenon CLI using a cwl-runner or as a tool in a Common Workflow Language workflow.
+Run Xenon CLI using a cwl-runner or as a tool in a [Common Workflow Language](http://www.commonwl.org/) workflow.
 
 Requires `nlesc/xenon-cli` Docker image to be available locally.
 
 Example to list contents of `/etc` directory via a ssh to localhost connection with cwl-runner:
 ```
-./xenon-ls.cwl --scheme sftp --location $USER@172.17.0.1 --path $PWD --certfile ~/.ssh/id_rsa
-./xenon-upload.cwl --certfile ~/.ssh/id_rsa --scheme sftp --location $USER@172.17.0.1 --source README.md --target $PWD/copy-of-README.md
-./xenon-download.cwl --certfile ~/.ssh/id_rsa --scheme sftp --location $USER@172.17.0.1 --source $PWD/README.md --target copy-of-README.md
+./xenon-ls.cwl --adaptor sftp --location $USER@172.17.0.1 --certfile ~/.ssh/id_rsa --path /etc
+# Copy file from localhost to working directory inside Docker container
+./xenon-upload.cwl --adaptor sftp --certfile ~/.ssh/id_rsa --location $USER@172.17.0.1 --source $PWD/README.md --target /tmp/copy-of-README.md
+# Copy file inside Docker container to localhost
+./xenon-download.cwl --adaptor sftp --certfile ~/.ssh/id_rsa --location $USER@172.17.0.1 --source /etc/passwd --target $PWD/copy-of-passwd
 ```
 (Replace `<user>@<host>` with actual username and hostname + expects docker with default network range)

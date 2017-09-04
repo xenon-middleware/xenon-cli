@@ -58,7 +58,7 @@ dependencies {
 }
 
 docker {
-    name 'hub.docker.com/nlesc/xenon-cli'
+    name 'nlesc/xenon-cli'
     dependsOn tasks.installShadowDist
     files tasks.installShadowDist.outputs
 }
