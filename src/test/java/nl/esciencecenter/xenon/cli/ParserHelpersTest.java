@@ -17,14 +17,14 @@ import org.junit.Test;
 
 public class ParserHelpersTest {
     @Test
-    public void getJobDescriptione() throws Exception {
+    public void getJobDescription_defaults() throws Exception {
         Map<String, Object> map = new HashMap<>();
         map.put("executable", "/bin/true");
         map.put("args", null);
         map.put("queue", null);
         map.put("envs", new ArrayList<String>());
         map.put("options", new ArrayList<String>());
-        map.put("max_time", 1);
+        map.put("max_run_time", 1);
         map.put("node_count", 1);
         map.put("procs_per_node", 1);
         map.put("working_directory", "/tmp");
@@ -43,7 +43,7 @@ public class ParserHelpersTest {
         map.put("queue", "gpu");
         map.put("envs", new ArrayList<String>());
         map.put("options", new ArrayList<String>());
-        map.put("max_time", 1);
+        map.put("max_run_time", 1);
         map.put("node_count", 1);
         map.put("procs_per_node", 1);
         map.put("working_directory", "/tmp");
@@ -63,7 +63,7 @@ public class ParserHelpersTest {
         List<String> envs = Collections.singletonList("KEY1=VAL1");
         map.put("envs", envs);
         map.put("options", new ArrayList<String>());
-        map.put("max_time", 1);
+        map.put("max_run_time", 1);
         map.put("node_count", 1);
         map.put("procs_per_node", 1);
         map.put("working_directory", "/tmp");
@@ -85,7 +85,7 @@ public class ParserHelpersTest {
         map.put("envs", new ArrayList<String>());
         List<String> options = Collections.singletonList("KEY1=VAL1");
         map.put("options", options);
-        map.put("max_time", 1);
+        map.put("max_run_time", 1);
         map.put("node_count", 1);
         map.put("procs_per_node", 1);
         map.put("working_directory", "/tmp");

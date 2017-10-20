@@ -38,7 +38,7 @@ public class ListJobsOutput {
                 String.valueOf(status.isDone()),
                 status.hasException() ? status.getException().getMessage() : "",
                 status.getExitCode() != null ? status.getExitCode().toString() : "",
-                status.getSchedulerSpecficInformation() != null ? status.getSchedulerSpecficInformation().toString() : ""
+                status.getSchedulerSpecificInformation() != null ? status.getSchedulerSpecificInformation().toString() : ""
             )).append(lsep);
         }
         return sb.toString();

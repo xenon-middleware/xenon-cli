@@ -32,7 +32,7 @@ xenon scheduler ssh --location localhost exec /bin/hostname
 # Pipe to a remote file
 echo "sleep 30;echo Hello" | xenon sftp --location localhost upload - /tmp/myjob.sh
 # Submit to a remote Slurm batch scheduler
-xenon scheduler slurm --location localhost submit /bin/sh /tmp/myjob.sh
+xenon scheduler slurm --location ssh://localhost submit /bin/sh /tmp/myjob.sh
 ```
 
 The above commands use your current username and keys from ~/.ssh.

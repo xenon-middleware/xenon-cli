@@ -71,8 +71,8 @@ public class Utils {
             description.setJobOptions(options);
         }
 
-        int maxTime = res.getInt("max_time");
-        description.setMaxTime(maxTime);
+        int maxTime = res.getInt("max_run_time");
+        description.setMaxRuntime(maxTime);
 
         int nodeCount = res.getInt("node_count");
         description.setNodeCount(nodeCount);

@@ -84,7 +84,7 @@ public class ParserHelpers {
             .metavar("KEY=VAL")
             .action(Arguments.append())
             .dest("options");
-        subparser.addArgument("--max-time").help("Maximum job time (in minutes)").type(Integer.class).setDefault(JobDescription.DEFAULT_MAX_RUN_TIME);
+        subparser.addArgument("--max-run-time").help("Maximum job run time (in minutes)").type(Integer.class).setDefault(JobDescription.DEFAULT_MAX_RUN_TIME_IN_MINUTES);
         subparser.addArgument("--node-count").type(Integer.class).help("Number of nodes to reserve").setDefault(1);
         subparser.addArgument("--procs-per-node").type(Integer.class).help("Number of processes started on each node").setDefault(1);
         subparser.addArgument("--working-directory")

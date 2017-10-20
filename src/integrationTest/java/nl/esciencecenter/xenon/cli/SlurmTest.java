@@ -34,7 +34,7 @@ public class SlurmTest {
 
     private static String getLocation() {
         DockerPort slurm = docker.containers().container(ADAPTOR_NAME).port(22);
-        return slurm.inFormat("$HOST:$EXTERNAL_PORT");
+        return slurm.inFormat("ssh://$HOST:$EXTERNAL_PORT");
     }
 
     private static String[] argsBuilder(String... args) {
