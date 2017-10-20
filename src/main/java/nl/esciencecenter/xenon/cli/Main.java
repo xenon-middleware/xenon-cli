@@ -236,7 +236,6 @@ public class Main {
 
     private void addArgumentProp(AdaptorDescription adaptorDescription, Subparser adaptorParser) {
         if (adaptorDescription.getSupportedProperties().length > 0) {
-            String sep = System.getProperty("line.separator");
             adaptorParser.addArgument("--prop")
                 .action(Arguments.append())
                 .metavar("KEY=VALUE")

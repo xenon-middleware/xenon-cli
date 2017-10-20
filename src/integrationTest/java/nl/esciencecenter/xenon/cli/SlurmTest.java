@@ -44,7 +44,9 @@ public class SlurmTest {
                 ADAPTOR_NAME,
                 "--location", location,
                 "--username", "xenon",
-                "--password", "javagat"
+                "--password", "javagat",
+                "--prop", "xenon.adaptors.filesystems.sftp.strictHostKeyChecking=false",
+                "--prop", "xenon.adaptors.filesystems.sftp.autoAddHostKey=false"
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }
