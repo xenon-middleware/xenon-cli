@@ -13,7 +13,7 @@ plugins {
     id 'maven-publish'
     id 'com.palantir.docker' version '0.13.0'
     // integration tests
-    id 'org.unbroken-dome.test-sets' version '1.4.1'
+    id 'org.unbroken-dome.test-sets' version '1.4.2'
     // xenon --version reads version from this file
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
@@ -32,26 +32,25 @@ repositories {
     maven {
         url 'https://dl.bintray.com/palantir/releases' // docker-compose-rule is published on bintray, not jcenter
     }
-    maven { url 'https://jitpack.io' }
 }
 
 testSets {
     integrationTest
 }
 
-ext.xenonLibVersion = 'master-SNAPSHOT'
+ext.xenonLibVersion = '2.0.0'
 
 dependencies {
-    runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.0.11'
+    runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
-    compile 'com.google.code.gson:gson:2.8.1'
-    compile 'net.sourceforge.argparse4j:argparse4j:0.7.0'
-    compile "com.github.NLeSC:Xenon:${xenonLibVersion}"
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'
+    compile "nl.esciencecenter.xenon:xenon:${xenonLibVersion}"
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'
     testCompile 'com.github.stefanbirkner:system-rules:1.16.1'
-    testCompile 'org.mockito:mockito-core:2.+'
+    testCompile 'org.mockito:mockito-core:2.11.0'
 
     integrationTestCompile 'com.github.geowarin:docker-junit-rule:1.1.0'
     integrationTestCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.32.0'
@@ -71,7 +70,7 @@ assemble.dependsOn shadowDistTar
 assemble.dependsOn shadowDistZip
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
+    gradleVersion = '4.2.1'
 }
 
 jacocoTestReport {

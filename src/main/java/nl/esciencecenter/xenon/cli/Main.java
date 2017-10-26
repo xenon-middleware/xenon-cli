@@ -129,7 +129,10 @@ public class Main {
     }
 
     public ArgumentParser buildArgumentParser() {
-        ArgumentParser newParser = ArgumentParsers.newArgumentParser(BuildConfig.NAME, true, "-", "@")
+        ArgumentParser newParser = ArgumentParsers.newFor(BuildConfig.NAME)
+                .addHelp(true)
+                .fromFilePrefix("@")
+                .build()
                 .defaultHelp(true)
                 .description("Operations on filesystems and schedulers with Xenon")
                 .version("Xenon CLI v" + BuildConfig.VERSION + ", Xenon Library v" + BuildConfig.XENON_LIB_VERSION);
