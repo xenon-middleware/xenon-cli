@@ -37,6 +37,24 @@ public class ParserHelpers {
         parser.addArgument("--target-certfile").help("Certificate private key file for target location (default: --certfile value)");
     }
 
+    static void addViaCredentialArguments(ArgumentParser parser) {
+        parser.addArgument("--via-username")
+                .action(Arguments.append())
+                .metavar("KEY=VAL")
+                .dest("via_usernames")
+                .help("Username for via host (default: --username value)");
+        parser.addArgument("--via-password")
+                .action(Arguments.append())
+                .metavar("KEY=VAL")
+                .dest("via_passwords")
+                .help("Password or passphrase for via host (default: --password value)");
+        parser.addArgument("--via-certfile")
+                .action(Arguments.append())
+                .metavar("KEY=VAL")
+                .dest("via_certfiles")
+                .help("Certificate private key file for via host (default: --certfile value)");
+    }
+
     public static MutuallyExclusiveGroup addCopyModeArguments(ArgumentParser parser) {
         MutuallyExclusiveGroup group = parser.addMutuallyExclusiveGroup("optional copy mode arguments");
         group.addArgument("--replace")

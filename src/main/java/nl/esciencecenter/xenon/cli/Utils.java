@@ -6,7 +6,9 @@ import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPrope
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,8 +19,10 @@ import nl.esciencecenter.xenon.AdaptorDescription;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.CertificateCredential;
 import nl.esciencecenter.xenon.credentials.Credential;
+import nl.esciencecenter.xenon.credentials.CredentialMap;
 import nl.esciencecenter.xenon.credentials.DefaultCredential;
 import nl.esciencecenter.xenon.credentials.PasswordCredential;
+import nl.esciencecenter.xenon.credentials.UserCredential;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
@@ -38,8 +42,14 @@ public class Utils {
         Map<String, String> output = new HashMap<>();
         if (input != null) {
             for (String prop : input) {
-                String[] keyval = prop.split("=", 2);
-                output.put(keyval[0], keyval[1]);
+                int isIndex = prop.indexOf("=");
+                if (isIndex > 0 && prop.length() > isIndex) {
+                    // the key is not allowed to have a '=' in it,
+                    // so 'k1=v1=v2' will result in key is 'k1' and val is 'v1=v2'
+                    String key = prop.substring(0, isIndex);
+                    String value = prop.substring(isIndex + 1);
+                    output.put(key, value);
+                }
             }
         }
         return output;
@@ -152,10 +162,37 @@ public class Utils {
         if (certfile == null && !"".equals(prefix)) {
             certfile = res.getString("certfile");
         }
-        return createCredential(username, passwordAsString, certfile);
+        Map<String, UserCredential> vias = createViaCredentials(res, username, passwordAsString, certfile);
+        UserCredential cred = createCredential(username, passwordAsString, certfile);
+        if (!vias.isEmpty()) {
+            CredentialMap credMap = new CredentialMap(cred);
+            for (Map.Entry<String, UserCredential> entry : vias.entrySet()) {
+                credMap.put(entry.getKey(), entry.getValue());
+            }
+            return credMap;
+        }
+        return cred;
     }
 
-    private static Credential createCredential(String username, String passwordAsString, String certfile) {
+    private static Map<String,UserCredential> createViaCredentials(Namespace res, String defaultUsername, String defaultPasswordAsString, String defaultCertfile) {
+        Map<String, String> via_usernames = parseArgumentListAsMap(res.getList("via_usernames"));
+        Map<String, String> via_passwords = parseArgumentListAsMap(res.getList("via_passwords"));
+        Map<String, String> via_certfiles = parseArgumentListAsMap(res.getList("via_certfiles"));
+        Set<String> hosts = new HashSet<>();
+        hosts.addAll(via_usernames.keySet());
+        hosts.addAll(via_passwords.keySet());
+        hosts.addAll(via_certfiles.keySet());
+        Map<String, UserCredential> creds = new HashMap<>();
+        for (String host : hosts) {
+            String username = via_usernames.getOrDefault(host, defaultUsername);
+            String password = via_passwords.getOrDefault(host, defaultPasswordAsString);
+            String certfile = via_certfiles.getOrDefault(host, defaultCertfile);
+            creds.put(host, createCredential(username, password, certfile));
+        }
+        return creds;
+    }
+
+    private static UserCredential createCredential(String username, String passwordAsString, String certfile) {
         char[] password = null;
         if (passwordAsString != null) {
             password = passwordAsString.toCharArray();
@@ -187,5 +224,9 @@ public class Utils {
         return parseArgumentListAsMap(props).entrySet().stream()
             .filter(p -> allowedKeys.contains(p.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    static boolean supportsVia(AdaptorDescription adaptorDescription) {
+        return Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(d -> d.contains("via:"));
     }
 }

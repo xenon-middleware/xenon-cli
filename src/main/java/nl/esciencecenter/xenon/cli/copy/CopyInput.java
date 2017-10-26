@@ -22,7 +22,7 @@ public class CopyInput {
         this(adaptor, location, path, credential, null);
     }
 
-    CopyInput(String adaptor, String location, String path, Credential credential, Map<String, String> properties) {
+    public CopyInput(String adaptor, String location, String path, Credential credential, Map<String, String> properties) {
         this.adaptor = adaptor;
         this.location = location;
         if ("-".equals(path) && ("file".equals(adaptor) || "local".equals(adaptor))) {
