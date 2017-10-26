@@ -170,6 +170,9 @@ public class Main {
         if (!Utils.isLocalAdaptor(adaptorDescription)) {
             ParserHelpers.addCredentialArguments(adaptorParser);
         }
+        if (Utils.supportsVia(adaptorDescription)) {
+            ParserHelpers.addViaCredentialArguments(adaptorParser);
+        }
         addArgumentProp(adaptorDescription, adaptorParser);
         Subparsers commandsParser = adaptorParser.addSubparsers().title("commands");
         if (adaptorDescription instanceof FileSystemAdaptorDescription) {

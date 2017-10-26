@@ -32,20 +32,23 @@ repositories {
     maven {
         url 'https://dl.bintray.com/palantir/releases' // docker-compose-rule is published on bintray, not jcenter
     }
+    maven { url 'https://jitpack.io' }
 }
 
 testSets {
     integrationTest
 }
 
-ext.xenonLibVersion = '2.0.0'
+// ext.xenonLibVersion = '2.0.0'
+ext.xenonLibVersion = 'master-SNAPSHOT'
 
 dependencies {
     runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'
-    compile "nl.esciencecenter.xenon:xenon:${xenonLibVersion}"
+//    compile "nl.esciencecenter.xenon:xenon:${xenonLibVersion}"
+    compile "com.github.NLeSC:Xenon:${xenonLibVersion}"
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'

@@ -2,6 +2,9 @@ package nl.esciencecenter.xenon.cli.sftp;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.github.geowarin.junit.DockerRule;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.Main;
@@ -58,10 +61,13 @@ public class SftpCopyTest {
         main.run(args);
 
         // Check file has been copied with Xenon to locationB
+        Map<String, String> props = new HashMap<>();
+        props.put("xenon.adaptors.filesystems.sftp.strictHostKeyChecking", "false");
+        props.put("xenon.adaptors.filesystems.sftp.autoAddHostKey", "false");
         Credential cred = new PasswordCredential("xenon", "javagat".toCharArray());
         FileSystem fs = null;
         try {
-            fs = FileSystem.create("sftp", getLocationB(), cred);
+            fs = FileSystem.create("sftp", getLocationB(), cred, props);
             Path path = new Path(targetPath);
             assertTrue(fs.exists(path));
         } finally {
@@ -96,9 +102,12 @@ public class SftpCopyTest {
 
         // Check file has been copied with Xenon to locationB
         Credential cred = new PasswordCredential("xenon", "javagat".toCharArray());
+        Map<String, String> props = new HashMap<>();
+        props.put("xenon.adaptors.filesystems.sftp.strictHostKeyChecking", "false");
+        props.put("xenon.adaptors.filesystems.sftp.autoAddHostKey", "false");
         FileSystem fs = null;
         try {
-            fs = FileSystem.create("sftp", getLocationB(), cred);
+            fs = FileSystem.create("sftp", getLocationB(), cred, props);
             Path path = new Path(targetPath);
             assertTrue(fs.exists(path));
         } finally {
