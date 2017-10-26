@@ -75,7 +75,7 @@ public class CopyParser implements IParser {
                     .help("Adaptor properties for target location, can be given multiple times, " +
                             ParserHelpers.getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()) +
                             sep + "(default: --prop value)")
-                    .dest("props");
+                    .dest("target_props");
         }
     }
 

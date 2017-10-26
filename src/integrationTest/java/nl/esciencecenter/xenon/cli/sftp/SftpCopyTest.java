@@ -54,6 +54,8 @@ public class SftpCopyTest {
                 "--prop", "xenon.adaptors.filesystems.sftp.autoAddHostKey=false",
                 "copy",
                 "--target-location", getLocationB(),
+                "--target-prop", "xenon.adaptors.filesystems.sftp.strictHostKeyChecking=false",
+                "--target-prop", "xenon.adaptors.filesystems.sftp.autoAddHostKey=false",
                 sourcePath,
                 targetPath
         };
@@ -94,6 +96,8 @@ public class SftpCopyTest {
                 "--target-location", getLocationB(),
                 "--target-username", "xenon",
                 "--target-password", "javagat",
+                "--target-prop", "xenon.adaptors.filesystems.sftp.strictHostKeyChecking=false",
+                "--target-prop", "xenon.adaptors.filesystems.sftp.autoAddHostKey=false",
                 sourcePath,
                 targetPath
         };

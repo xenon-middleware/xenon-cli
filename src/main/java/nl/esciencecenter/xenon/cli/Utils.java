@@ -217,7 +217,7 @@ public class Utils {
     }
 
     public static Map<String,String> buildTargetXenonProperties(Namespace res, Set<String> allowedKeys) {
-        return buildXenonProperties(res.getList("--target-props"), allowedKeys);
+        return buildXenonProperties(res.getList("target_props"), allowedKeys);
     }
 
     private static Map<String, String> buildXenonProperties(List<String> props,Set<String> allowedKeys) {
