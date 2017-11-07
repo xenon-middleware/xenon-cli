@@ -11,15 +11,14 @@ import nl.esciencecenter.xenon.filesystems.Path;
 public class RenameCommand extends XenonCommand {
     @Override
     public RenameOutput run(Namespace res) throws XenonException {
-        FileSystem fs = createFileSystem(res);
         String sourceIn = res.getString("source");
         String targetIn = res.getString("target");
         Path source = new Path(sourceIn);
         Path target = new Path(targetIn);
 
-        fs.rename(source, target);
-
-        fs.close();
-        return new RenameOutput(fs.getLocation(), source, target);
+        try (FileSystem fs = createFileSystem(res)) {
+            fs.rename(source, target);
+            return new RenameOutput(fs.getLocation(), source, target);
+        }
     }
 }

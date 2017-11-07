@@ -24,11 +24,9 @@ public class ListFilesCommand extends XenonCommand {
         Boolean showhidden = res.getBoolean("hidden");
         Boolean longFormat = res.getBoolean("long");
 
-        FileSystem fs = createFileSystem(res);
-        Object listing = listObjects(fs, path, recursive, showhidden, longFormat);
-        fs.close();
-
-        return listing;
+        try (FileSystem fs = createFileSystem(res)) {
+            return listObjects(fs, path, recursive, showhidden, longFormat);
+        }
     }
 
     private Object listObjects(FileSystem fs, String pathIn, Boolean recursive, Boolean showhidden, Boolean longFormat) throws XenonException {

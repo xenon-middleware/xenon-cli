@@ -40,23 +40,21 @@ public class CopyCommand extends XenonCommand {
         }
 
         Path sourcePath = source.getPath();
-        FileSystem sourceFS = source.getFileSystem();
         Path targetPath = target.getPath();
-        FileSystem targetFS = target.getFileSystem();
-
-        long bytesCopied;
-        if (source.isStream() && !target.isStream()) {
-            bytesCopied = copyFromSystemIn(targetPath, targetFS, copymode, recursive);
-        } else if (!source.isStream() && target.isStream()) {
-            bytesCopied = copyToSystemOut(sourcePath, sourceFS);
-        } else {
-            bytesCopied = copy(sourcePath, sourceFS, targetPath, targetFS, recursive, copymode).bytesCopied();
+        try (
+            FileSystem sourceFS = source.getFileSystem();
+            FileSystem targetFS = target.getFileSystem()
+            ) {
+            long bytesCopied;
+            if (source.isStream() && !target.isStream()) {
+                bytesCopied = copyFromSystemIn(targetPath, targetFS, copymode, recursive);
+            } else if (!source.isStream() && target.isStream()) {
+                bytesCopied = copyToSystemOut(sourcePath, sourceFS);
+            } else {
+                bytesCopied = copy(sourcePath, sourceFS, targetPath, targetFS, recursive, copymode).bytesCopied();
+            }
+            return new CopyOutput(source, target, bytesCopied);
         }
-
-        sourceFS.close();
-        targetFS.close();
-
-        return new CopyOutput(source, target, bytesCopied);
     }
 
     private CopyStatus copy(Path sourcePath, FileSystem sourceFS, Path targetPath, FileSystem targetFS, Boolean recursive, CopyMode copymode) throws XenonException {
@@ -66,8 +64,6 @@ public class CopyCommand extends XenonCommand {
             Throwable e = status.getException();
             if (e != null) {
                 throw (XenonException) e;
-            } else {
-                    throw new XenonException(sourceFS.getAdaptorName(), e.getMessage(), e);
             }
         }
         return status;

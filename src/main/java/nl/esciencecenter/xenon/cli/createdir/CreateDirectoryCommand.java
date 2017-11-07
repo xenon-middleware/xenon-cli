@@ -11,16 +11,16 @@ import nl.esciencecenter.xenon.filesystems.Path;
 public class CreateDirectoryCommand extends XenonCommand {
     @Override
     public CreateDirectoryOutput run(Namespace res) throws XenonException {
-        FileSystem fs = createFileSystem(res);
         String pathIn = res.getString("path");
         Path dir = new Path(pathIn);
         Boolean createParent = res.getBoolean("parents");
-        if (createParent) {
-            fs.createDirectories(dir);
-        } else {
-            fs.createDirectory(dir);
+        try (FileSystem fs = createFileSystem(res)) {
+            if (createParent) {
+                fs.createDirectories(dir);
+            } else {
+                fs.createDirectory(dir);
+            }
+            return new CreateDirectoryOutput(fs.getLocation(), dir);
         }
-        fs.close();
-        return new CreateDirectoryOutput(fs.getLocation(), dir);
     }
 }

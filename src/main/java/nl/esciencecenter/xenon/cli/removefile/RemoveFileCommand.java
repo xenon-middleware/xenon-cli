@@ -14,17 +14,16 @@ import nl.esciencecenter.xenon.filesystems.Path;
 public class RemoveFileCommand extends XenonCommand {
     @Override
     public RemoveFileOutput run(Namespace res) throws XenonException {
-        FileSystem fs = createFileSystem(res);
         String path = res.getString("path");
         Boolean recursive = res.getBoolean("recursive");
-        remove(fs, path, recursive);
-        return new RemoveFileOutput(fs.getLocation(), path);
+        try (FileSystem fs = createFileSystem(res)) {
+            remove(fs, path, recursive);
+            return new RemoveFileOutput(fs.getLocation(), path);
+        }
     }
 
     private void remove(FileSystem fs, String pathIn, Boolean recursive) throws XenonException {
         Path path = new Path(pathIn);
         fs.delete(path, recursive);
-
-        fs.close();
     }
 }
