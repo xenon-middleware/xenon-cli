@@ -8,17 +8,17 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.credentials.PasswordCredential;
-import nl.esciencecenter.xenon.filesystems.FileSystem;
-import nl.esciencecenter.xenon.filesystems.Path;
-
 import com.github.geowarin.junit.DockerRule;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.credentials.Credential;
+import nl.esciencecenter.xenon.credentials.PasswordCredential;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.filesystems.Path;
 
 public class SftpTest {
     private static final String PORT = "22/tcp";
@@ -45,8 +45,7 @@ public class SftpTest {
             "--location", location,
             "--username", "xenon",
             "--password", "javagat",
-            "--prop", "xenon.adaptors.filesystems.sftp.strictHostKeyChecking=false",
-            "--prop", "xenon.adaptors.filesystems.sftp.autoAddHostKey=false"
+            "--prop", "xenon.adaptors.filesystems.sftp.strictHostKeyChecking=false"
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }

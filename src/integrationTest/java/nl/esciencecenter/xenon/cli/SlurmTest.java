@@ -7,18 +7,16 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
-import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
-import nl.esciencecenter.xenon.cli.submit.SubmitOutput;
-
 import com.palantir.docker.compose.DockerComposeRule;
 import com.palantir.docker.compose.connection.DockerPort;
 import com.palantir.docker.compose.connection.waiting.HealthChecks;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.SystemOutRule;
+
+import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
+import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
+import nl.esciencecenter.xenon.cli.submit.SubmitOutput;
 
 public class SlurmTest {
     private static final String ADAPTOR_NAME = "slurm";
@@ -28,8 +26,6 @@ public class SlurmTest {
             .waitingForService(ADAPTOR_NAME, HealthChecks.toHaveAllPortsOpen())
             .build();
 
-    @Rule
-    public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
     private Main main;
 
     private static String getLocation() {
@@ -45,8 +41,7 @@ public class SlurmTest {
                 "--location", location,
                 "--username", "xenon",
                 "--password", "javagat",
-                "--prop", "xenon.adaptors.schedulers.ssh.strictHostKeyChecking=false",
-                "--prop", "xenon.adaptors.schedulers.ssh.autoAddHostKey=false"
+                "--prop", "xenon.adaptors.schedulers.ssh.strictHostKeyChecking=false"
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }

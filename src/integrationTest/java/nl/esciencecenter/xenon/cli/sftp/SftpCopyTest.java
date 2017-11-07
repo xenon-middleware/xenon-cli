@@ -6,14 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.geowarin.junit.DockerRule;
+import org.junit.ClassRule;
+import org.junit.Test;
+
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.Main;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.credentials.PasswordCredential;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
-import org.junit.ClassRule;
-import org.junit.Test;
 
 public class SftpCopyTest {
     private static final String PORT = "22/tcp";
@@ -51,11 +52,9 @@ public class SftpCopyTest {
                 "--username", "xenon",
                 "--password", "javagat",
                 "--prop", "xenon.adaptors.filesystems.sftp.strictHostKeyChecking=false",
-                "--prop", "xenon.adaptors.filesystems.sftp.autoAddHostKey=false",
                 "copy",
                 "--target-location", getLocationB(),
                 "--target-prop", "xenon.adaptors.filesystems.sftp.strictHostKeyChecking=false",
-                "--target-prop", "xenon.adaptors.filesystems.sftp.autoAddHostKey=false",
                 sourcePath,
                 targetPath
         };
@@ -65,7 +64,6 @@ public class SftpCopyTest {
         // Check file has been copied with Xenon to locationB
         Map<String, String> props = new HashMap<>();
         props.put("xenon.adaptors.filesystems.sftp.strictHostKeyChecking", "false");
-        props.put("xenon.adaptors.filesystems.sftp.autoAddHostKey", "false");
         Credential cred = new PasswordCredential("xenon", "javagat".toCharArray());
         FileSystem fs = null;
         try {
@@ -91,13 +89,11 @@ public class SftpCopyTest {
                 "--username", "xenon",
                 "--password", "javagat",
                 "--prop", "xenon.adaptors.filesystems.sftp.strictHostKeyChecking=false",
-                "--prop", "xenon.adaptors.filesystems.sftp.autoAddHostKey=false",
                 "copy",
                 "--target-location", getLocationB(),
                 "--target-username", "xenon",
                 "--target-password", "javagat",
                 "--target-prop", "xenon.adaptors.filesystems.sftp.strictHostKeyChecking=false",
-                "--target-prop", "xenon.adaptors.filesystems.sftp.autoAddHostKey=false",
                 sourcePath,
                 targetPath
         };
@@ -108,7 +104,6 @@ public class SftpCopyTest {
         Credential cred = new PasswordCredential("xenon", "javagat".toCharArray());
         Map<String, String> props = new HashMap<>();
         props.put("xenon.adaptors.filesystems.sftp.strictHostKeyChecking", "false");
-        props.put("xenon.adaptors.filesystems.sftp.autoAddHostKey", "false");
         FileSystem fs = null;
         try {
             fs = FileSystem.create("sftp", getLocationB(), cred, props);

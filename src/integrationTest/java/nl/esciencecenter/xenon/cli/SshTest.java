@@ -36,8 +36,7 @@ public class SshTest {
                 "--location", location,
                 "--username", "xenon",
                 "--password", "javagat",
-                "--prop", "xenon.adaptors.schedulers.ssh.strictHostKeyChecking=false",
-                "--prop", "xenon.adaptors.schedulers.ssh.autoAddHostKey=false"
+                "--prop", "xenon.adaptors.schedulers.ssh.strictHostKeyChecking=false"
         };
         return Stream.concat(Arrays.stream(myargs), Arrays.stream(args)).toArray(String[]::new);
     }
