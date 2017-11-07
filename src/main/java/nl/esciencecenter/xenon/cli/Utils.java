@@ -42,7 +42,7 @@ public class Utils {
         Map<String, String> output = new HashMap<>();
         if (input != null) {
             for (String prop : input) {
-                int isIndex = prop.indexOf("=");
+                int isIndex = prop.indexOf('=');
                 if (isIndex > 0 && prop.length() > isIndex) {
                     // the key is not allowed to have a '=' in it,
                     // so 'k1=v1=v2' will result in key is 'k1' and val is 'v1=v2'
@@ -175,18 +175,18 @@ public class Utils {
     }
 
     private static Map<String,UserCredential> createViaCredentials(Namespace res, String defaultUsername, String defaultPasswordAsString, String defaultCertfile) {
-        Map<String, String> via_usernames = parseArgumentListAsMap(res.getList("via_usernames"));
-        Map<String, String> via_passwords = parseArgumentListAsMap(res.getList("via_passwords"));
-        Map<String, String> via_certfiles = parseArgumentListAsMap(res.getList("via_certfiles"));
+        Map<String, String> viaUsernames = parseArgumentListAsMap(res.getList("via_usernames"));
+        Map<String, String> viaPasswords = parseArgumentListAsMap(res.getList("via_passwords"));
+        Map<String, String> viaCertfiles = parseArgumentListAsMap(res.getList("via_certfiles"));
         Set<String> hosts = new HashSet<>();
-        hosts.addAll(via_usernames.keySet());
-        hosts.addAll(via_passwords.keySet());
-        hosts.addAll(via_certfiles.keySet());
+        hosts.addAll(viaUsernames.keySet());
+        hosts.addAll(viaPasswords.keySet());
+        hosts.addAll(viaCertfiles.keySet());
         Map<String, UserCredential> creds = new HashMap<>();
         for (String host : hosts) {
-            String username = via_usernames.getOrDefault(host, defaultUsername);
-            String password = via_passwords.getOrDefault(host, defaultPasswordAsString);
-            String certfile = via_certfiles.getOrDefault(host, defaultCertfile);
+            String username = viaUsernames.getOrDefault(host, defaultUsername);
+            String password = viaPasswords.getOrDefault(host, defaultPasswordAsString);
+            String certfile = viaCertfiles.getOrDefault(host, defaultCertfile);
             creds.put(host, createCredential(username, password, certfile));
         }
         return creds;
