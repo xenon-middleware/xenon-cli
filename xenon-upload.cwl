@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 # Native:
-# xenon --format cwljson sftp --location localhost upload README.md $PWD/copy-of-README.md
+# xenon --json filesystem sftp --location localhost upload README.md $PWD/copy-of-README.md
 # Using cwl-runnner:
 # ./xenon-upload.cwl --certfile ~/.ssh/id_rsa --scheme sftp --location $USER@172.17.0.1 --source README.md --target $PWD/copy-of-README.md
 cwlVersion: v1.0

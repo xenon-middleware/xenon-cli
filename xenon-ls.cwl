@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 # Native:
-# xenon --format cwljson sftp --location localhost list $PWD/
+# xenon --json filesystem sftp --location localhost list $PWD/
 # Using cwl-runnner:
 # ./xenon-ls.cwl --scheme sftp --location $USER@172.17.0.1 --path $PWD --certfile ~/.ssh/id_rsa
 cwlVersion: v1.0
