@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [2.0.0] - 2017-11-07
+
 ### Added
 
 * Subcommands
@@ -19,8 +21,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-* Upgraded to Xenon 2.0.0
+* Upgraded to Xenon 2.2.0
 * Renamed `--format cwljson` argument to `--json`
+* Xenon CLI now has same major version as Xenon
 
 ## [1.0.3] - 2017-07-20
 

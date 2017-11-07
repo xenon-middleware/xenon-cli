@@ -2,8 +2,8 @@
 
 [![Build Status](https://travis-ci.org/NLeSC/xenon-cli.svg?branch=master)](https://travis-ci.org/NLeSC/xenon-cli)
 [![Build status](https://ci.appveyor.com/api/projects/status/vki0xma8y7glpt09/branch/master?svg=true)](https://ci.appveyor.com/project/NLeSC/xenon-cli/branch/master)
-[![SonarQube Gate](https://sonarqube.com/api/badges/gate?key=nlesc%3Axenon-cli)](https://sonarqube.com/dashboard?id=nlesc%3Axenon-cli)
-[![SonarQube Coverage](https://sonarqube.com/api/badges/measure?key=nlesc%3Axenon-cli&metric=coverage)](https://sonarqube.com/component_measures/domain/Coverage?id=nlesc%3Axenon-cli)
+[![SonarQube Gate](https://sonarqube.com/api/badges/gate?key=nlesc%3Axenon-cli)](https://sonarcloud.io/dashboard?id=nl.esciencecenter.xenon.cli%3Axenon-cli)
+[![SonarQube Coverage](https://sonarqube.com/api/badges/measure?key=nlesc%3Axenon-cli&metric=coverage)](https://sonarcloud.io/component_measures?id=nl.esciencecenter.xenon.cli%3Axenon-cli&metric=Coverage)
 [![DOI](https://zenodo.org/badge/80642209.svg)](https://zenodo.org/badge/latestdoi/80642209)
 
 Command line interface which uses the [Xenon library](https://nlesc.github.io/Xenon) to perform job and file operations.
@@ -53,9 +53,11 @@ Generates application tar/zip in `build/distributions/` directory.
 
 # Release
 
-1. Create a new GitHub release
-2. Upload the files in `build/distributions/` directory to that release
-3. Publish release
+1. Bump version in `build.gradle`, add version to `CHANGELOG.md` and commit/push
+2. Create a new GitHub release
+3. Upload the files in `build/distributions/` directory to that release
+4. Publish release
+5. Edit [Zenodo entry](https://doi.org/10.5281/zenodo.597603), correct license, add Xenon doi as `is referenced by this upload`.
 
 ## Docker
 
