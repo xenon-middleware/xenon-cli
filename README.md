@@ -51,6 +51,17 @@ xenon filesystem sftp --location localhost --username $USER --password @password
 
 Generates application tar/zip in `build/distributions/` directory.
 
+# Tests
+
+Requirements for the integration tests:
+* [docker](https://docs.docker.com/engine/installation/), v1.13 or greater
+* [docker-compose](https://docs.docker.com/compose/), v1.10 or greater
+
+The unit and integration tests can be run with:
+```
+./gradlew check
+```
+
 # Release
 
 1. Bump version in `build.gradle`, add version to `CHANGELOG.md` and commit/push
