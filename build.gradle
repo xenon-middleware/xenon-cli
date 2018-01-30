@@ -23,8 +23,9 @@ version = '2.0.0'
 group = 'nl.esciencecenter.xenon.cli'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+def javaVersion = JavaVersion.VERSION_1_8
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
 
 repositories {
     mavenCentral()
@@ -133,3 +134,12 @@ buildConfig {
     appName = project.applicationName
     buildConfigField 'String', 'XENON_LIB_VERSION', "${xenonLibVersion}"
 }
+
+task enforceVersion << {
+    def foundVersion = JavaVersion.current();
+    if (foundVersion != javaVersion)
+        throw new IllegalStateException("Wrong Java version; required is "
+            + javaVersion + ", but found " + foundVersion);
+}
+
+compileJava.dependsOn(enforceVersion);
