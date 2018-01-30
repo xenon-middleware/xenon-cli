@@ -11,4 +11,5 @@ build:
   noarch: generic
 about:
   home: https://github.com/NLeSC/Xenon
-  license: Apache v2.0
+  license: Apache 2.0
+  summary: If you are using remote machines to do your computations, and don’t feel like learning and implementing many different APIs and do no not want to program, Xenon Command Line Interface (CLI) is the tool for you.
