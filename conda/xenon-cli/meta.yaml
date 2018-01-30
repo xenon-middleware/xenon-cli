@@ -1,0 +1,14 @@
+package:
+  name: xenon-cli
+  version: 2.0.0
+source:
+  sha256: 69c6bd2e63f2f846f10d9ef319344c7e7d14489ca98c53ac36548dde0ca6b98e
+  url: https://github.com/NLeSC/xenon-cli/releases/download/v2.0.0/xenon-cli-shadow-2.0.0.tar
+requirements:
+  run:
+    - openjdk 8.*
+build:
+  noarch: generic
+about:
+  home: https://github.com/NLeSC/Xenon
+  license: Apache v2.0
