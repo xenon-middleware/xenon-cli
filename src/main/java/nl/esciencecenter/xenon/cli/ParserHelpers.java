@@ -97,6 +97,10 @@ public class ParserHelpers {
             .metavar("KEY=VAL")
             .action(Arguments.append())
             .dest("envs");
+        subparser.addArgument("--inherit-env")
+            .help("Use all local environment variables for the executable")
+            .action(Arguments.storeTrue())
+        ;
         subparser.addArgument("--option")
             .help("Option for job")
             .metavar("KEY=VAL")

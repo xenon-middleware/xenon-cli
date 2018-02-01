@@ -72,6 +72,12 @@ public class Utils {
         }
 
         Map<String, String> envs = parseArgumentListAsMap(res.getList("envs"));
+        Boolean inheritEnv = res.getBoolean("inherit_env");
+        if (inheritEnv) {
+            for (Map.Entry<String, String> env : System.getenv().entrySet()) {
+                envs.putIfAbsent(env.getKey(), env.getValue());
+            }
+        }
         if (!envs.isEmpty()) {
             description.setEnvironment(envs);
         }

@@ -28,6 +28,7 @@ public class ParserHelpersTest {
         map.put("node_count", 1);
         map.put("procs_per_node", 1);
         map.put("working_directory", "/tmp");
+        map.put("inherit_env", false);
 
         Namespace res = new Namespace(map);
         JobDescription result = getJobDescription(res);
@@ -47,6 +48,7 @@ public class ParserHelpersTest {
         map.put("node_count", 1);
         map.put("procs_per_node", 1);
         map.put("working_directory", "/tmp");
+        map.put("inherit_env", false);
 
         Namespace res = new Namespace(map);
         JobDescription result = getJobDescription(res);
@@ -67,6 +69,7 @@ public class ParserHelpersTest {
         map.put("node_count", 1);
         map.put("procs_per_node", 1);
         map.put("working_directory", "/tmp");
+        map.put("inherit_env", false);
 
         Namespace res = new Namespace(map);
         JobDescription result = getJobDescription(res);
@@ -89,6 +92,7 @@ public class ParserHelpersTest {
         map.put("node_count", 1);
         map.put("procs_per_node", 1);
         map.put("working_directory", "/tmp");
+        map.put("inherit_env", false);
 
         Namespace res = new Namespace(map);
         JobDescription result = getJobDescription(res);
