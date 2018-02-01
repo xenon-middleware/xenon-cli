@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [2.0.1] - 2018-01-30
+
+### Changed
+
+* Upgraded to Xenon 2.3.0-nohadoop
+
 ## [2.0.0] - 2017-11-07
 
 ### Added

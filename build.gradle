@@ -19,7 +19,7 @@ plugins {
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
-version = '2.0.0'
+version = '2.0.1'
 group = 'nl.esciencecenter.xenon.cli'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
@@ -40,7 +40,7 @@ testSets {
     integrationTest
 }
 
-ext.xenonLibVersion = '2.2.0'
+ext.xenonLibVersion = '2.3.0-nohadoop'
 
 dependencies {
     runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
