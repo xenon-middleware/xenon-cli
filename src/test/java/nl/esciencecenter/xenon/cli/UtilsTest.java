@@ -1,8 +1,6 @@
 package nl.esciencecenter.xenon.cli;
 
-import static nl.esciencecenter.xenon.cli.Utils.createCredential;
-import static nl.esciencecenter.xenon.cli.Utils.parseArgumentListAsMap;
-import static nl.esciencecenter.xenon.cli.Utils.supportsVia;
+import static nl.esciencecenter.xenon.cli.Utils.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -292,4 +290,35 @@ public class UtilsTest {
 
         assertTrue(supportsVia(description));
     }
+
+    @Test
+    public void validEnvironmentVariableName_path() {
+        assertTrue(validEnvironmentVariableName("PATH"));
+    }
+
+    @Test
+    public void validEnvironmentVariableName_javaHome() {
+        assertTrue(validEnvironmentVariableName("JAVA_HOME"));
+    }
+
+    @Test
+    public void validEnvironmentVariableName_foo1() {
+        assertTrue(validEnvironmentVariableName("FOO1"));
+    }
+
+    @Test
+    public void validEnvironmentVariableName_1foo() {
+        assertFalse(validEnvironmentVariableName("1FOO"));
+    }
+
+    @Test
+    public void validEnvironmentVariableName_bashFunction() {
+        assertFalse(validEnvironmentVariableName("BASH_FUNC_module()"));
+    }
+
+    @Test
+    public void validEnvironmentVariableName_bashFunctionShellshock() {
+        assertFalse(validEnvironmentVariableName("BASH_FUNC_module%%"));
+    }
+
 }

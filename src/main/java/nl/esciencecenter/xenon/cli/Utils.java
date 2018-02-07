@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -75,7 +76,9 @@ public class Utils {
         Boolean inheritEnv = res.getBoolean("inherit_env");
         if (inheritEnv) {
             for (Map.Entry<String, String> env : System.getenv().entrySet()) {
-                envs.putIfAbsent(env.getKey(), env.getValue());
+                if (validEnvironmentVariableName(env.getKey())) {
+                    envs.putIfAbsent(env.getKey(), env.getValue());
+                }
             }
         }
         if (!envs.isEmpty()) {
@@ -116,6 +119,11 @@ public class Utils {
             description.setStderr(stderr);
         }
         return description;
+    }
+
+    static boolean validEnvironmentVariableName(final String key) {
+        String regex = "^[0-9A-Z_]+$";
+        return Pattern.matches(regex, key) && !Character.isDigit(key.charAt(0));
     }
 
     public static long pipe(InputStream in, OutputStream out) throws IOException {
