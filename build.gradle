@@ -28,6 +28,7 @@ sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
 
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
     maven {
@@ -40,7 +41,7 @@ testSets {
     integrationTest
 }
 
-ext.xenonLibVersion = '2.3.1-nohadoop'
+ext.xenonLibVersion = '3.0.0'
 
 dependencies {
     runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
@@ -142,4 +143,8 @@ task enforceVersion << {
             + javaVersion + ", but found " + foundVersion);
 }
 
-compileJava.dependsOn(enforceVersion);
+compileJava.dependsOn(enforceVersion)
+
+shadowJar {
+    mergeServiceFiles()
+}
