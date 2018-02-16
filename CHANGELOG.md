@@ -6,13 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [2.1.0] - 2018-02-16
+
 ### Added
 
 * --start-single-process to exec and submit sub commands (#56)
+* --inherit-env to exec and submit sub commands (#55)
 
 ### Changed
 
-* Upgraded to Xenon 2.3.1-nohadoop
+* Upgraded to Xenon 2.3.2-nohadoop
 
 ## [2.0.1] - 2018-01-30
 
