@@ -99,6 +99,10 @@ public class Utils {
         int procsPerNode = res.getInt("procs_per_node");
         description.setProcessesPerNode(procsPerNode);
 
+        if (res.getBoolean("start_single_process")) {
+            description.setStartSingleProcess(true);
+        }
+
         String workingDirectory = res.getString("working_directory");
         if (workingDirectory != null) {
             description.setWorkingDirectory(workingDirectory);

@@ -109,6 +109,8 @@ public class ParserHelpers {
         subparser.addArgument("--max-run-time").help("Maximum job run time (in minutes)").type(Integer.class).setDefault(JobDescription.DEFAULT_MAX_RUN_TIME_IN_MINUTES);
         subparser.addArgument("--node-count").type(Integer.class).help("Number of nodes to reserve").setDefault(1);
         subparser.addArgument("--procs-per-node").type(Integer.class).help("Number of processes started on each node").setDefault(1);
+        subparser.addArgument("--start-single-process").action(Arguments.storeTrue())
+            .help("Set if only a single process is started, instead of --node-count * --procs-per-node. Resources are still reserved, but it is up to the user to start all the processes");
         subparser.addArgument("--working-directory")
             .help("Path at location where executable should be executed. If location is local system, default value is the current working directory. If location is remote, default value is remote system's entry path");
     }

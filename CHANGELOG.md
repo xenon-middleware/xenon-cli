@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+* --start-single-process to exec and submit sub commands (#56)
+
 ### Changed
 
 * Upgraded to Xenon 2.3.1-nohadoop
