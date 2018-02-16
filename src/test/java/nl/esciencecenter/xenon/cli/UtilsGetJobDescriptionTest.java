@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
@@ -63,6 +64,20 @@ public class UtilsGetJobDescriptionTest {
         JobDescription expected = new JobDescription();
         expected.setExecutable("sleep");
         expected.setEnvironment(Collections.singletonMap("SOMEVAR", "somevalue"));
+        assertEquals(expected, description);
+    }
+
+    @Test
+    public void options() {
+        Map<String, Object> attrs = defaultArgs();
+        List<String> options = Collections.singletonList("KEY1=VAL1");
+        attrs.put("options", options);
+        Namespace res = new Namespace(attrs);
+        JobDescription description = getJobDescription(res);
+
+        JobDescription expected = new JobDescription();
+        expected.setExecutable("sleep");
+        expected.setJobOptions(Collections.singletonMap("KEY1", "VAL1"));
         assertEquals(expected, description);
     }
 
