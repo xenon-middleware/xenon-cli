@@ -40,7 +40,7 @@ testSets {
     integrationTest
 }
 
-ext.xenonLibVersion = '2.3.1-nohadoop'
+ext.xenonLibVersion = '2.3.2-nohadoop'
 
 dependencies {
     runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
