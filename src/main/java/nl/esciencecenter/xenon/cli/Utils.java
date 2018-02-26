@@ -122,6 +122,15 @@ public class Utils {
         if (stderr != null) {
             description.setStderr(stderr);
         }
+
+        String name = res.getString("name");
+        if (name != null) {
+            description.setName(name);
+        }
+        Integer maxMemory = res.getInt("max_memory");
+        if (maxMemory != null) {
+            description.setMaxMemory(maxMemory);
+        }
         return description;
     }
 

@@ -1,16 +1,17 @@
 package nl.esciencecenter.xenon.cli;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import nl.esciencecenter.xenon.schedulers.JobDescription;
-import org.junit.Test;
+import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
-import static org.junit.Assert.assertEquals;
+import net.sourceforge.argparse4j.inf.Namespace;
+import org.junit.Test;
+
+import nl.esciencecenter.xenon.schedulers.JobDescription;
 
 public class UtilsGetJobDescriptionTest {
     @Test
@@ -204,5 +205,27 @@ public class UtilsGetJobDescriptionTest {
         attrs.put("procs_per_node", 1);
         attrs.put("start_single_process", false);
         return attrs;
+    }
+
+    @Test
+    public void name() {
+        Map<String, Object> attrs = defaultArgs();
+        attrs.put("name", "myjobname");
+        Namespace res = new Namespace(attrs);
+
+        JobDescription description = getJobDescription(res);
+
+        assertEquals("myjobname", description.getName());
+    }
+
+    @Test
+    public void maxRuntime() {
+        Map<String, Object> attrs = defaultArgs();
+        attrs.put("max_memory", 4096);
+        Namespace res = new Namespace(attrs);
+
+        JobDescription description = getJobDescription(res);
+
+        assertEquals(4096, description.getMaxMemory());
     }
 }

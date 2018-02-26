@@ -19,7 +19,7 @@ plugins {
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
-version = '2.1.0'
+version = '2.2.0'
 group = 'nl.esciencecenter.xenon.cli'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
@@ -40,7 +40,7 @@ testSets {
     integrationTest
 }
 
-ext.xenonLibVersion = '2.3.2-nohadoop'
+ext.xenonLibVersion = '2.4.0'
 
 dependencies {
     runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
@@ -54,6 +54,7 @@ dependencies {
     testCompile 'com.github.stefanbirkner:system-rules:1.17.1'
     testCompile 'org.mockito:mockito-core:2.15.0'
 
+    integrationTestCompile 'org.apache.hadoop:hadoop-client:3.0.0'
     integrationTestCompile 'com.github.geowarin:docker-junit-rule:1.2.0'
     integrationTestCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.33.0'
 }
