@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [2.2.0] - 2018-02-26
+
+### Added
+
+* --name to to submit sub commands (#59)
+* --max-memory to exec and submit sub command (#58)
+
+### Changed
+
+* Upgraded to Xenon 2.4.0
+
 ## [2.1.0] - 2018-02-16
 
 ### Added

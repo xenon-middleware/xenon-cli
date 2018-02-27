@@ -113,6 +113,7 @@ public class ParserHelpers {
             .help("Set if only a single process is started, instead of --node-count * --procs-per-node. Resources are still reserved, but it is up to the user to start all the processes");
         subparser.addArgument("--working-directory")
             .help("Path at location where executable should be executed. If location is local system, default value is the current working directory. If location is remote, default value is remote system's entry path");
+        subparser.addArgument("--max-memory").help("Maximum amount of memory needed for process (in MBytes)").type(Integer.class);
     }
 
     public static Set<String> getAllowedFileSystemPropertyKeys(String adaptor) throws XenonException {

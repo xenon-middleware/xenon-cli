@@ -1,11 +1,11 @@
 package nl.esciencecenter.xenon.cli.submit;
 
-import nl.esciencecenter.xenon.cli.IParser;
-import nl.esciencecenter.xenon.cli.ParserHelpers;
-
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
+
+import nl.esciencecenter.xenon.cli.IParser;
+import nl.esciencecenter.xenon.cli.ParserHelpers;
 
 public class SubmitParser implements IParser {
     @Override
@@ -24,6 +24,7 @@ public class SubmitParser implements IParser {
         subparser.addArgument("--stderr").help("Path to file which is used as stderr for executable");
 
         subparser.addArgument("--long", "-l").help("Output long format").action(Arguments.storeTrue());
+        subparser.addArgument("--name").help("Name of the job");
         return subparser;
     }
 }

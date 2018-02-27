@@ -70,7 +70,7 @@ The unit and integration tests can be run with:
 3. Upload the files in `build/distributions/` directory to that release
 4. Publish release
 5. Edit [Zenodo entry](https://doi.org/10.5281/zenodo.597603), correct license, add [Xenon doi](https://doi.org/10.5281/zenodo.597993) as `is referenced by this upload`.
-6. Create Conda release, see [conda/README.md](conda/README.md)
+6. Create conda release, see [conda/README.md](conda/README.md)
 
 ## Docker
 
