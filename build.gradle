@@ -47,7 +47,9 @@ dependencies {
 
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'
-    compile "nl.esciencecenter.xenon:xenon:${xenonLibVersion}"
+    compile("nl.esciencecenter.xenon:xenon:${xenonLibVersion}") {
+        exclude group: 'org.slf4j', module:'slf4j-log4j12'
+    }
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'
