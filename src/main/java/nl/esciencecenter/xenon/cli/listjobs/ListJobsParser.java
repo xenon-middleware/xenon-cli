@@ -13,7 +13,7 @@ public class ListJobsParser implements IParser {
             .setDefault("command", new ListJobsCommand())
             .defaultHelp(true)
             .help("List jobs of scheduler")
-            .description("List jobs of scheduler");
+            .description("List jobs of scheduler. Command without `--identifier` flag will only return jobs which are pending or runnning");
         subparser.addArgument("--queue").help("Only list jobs belonging to this queue").action(Arguments.append());
         subparser.addArgument("--identifier").help("Only list jobs with this identifier").action(Arguments.append());
         return subparser;
