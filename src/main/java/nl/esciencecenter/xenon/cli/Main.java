@@ -23,6 +23,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 import net.sourceforge.argparse4j.inf.Subparsers;
 import nl.esciencecenter.xenon.AdaptorDescription;
+import nl.esciencecenter.xenon.InvalidLocationException;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.copy.CopyParser;
 import nl.esciencecenter.xenon.cli.copy.DownloadParser;

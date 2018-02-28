@@ -2,6 +2,7 @@ package nl.esciencecenter.xenon.cli;
 
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
 import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.AdaptorDescription;
+import nl.esciencecenter.xenon.InvalidLocationException;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.CertificateCredential;
 import nl.esciencecenter.xenon.credentials.Credential;
@@ -159,7 +161,14 @@ public class Utils {
 
         Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        return Scheduler.create(adaptor, location, credential, props);
+        try {
+            return Scheduler.create(adaptor, location, credential, props);
+        } catch (InvalidLocationException e) {
+            String message = e.getMessage();
+            String[] supportedLocations = Scheduler.getAdaptorDescription(adaptor).getSupportedLocations();
+            message += " (" + getSupportedLocationHelp(supportedLocations) + ")";
+            throw new InvalidLocationException(adaptor, message, e);
+        }
     }
 
     public static FileSystem createFileSystem(Namespace res) throws XenonException {
@@ -169,7 +178,14 @@ public class Utils {
 
         Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
         Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        return FileSystem.create(adaptor, location, credential, props);
+        try {
+            return FileSystem.create(adaptor, location, credential, props);
+        } catch (InvalidLocationException e) {
+            String message = e.getMessage();
+            String[] supportedLocations = FileSystem.getAdaptorDescription(adaptor).getSupportedLocations();
+            message += " (" + getSupportedLocationHelp(supportedLocations) + ")";
+            throw new InvalidLocationException(adaptor, message, e);
+        }
     }
 
     static Credential createCredential(Namespace res) {

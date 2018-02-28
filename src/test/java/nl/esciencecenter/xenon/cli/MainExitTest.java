@@ -1,9 +1,11 @@
 package nl.esciencecenter.xenon.cli;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertTrue;
 
 import nl.esciencecenter.xenon.XenonException;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
@@ -46,6 +48,19 @@ public class MainExitTest {
         Main main = new Main();
 
         String[] badCommands = new String[]{"filesystem", "badadaptorname"};
+        main.run(badCommands);
+    }
+
+    @Test
+    public void run_invalidlocationexception_listsupportedlocations() {
+        exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String log = systemErrRule.getLogWithNormalizedLineSeparator();
+            Assert.assertThat(log, containsString("slurm adaptor: Invalid location: foobar (supported locations "));
+        });
+        Main main = new Main();
+
+        String[] badCommands = new String[]{"scheduler", "slurm", "--location", "foobar", "list"};
         main.run(badCommands);
     }
 }

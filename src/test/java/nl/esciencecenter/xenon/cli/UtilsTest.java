@@ -1,6 +1,7 @@
 package nl.esciencecenter.xenon.cli;
 
 import static nl.esciencecenter.xenon.cli.Utils.*;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -14,7 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.argparse4j.inf.Namespace;
+import nl.esciencecenter.xenon.InvalidLocationException;
 import nl.esciencecenter.xenon.UnknownAdaptorException;
+import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.CertificateCredential;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.credentials.CredentialMap;
@@ -22,9 +25,14 @@ import nl.esciencecenter.xenon.credentials.DefaultCredential;
 import nl.esciencecenter.xenon.credentials.PasswordCredential;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 import nl.esciencecenter.xenon.schedulers.SchedulerAdaptorDescription;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class UtilsTest {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Test(expected = IllegalAccessError.class)
     public void constructor() {
         new Utils();
@@ -321,4 +329,29 @@ public class UtilsTest {
         assertFalse(validEnvironmentVariableName("BASH_FUNC_module%%"));
     }
 
+    @Test
+    public void createScheduler_InvalidLocationException_supportedLocations() throws XenonException {
+        thrown.expect(InvalidLocationException.class);
+        thrown.expectMessage(containsString("supported"));
+
+        Map<String, Object> attrs = new HashMap<>();
+        attrs.put("adaptor", "slurm");
+        attrs.put("location", "foobar"); // should start with local:// or ssh://
+        Namespace res = new Namespace(attrs);
+
+        createScheduler(res);
+    }
+
+    @Test
+    public void createFileSystem_InvalidLocationException_supportedLocations() throws XenonException {
+        thrown.expect(InvalidLocationException.class);
+        thrown.expectMessage(containsString("supported"));
+
+        Map<String, Object> attrs = new HashMap<>();
+        attrs.put("adaptor", "sftp");
+        attrs.put("location", " ");
+        Namespace res = new Namespace(attrs);
+
+        createFileSystem(res);
+    }
 }
