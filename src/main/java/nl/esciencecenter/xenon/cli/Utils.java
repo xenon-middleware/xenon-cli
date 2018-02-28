@@ -1,34 +1,26 @@
 package nl.esciencecenter.xenon.cli;
 
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
+import net.sourceforge.argparse4j.inf.Namespace;
+import nl.esciencecenter.xenon.AdaptorDescription;
+import nl.esciencecenter.xenon.InvalidLocationException;
+import nl.esciencecenter.xenon.UnknownPropertyException;
+import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.credentials.*;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
+import nl.esciencecenter.xenon.schedulers.JobDescription;
+import nl.esciencecenter.xenon.schedulers.Scheduler;
+import nl.esciencecenter.xenon.schedulers.SchedulerAdaptorDescription;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import nl.esciencecenter.xenon.AdaptorDescription;
-import nl.esciencecenter.xenon.InvalidLocationException;
-import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.credentials.CertificateCredential;
-import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.credentials.CredentialMap;
-import nl.esciencecenter.xenon.credentials.DefaultCredential;
-import nl.esciencecenter.xenon.credentials.PasswordCredential;
-import nl.esciencecenter.xenon.credentials.UserCredential;
-import nl.esciencecenter.xenon.filesystems.FileSystem;
-import nl.esciencecenter.xenon.schedulers.JobDescription;
-import nl.esciencecenter.xenon.schedulers.Scheduler;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedPropertiesHelp;
 
 /**
  * Helpers for Xenon.jobs based commands
@@ -159,15 +151,13 @@ public class Utils {
         String location = res.getString("location");
         Credential credential = createCredential(res);
 
-        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
-        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        Map<String, String> props = buildXenonProperties(res);
+        SchedulerAdaptorDescription adaptorDescription = Scheduler.getAdaptorDescription(adaptor);
         try {
             return Scheduler.create(adaptor, location, credential, props);
-        } catch (InvalidLocationException e) {
-            String message = e.getMessage();
-            String[] supportedLocations = Scheduler.getAdaptorDescription(adaptor).getSupportedLocations();
-            message += " (" + getSupportedLocationHelp(supportedLocations) + ")";
-            throw new InvalidLocationException(adaptor, message, e);
+        } catch (InvalidLocationException|UnknownPropertyException e) {
+            rethrowWithSupported(adaptorDescription, e);
+            return null;
         }
     }
 
@@ -176,15 +166,13 @@ public class Utils {
         String location = res.getString("location");
         Credential credential = createCredential(res);
 
-        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
-        Map<String, String> props = buildXenonProperties(res, allowedKeys);
+        Map<String, String> props = buildXenonProperties(res);
+        FileSystemAdaptorDescription adaptorDescription = FileSystem.getAdaptorDescription(adaptor);
         try {
             return FileSystem.create(adaptor, location, credential, props);
-        } catch (InvalidLocationException e) {
-            String message = e.getMessage();
-            String[] supportedLocations = FileSystem.getAdaptorDescription(adaptor).getSupportedLocations();
-            message += " (" + getSupportedLocationHelp(supportedLocations) + ")";
-            throw new InvalidLocationException(adaptor, message, e);
+        } catch (InvalidLocationException|UnknownPropertyException e) {
+            rethrowWithSupported(adaptorDescription, e);
+            return null;
         }
     }
 
@@ -255,21 +243,35 @@ public class Utils {
         return adaptorDescription.getName().equals("file") || adaptorDescription.getName().equals("local");
     }
 
-    public static Map<String,String> buildXenonProperties(Namespace res, Set<String> allowedKeys) {
-        return buildXenonProperties(res.getList("props"), allowedKeys);
+    public static Map<String,String> buildXenonProperties(Namespace res) {
+        return buildXenonProperties(res.getList("props"));
     }
 
-    public static Map<String,String> buildTargetXenonProperties(Namespace res, Set<String> allowedKeys) {
-        return buildXenonProperties(res.getList("target_props"), allowedKeys);
+    public static Map<String,String> buildTargetXenonProperties(Namespace res) {
+        return buildXenonProperties(res.getList("target_props"));
     }
 
-    private static Map<String, String> buildXenonProperties(List<String> props,Set<String> allowedKeys) {
+    private static Map<String, String> buildXenonProperties(List<String> props) {
         return parseArgumentListAsMap(props).entrySet().stream()
-            .filter(p -> allowedKeys.contains(p.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     static boolean supportsVia(AdaptorDescription adaptorDescription) {
         return Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(d -> d.contains("via:"));
+    }
+
+    private static void rethrowWithSupported(AdaptorDescription adaptorDescription, XenonException e) throws XenonException {
+        if (e instanceof InvalidLocationException) {
+            String message = e.getMessage();
+            String[] supportedLocations = adaptorDescription.getSupportedLocations();
+            message += " (" + getSupportedLocationHelp(supportedLocations) + ")";
+            throw new InvalidLocationException(adaptorDescription.getName(), message, e);
+        } else if (e instanceof UnknownPropertyException) {
+            String message = e.getMessage();
+            message += " (" + getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()) + ")";
+            throw new UnknownPropertyException(adaptorDescription.getName(), message, e);
+        } else {
+            throw e;
+        }
     }
 }

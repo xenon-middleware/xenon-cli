@@ -17,6 +17,7 @@ import java.util.Map;
 import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.InvalidLocationException;
 import nl.esciencecenter.xenon.UnknownAdaptorException;
+import nl.esciencecenter.xenon.UnknownPropertyException;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.CertificateCredential;
 import nl.esciencecenter.xenon.credentials.Credential;
@@ -354,4 +355,31 @@ public class UtilsTest {
 
         createFileSystem(res);
     }
+
+    @Test
+    public void createScheduler_UnknownPropertyException_supportedProps() throws XenonException {
+        thrown.expect(UnknownPropertyException.class);
+        thrown.expectMessage(containsString("supported"));
+
+        Map<String, Object> attrs = new HashMap<>();
+        attrs.put("adaptor", "local");
+        attrs.put("props", Collections.singletonList("foo=bar"));
+        Namespace res = new Namespace(attrs);
+
+        createScheduler(res);
+    }
+
+    @Test
+    public void createFileSystem_UnknownPropertyException_supportedProps() throws XenonException {
+        thrown.expect(UnknownPropertyException.class);
+        thrown.expectMessage(containsString("supported"));
+
+        Map<String, Object> attrs = new HashMap<>();
+        attrs.put("adaptor", "file");
+        attrs.put("props", Collections.singletonList("foo=bar"));
+        Namespace res = new Namespace(attrs);
+
+        createFileSystem(res);
+    }
+
 }

@@ -1,21 +1,18 @@
 package nl.esciencecenter.xenon.cli;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
-
-import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.SystemOutRule;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
 
 public class MainTest {
     @Rule
@@ -28,8 +25,7 @@ public class MainTest {
         attrs.put("props", propsIn);
         Namespace ns = new Namespace(attrs);
 
-        Set<String> allowedKeys = new HashSet<>(Arrays.asList("KEY1", "KEY2"));
-        Map<String, String> result = Utils.buildXenonProperties(ns, allowedKeys);
+        Map<String, String> result = Utils.buildXenonProperties(ns);
         Map<String, String> expected = new HashMap<>();
         expected.put("KEY1", "VAL1");
         expected.put("KEY2", "VAL2");

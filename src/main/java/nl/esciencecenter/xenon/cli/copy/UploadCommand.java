@@ -1,16 +1,13 @@
 package nl.esciencecenter.xenon.cli.copy;
 
-import static nl.esciencecenter.xenon.cli.Utils.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
-
-import java.util.Map;
-import java.util.Set;
-
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.filesystems.CopyMode;
 
-import net.sourceforge.argparse4j.inf.Namespace;
+import java.util.Map;
+
+import static nl.esciencecenter.xenon.cli.Utils.buildXenonProperties;
 
 /**
  * Command to upload a local file to target
@@ -25,8 +22,7 @@ public class UploadCommand extends CopyCommand {
         Credential targetCredential = buildCredential(res);
         CopyMode copymode = res.get("copymode");
         Boolean recursive = res.getBoolean("recursive");
-        Set<String> targetAllowedKeys = getAllowedFileSystemPropertyKeys(targetAdaptorName);
-        Map<String, String> targetProps = buildXenonProperties(res, targetAllowedKeys);
+        Map<String, String> targetProps = buildXenonProperties(res);
 
         CopyInput source = new CopyInput("file", null, sourcePath, null);
         CopyInput target = new CopyInput(targetAdaptorName, targetLocation, targetPath, targetCredential, targetProps);
