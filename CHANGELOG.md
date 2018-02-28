@@ -6,9 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [2.2.1] - 2018-02-28
+
 ### Changed
 
 * Upgraded to Xenon 2.4.1
+
+### Fixed
+
+* slf4j multiple bindings warning
+* Slurm maxtime for interactive job does not appear functional (#29)
+* On InvalidLocationException return supported locations (#31)
+* On UnknownPropertyException return supported props (#34)
 
 ## [2.2.0] - 2018-02-26
 
