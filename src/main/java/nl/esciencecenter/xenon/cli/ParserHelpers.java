@@ -1,26 +1,24 @@
 package nl.esciencecenter.xenon.cli;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Subparser;
-import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.filesystems.CopyMode;
-import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
-import nl.esciencecenter.xenon.schedulers.Scheduler;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Utilities to construct argument parser
  */
 public class ParserHelpers {
+    private static final String KEY_VAL = "KEY=VAL";
+
     private ParserHelpers() {
         throw new IllegalAccessError("Utility class");
     }
@@ -40,17 +38,17 @@ public class ParserHelpers {
     static void addViaCredentialArguments(ArgumentParser parser) {
         parser.addArgument("--via-username")
                 .action(Arguments.append())
-                .metavar("KEY=VAL")
+                .metavar(KEY_VAL)
                 .dest("via_usernames")
                 .help("Username for via host (default: --username value)");
         parser.addArgument("--via-password")
                 .action(Arguments.append())
-                .metavar("KEY=VAL")
+                .metavar(KEY_VAL)
                 .dest("via_passwords")
                 .help("Password or passphrase for via host (default: --password value)");
         parser.addArgument("--via-certfile")
                 .action(Arguments.append())
-                .metavar("KEY=VAL")
+                .metavar(KEY_VAL)
                 .dest("via_certfiles")
                 .help("Certificate private key file for via host (default: --certfile value)");
     }
@@ -81,7 +79,7 @@ public class ParserHelpers {
         return String.join(sep, helps);
     }
 
-    static String getAdaptorPropertyHelp(XenonPropertyDescription property) {
+    private static String getAdaptorPropertyHelp(XenonPropertyDescription property) {
         return "- " + property.getName() + "=" + property.getDefaultValue() + " ("+ property.getDescription() + ", type:" + property.getType() + ") ";
     }
 
@@ -94,7 +92,7 @@ public class ParserHelpers {
         subparser.addArgument("--queue").help("Schedule job in this queue");
         subparser.addArgument("--env")
             .help("Environment variable of the executable")
-            .metavar("KEY=VAL")
+            .metavar(KEY_VAL)
             .action(Arguments.append())
             .dest("envs");
         subparser.addArgument("--inherit-env")
@@ -103,7 +101,7 @@ public class ParserHelpers {
         ;
         subparser.addArgument("--option")
             .help("Option for job")
-            .metavar("KEY=VAL")
+            .metavar(KEY_VAL)
             .action(Arguments.append())
             .dest("options");
         subparser.addArgument("--max-run-time").help("Maximum job run time (in minutes)").type(Integer.class).setDefault(JobDescription.DEFAULT_MAX_RUN_TIME_IN_MINUTES);
@@ -114,14 +112,6 @@ public class ParserHelpers {
         subparser.addArgument("--working-directory")
             .help("Path at location where executable should be executed. If location is local system, default value is the current working directory. If location is remote, default value is remote system's entry path");
         subparser.addArgument("--max-memory").help("Maximum amount of memory needed for process (in MBytes)").type(Integer.class);
-    }
-
-    public static Set<String> getAllowedFileSystemPropertyKeys(String adaptor) throws XenonException {
-        return Arrays.stream(FileSystem.getAdaptorDescription(adaptor).getSupportedProperties()).map(XenonPropertyDescription::getName).collect(Collectors.toSet());
-    }
-
-    public static Set<String> getAllowedSchedulerPropertyKeys(String adaptor) throws XenonException {
-        return Arrays.stream(Scheduler.getAdaptorDescription(adaptor).getSupportedProperties()).map(XenonPropertyDescription::getName).collect(Collectors.toSet());
     }
 
     public static String getSupportedPropertiesHelp(XenonPropertyDescription[] descriptions) {
