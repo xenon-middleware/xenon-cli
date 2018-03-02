@@ -6,11 +6,15 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Subparser;
 import nl.esciencecenter.xenon.XenonPropertyDescription;
+import nl.esciencecenter.xenon.credentials.CertificateCredential;
+import nl.esciencecenter.xenon.credentials.PasswordCredential;
+import nl.esciencecenter.xenon.credentials.UserCredential;
 import nl.esciencecenter.xenon.filesystems.CopyMode;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -23,34 +27,52 @@ public class ParserHelpers {
         throw new IllegalAccessError("Utility class");
     }
 
-    static void addCredentialArguments(ArgumentParser parser) {
-        parser.addArgument("--username").help("Username").setDefault(System.getProperty("user.name"));
-        parser.addArgument("--password").help("Password or passphrase");
-        parser.addArgument("--certfile").help("Certificate private key file");
+    static void addCredentialArguments(ArgumentParser parser, Set<Class> supportedCreds) {
+        if (supportedCreds.stream().anyMatch(UserCredential.class::isAssignableFrom)) {
+            parser.addArgument("--username").help("Username").setDefault(System.getProperty("user.name"));
+        }
+        if (supportedCreds.contains(PasswordCredential.class) || supportedCreds.contains(CertificateCredential.class)) {
+            parser.addArgument("--password").help("Password or passphrase");
+        }
+        if (supportedCreds.contains(CertificateCredential.class)) {
+            parser.addArgument("--certfile").help("Certificate private key file");
+        }
     }
 
-    public static void addTargetCredentialArguments(ArgumentGroup parser) {
-        parser.addArgument("--target-username").help("Username for target location (default: --username value)");
-        parser.addArgument("--target-password").help("Password or passphrase for target location (default: --password value)");
-        parser.addArgument("--target-certfile").help("Certificate private key file for target location (default: --certfile value)");
+    public static void addTargetCredentialArguments(ArgumentGroup parser, Set<Class> supportedCreds) {
+        if (supportedCreds.stream().anyMatch(UserCredential.class::isAssignableFrom)) {
+            parser.addArgument("--target-username").help("Username for target location (default: --username value)");
+        }
+        if (supportedCreds.contains(PasswordCredential.class) || supportedCreds.contains(CertificateCredential.class)) {
+            parser.addArgument("--target-password").help("Password or passphrase for target location (default: --password value)");
+        }
+        if (supportedCreds.contains(CertificateCredential.class)) {
+            parser.addArgument("--target-certfile").help("Certificate private key file for target location (default: --certfile value)");
+        }
     }
 
-    static void addViaCredentialArguments(ArgumentParser parser) {
-        parser.addArgument("--via-username")
-                .action(Arguments.append())
-                .metavar(KEY_VAL)
-                .dest("via_usernames")
-                .help("Username for via host (default: --username value)");
-        parser.addArgument("--via-password")
-                .action(Arguments.append())
-                .metavar(KEY_VAL)
-                .dest("via_passwords")
-                .help("Password or passphrase for via host (default: --password value)");
-        parser.addArgument("--via-certfile")
-                .action(Arguments.append())
-                .metavar(KEY_VAL)
-                .dest("via_certfiles")
-                .help("Certificate private key file for via host (default: --certfile value)");
+    static void addViaCredentialArguments(ArgumentParser parser, Set<Class> supportedCreds) {
+        if (supportedCreds.stream().anyMatch(UserCredential.class::isAssignableFrom)) {
+            parser.addArgument("--via-username")
+                    .action(Arguments.append())
+                    .metavar(KEY_VAL)
+                    .dest("via_usernames")
+                    .help("Username for via host (default: --username value)");
+        }
+        if (supportedCreds.contains(PasswordCredential.class) || supportedCreds.contains(CertificateCredential.class)) {
+            parser.addArgument("--via-password")
+                    .action(Arguments.append())
+                    .metavar(KEY_VAL)
+                    .dest("via_passwords")
+                    .help("Password or passphrase for via host (default: --password value)");
+        }
+        if (supportedCreds.contains(CertificateCredential.class)) {
+            parser.addArgument("--via-certfile")
+                    .action(Arguments.append())
+                    .metavar(KEY_VAL)
+                    .dest("via_certfiles")
+                    .help("Certificate private key file for via host (default: --certfile value)");
+        }
     }
 
     public static MutuallyExclusiveGroup addCopyModeArguments(ArgumentParser parser) {

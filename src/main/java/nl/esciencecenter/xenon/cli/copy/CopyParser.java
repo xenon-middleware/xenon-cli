@@ -15,6 +15,10 @@ import nl.esciencecenter.xenon.cli.ParserHelpers;
 import nl.esciencecenter.xenon.cli.Utils;
 import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class CopyParser implements IParser {
     private FileSystemAdaptorDescription adaptorDescription;
 
@@ -57,7 +61,8 @@ public class CopyParser implements IParser {
             }
         }
         if (!isLocal) {
-            addTargetCredentialArguments(targetparser);
+            Set<Class> supportedCreds = new HashSet<>(Arrays.asList(adaptorDescription.getSupportedCredentials()));
+            addTargetCredentialArguments(targetparser, supportedCreds);
         }
         addTargetArgumentProp(adaptorDescription, targetparser);
 

@@ -157,11 +157,12 @@ public class Main {
     private void adaptorSubCommands(Subparsers subparsers, AdaptorDescription adaptorDescription) {
         Subparser adaptorParser = addSubCommandAdaptor(subparsers, adaptorDescription);
         addArgumentLocation(adaptorDescription, adaptorParser);
+        Set<Class> supportedCreds = new HashSet<>(Arrays.asList(adaptorDescription.getSupportedCredentials()));
         if (!Utils.isLocalAdaptor(adaptorDescription)) {
-            ParserHelpers.addCredentialArguments(adaptorParser);
+            ParserHelpers.addCredentialArguments(adaptorParser, supportedCreds);
         }
         if (Utils.supportsVia(adaptorDescription)) {
-            ParserHelpers.addViaCredentialArguments(adaptorParser);
+            ParserHelpers.addViaCredentialArguments(adaptorParser, supportedCreds);
         }
         addArgumentProp(adaptorDescription, adaptorParser);
         Subparsers commandsParser = adaptorParser.addSubparsers().title("commands");
