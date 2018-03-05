@@ -19,11 +19,7 @@ import nl.esciencecenter.xenon.InvalidLocationException;
 import nl.esciencecenter.xenon.UnknownAdaptorException;
 import nl.esciencecenter.xenon.UnknownPropertyException;
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.credentials.CertificateCredential;
-import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.credentials.CredentialMap;
-import nl.esciencecenter.xenon.credentials.DefaultCredential;
-import nl.esciencecenter.xenon.credentials.PasswordCredential;
+import nl.esciencecenter.xenon.credentials.*;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 import nl.esciencecenter.xenon.schedulers.SchedulerAdaptorDescription;
 import org.junit.Rule;
@@ -156,6 +152,19 @@ public class UtilsTest {
     }
 
     @Test
+    public void createCredential_keytab() {
+        Map<String, Object> attrs = new Hashtable<>();
+        attrs.put("username", "someone");
+        attrs.put("keytabfile", "/home/someone/.hdfs/keytab");
+        Namespace res = new Namespace(attrs);
+
+        Credential result = createCredential(res);
+
+        Credential expected = new KeytabCredential("someone", "/home/someone/.hdfs/keytab");
+        assertEquals(expected, result);
+    }
+
+    @Test
     public void createCredential_viaUsername_credentialMapWithDefaultCred() {
         Map<String, Object> attrs = new Hashtable<>();
         attrs.put("via_usernames", Collections.singletonList("somehost=someone"));
@@ -283,6 +292,35 @@ public class UtilsTest {
 
         CredentialMap expected = new CredentialMap(new DefaultCredential("otherone"));
         expected.put("somehost", new CertificateCredential("someone", "/home/someone/.ssh/somehost.key", "somepw".toCharArray()));
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void createCredential_UsernameandViaKeytabfile_credentialMapWithWithKeytab() {
+        Map<String, Object> attrs = new Hashtable<>();
+        attrs.put("username", "otherone");
+        attrs.put("via_keytabfiles", Collections.singletonList("somehost=/home/someone/.hdfs/keytab"));
+        Namespace res = new Namespace(attrs);
+
+        Credential result = createCredential(res);
+
+        CredentialMap expected = new CredentialMap(new DefaultCredential("otherone"));
+        expected.put("somehost", new KeytabCredential("otherone", "/home/someone/.hdfs/keytab"));
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void createCredential_ViaUsernameAndViaKeytabfile_credentialMapWithWithKeytab() {
+        Map<String, Object> attrs = new Hashtable<>();
+        attrs.put("username", "otherone");
+        attrs.put("via_usernames", Collections.singletonList("somehost=someone"));
+        attrs.put("via_keytabfiles", Collections.singletonList("somehost=/home/someone/.hdfs/keytab"));
+        Namespace res = new Namespace(attrs);
+
+        Credential result = createCredential(res);
+
+        CredentialMap expected = new CredentialMap(new DefaultCredential("otherone"));
+        expected.put("somehost", new KeytabCredential("someone", "/home/someone/.hdfs/keytab"));
         assertEquals(expected, result);
     }
 
