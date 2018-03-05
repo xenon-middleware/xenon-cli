@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+* On InvalidCredentialException return supported credentials (#32)
+
 ## [2.2.1] - 2018-02-28
 
 ### Changed
