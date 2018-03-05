@@ -65,7 +65,7 @@ The unit and integration tests can be run with:
 
 # Release
 
-1. Bump version in `build.gradle`, add version to `CHANGELOG.md` and commit/push
+1. Bump version in `build.gradle`, `conda/xenon-cli/meta.yaml` files, add version to `CHANGELOG.md` and commit/push
 2. Create a new GitHub release
 3. Upload the files in `build/distributions/` directory to that release
 4. Publish release

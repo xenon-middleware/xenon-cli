@@ -6,13 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [2.3.0] - 2018-03-05
+
 ### Added
 
 * KeytabCredential support (#46)
 
+### Changed
+
+* Upgraded to Xenon 2.5.0
+
 ### Fixed
 
-* On InvalidCredentialException return supported credentials (#32)
+* Only show credentials flags supported by adaptor (#32)
 
 ## [2.2.1] - 2018-02-28
 
