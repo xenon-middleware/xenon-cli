@@ -57,21 +57,21 @@ public class ParserHelpers {
                     .action(Arguments.append())
                     .metavar(KEY_VAL)
                     .dest("via_usernames")
-                    .help("Username for via host (default: --username value)");
+                    .help("Username for via host, format <via hostname>=<username> (default: --username value)");
         }
         if (supportedCreds.contains(PasswordCredential.class) || supportedCreds.contains(CertificateCredential.class)) {
             parser.addArgument("--via-password")
                     .action(Arguments.append())
                     .metavar(KEY_VAL)
                     .dest("via_passwords")
-                    .help("Password or passphrase for via host (default: --password value)");
+                    .help("Password or passphrase for via host, format <via hostname>=<password> (default: --password value)");
         }
         if (supportedCreds.contains(CertificateCredential.class)) {
             parser.addArgument("--via-certfile")
                     .action(Arguments.append())
                     .metavar(KEY_VAL)
                     .dest("via_certfiles")
-                    .help("Certificate private key file for via host (default: --certfile value)");
+                    .help("Certificate private key file for via host, format <via hostname>=<certfile> (default: --certfile value)");
         }
     }
 
