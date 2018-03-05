@@ -40,17 +40,14 @@ testSets {
     integrationTest
 }
 
-ext.xenonLibVersion = '2.4.1'
+ext.xenonLibVersion = '2.5.0'
 
 dependencies {
     runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'
-//    compile("nl.esciencecenter.xenon:xenon:${xenonLibVersion}") {
-//        exclude group: 'org.slf4j', module:'slf4j-log4j12'
-//    }
-    compile("com.github.nlesc:xenon:master-SNAPSHOT") {
+    compile("nl.esciencecenter.xenon:xenon:${xenonLibVersion}") {
         exclude group: 'org.slf4j', module:'slf4j-log4j12'
     }
     compile 'org.slf4j:slf4j-api:1.7.25'
