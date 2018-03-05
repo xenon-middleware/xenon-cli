@@ -7,6 +7,7 @@ import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Subparser;
 import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.credentials.CertificateCredential;
+import nl.esciencecenter.xenon.credentials.KeytabCredential;
 import nl.esciencecenter.xenon.credentials.PasswordCredential;
 import nl.esciencecenter.xenon.credentials.UserCredential;
 import nl.esciencecenter.xenon.filesystems.CopyMode;
@@ -37,6 +38,9 @@ public class ParserHelpers {
         if (supportedCreds.contains(CertificateCredential.class)) {
             parser.addArgument("--certfile").help("Certificate private key file");
         }
+        if (supportedCreds.contains(KeytabCredential.class)) {
+            parser.addArgument("--keytabfile").help("Key tab file");
+        }
     }
 
     public static void addTargetCredentialArguments(ArgumentGroup parser, Set<Class> supportedCreds) {
@@ -48,6 +52,9 @@ public class ParserHelpers {
         }
         if (supportedCreds.contains(CertificateCredential.class)) {
             parser.addArgument("--target-certfile").help("Certificate private key file for target location (default: --certfile value)");
+        }
+        if (supportedCreds.contains(KeytabCredential.class)) {
+            parser.addArgument("--target-keytabfile").help("Key tab file for target location (--default: --keytabfile value)");
         }
     }
 
@@ -72,6 +79,13 @@ public class ParserHelpers {
                     .metavar(KEY_VAL)
                     .dest("via_certfiles")
                     .help("Certificate private key file for via host, format <via hostname>=<certfile> (default: --certfile value)");
+        }
+        if (supportedCreds.contains(KeytabCredential.class)) {
+            parser.addArgument("--via-keytabfile")
+                    .action(Arguments.append())
+                    .metavar(KEY_VAL)
+                    .dest("via_keytabfiles")
+                    .help("Key tab file for via host, format <via hostname>=<keytabfilefile> (default: --keytabfile value)");
         }
     }
 
