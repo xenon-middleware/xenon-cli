@@ -193,8 +193,12 @@ public class Utils {
         if (certfile == null && !"".equals(prefix)) {
             certfile = res.getString("certfile");
         }
-        Map<String, UserCredential> vias = createViaCredentials(res, username, passwordAsString, certfile);
-        UserCredential cred = createCredential(username, passwordAsString, certfile);
+        String keytabfile = res.getString(prefix + "keytabfile");
+        if (keytabfile == null && !"".equals(prefix)) {
+            keytabfile = res.getString("keytabfile");
+        }
+        Map<String, UserCredential> vias = createViaCredentials(res, username, passwordAsString, certfile, keytabfile);
+        UserCredential cred = createCredential(username, passwordAsString, certfile, keytabfile);
         if (!vias.isEmpty()) {
             CredentialMap credMap = new CredentialMap(cred);
             for (Map.Entry<String, UserCredential> entry : vias.entrySet()) {
@@ -205,30 +209,35 @@ public class Utils {
         return cred;
     }
 
-    private static Map<String,UserCredential> createViaCredentials(Namespace res, String defaultUsername, String defaultPasswordAsString, String defaultCertfile) {
+    private static Map<String,UserCredential> createViaCredentials(Namespace res, String defaultUsername, String defaultPasswordAsString, String defaultCertfile, String defaultKeytabfile) {
         Map<String, String> viaUsernames = parseArgumentListAsMap(res.getList("via_usernames"));
         Map<String, String> viaPasswords = parseArgumentListAsMap(res.getList("via_passwords"));
         Map<String, String> viaCertfiles = parseArgumentListAsMap(res.getList("via_certfiles"));
+        Map<String, String> viaKeytabfiles = parseArgumentListAsMap(res.getList("via_keytabfiles"));
         Set<String> hosts = new HashSet<>();
         hosts.addAll(viaUsernames.keySet());
         hosts.addAll(viaPasswords.keySet());
         hosts.addAll(viaCertfiles.keySet());
+        hosts.addAll(viaKeytabfiles.keySet());
         Map<String, UserCredential> creds = new HashMap<>();
         for (String host : hosts) {
             String username = viaUsernames.getOrDefault(host, defaultUsername);
             String password = viaPasswords.getOrDefault(host, defaultPasswordAsString);
             String certfile = viaCertfiles.getOrDefault(host, defaultCertfile);
-            creds.put(host, createCredential(username, password, certfile));
+            String keytabfile = viaKeytabfiles.getOrDefault(host, defaultKeytabfile);
+            creds.put(host, createCredential(username, password, certfile, keytabfile));
         }
         return creds;
     }
 
-    private static UserCredential createCredential(String username, String passwordAsString, String certfile) {
+    private static UserCredential createCredential(String username, String passwordAsString, String certfile, String keytabfile) {
         char[] password = null;
         if (passwordAsString != null) {
             password = passwordAsString.toCharArray();
         }
-        if (certfile != null) {
+        if (keytabfile != null) {
+            return new KeytabCredential(username, keytabfile);
+        } else if (certfile != null) {
             return new CertificateCredential(username, certfile, password);
         } else if (password != null) {
             return new PasswordCredential(username, password);
