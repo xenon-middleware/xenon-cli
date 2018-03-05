@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+* KeytabCredential support (#46)
+
 ### Fixed
 
 * On InvalidCredentialException return supported credentials (#32)
