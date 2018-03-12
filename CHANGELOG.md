@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+* scheduler arguments for exec and submit (#)
+
+### Changed
+
+* Upgraded to Xenon 2.6.0
+
 ## [2.3.0] - 2018-03-05
 
 ### Added

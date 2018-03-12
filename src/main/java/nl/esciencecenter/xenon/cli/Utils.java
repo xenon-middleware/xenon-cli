@@ -125,6 +125,12 @@ public class Utils {
         if (maxMemory != null) {
             description.setMaxMemory(maxMemory);
         }
+
+        List<String> schedulerArgs = res.getList("scheduler_arguments");
+        if (!schedulerArgs.isEmpty()) {
+            description.setSchedulerArguments(schedulerArgs.toArray(new String[0]));
+        }
+
         return description;
     }
 

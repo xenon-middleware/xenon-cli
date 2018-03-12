@@ -3,10 +3,7 @@ package nl.esciencecenter.xenon.cli;
 import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Test;
@@ -227,5 +224,17 @@ public class UtilsGetJobDescriptionTest {
         JobDescription description = getJobDescription(res);
 
         assertEquals(4096, description.getMaxMemory());
+    }
+
+    @Test
+    public void schedulerArguments() {
+        Map<String, Object> attrs = defaultArgs();
+        List<String> args = Collections.singletonList("--constraint=haswell");
+        attrs.put("scheduler_arguments", args);
+        Namespace res = new Namespace(attrs);
+
+        JobDescription description = getJobDescription(res);
+
+        assertEquals(args, description.getSchedulerArguments());
     }
 }
