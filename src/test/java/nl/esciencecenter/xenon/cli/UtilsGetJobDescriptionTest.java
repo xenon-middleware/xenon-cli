@@ -2,6 +2,7 @@ package nl.esciencecenter.xenon.cli;
 
 import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.*;
 
@@ -227,7 +228,17 @@ public class UtilsGetJobDescriptionTest {
     }
 
     @Test
-    public void schedulerArguments() {
+    public void schedulerArguments_zero() {
+        Map<String, Object> attrs = defaultArgs();
+        Namespace res = new Namespace(attrs);
+
+        JobDescription description = getJobDescription(res);
+
+        assertEquals(new ArrayList<String>() ,description.getSchedulerArguments());
+    }
+
+    @Test
+    public void schedulerArguments_one() {
         Map<String, Object> attrs = defaultArgs();
         List<String> args = Collections.singletonList("--constraint=haswell");
         attrs.put("scheduler_arguments", args);

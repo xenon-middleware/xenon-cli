@@ -127,7 +127,7 @@ public class Utils {
         }
 
         List<String> schedulerArgs = res.getList("scheduler_arguments");
-        if (!schedulerArgs.isEmpty()) {
+        if (schedulerArgs != null && !schedulerArgs.isEmpty()) {
             description.setSchedulerArguments(schedulerArgs.toArray(new String[0]));
         }
 
