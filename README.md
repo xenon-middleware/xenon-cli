@@ -69,7 +69,7 @@ The unit and integration tests can be run with:
 2. Create a new GitHub release
 3. Upload the files in `build/distributions/` directory to that release
 4. Publish release
-5. Edit [Zenodo entry](https://doi.org/10.5281/zenodo.597603), correct license, add [Xenon doi](https://doi.org/10.5281/zenodo.597993) as `is referenced by this upload`.
+5. Edit [Zenodo entry](https://doi.org/10.5281/zenodo.597603), add [Xenon doi](https://doi.org/10.5281/zenodo.597993) as `is referenced by this upload`.
 6. Create conda release, see [conda/README.md](conda/README.md)
 
 ## Docker
@@ -85,7 +85,7 @@ Generates a `nlesc/xenon-cli` Docker image.
 
 To use local files use volume mounting (watch out as the path should be relative to mount point):
 ```
-docker run -ti --rm nlesc/xenon-cli --user $USER -v $PWD:/work --adaptor ssh upload --source /work/somefile.txt --location localhost --path /tmp/copy-of-somefile.txt 
+docker run -ti --rm nlesc/xenon-cli --user $USER -v $PWD:/work --adaptor ssh upload --source /work/somefile.txt --location localhost --path /tmp/copy-of-somefile.txt
 ```
 
 ## Common Workflow Language
