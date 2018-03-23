@@ -13,7 +13,7 @@ authors:
   name-particle: H.
   affiliation: Netherlands eScience Center
 version: 2.3.0
-date-released: '2018-03-05'
+date-released: 2018-03-05
 repository-code: https://github.com/NLeSC/xenon-cli
 license: Apache-2.0
 references:
