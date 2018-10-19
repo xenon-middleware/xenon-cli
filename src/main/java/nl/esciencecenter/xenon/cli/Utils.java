@@ -1,32 +1,26 @@
 package nl.esciencecenter.xenon.cli;
 
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedSchedulerPropertyKeys;
+import net.sourceforge.argparse4j.inf.Namespace;
+import nl.esciencecenter.xenon.AdaptorDescription;
+import nl.esciencecenter.xenon.InvalidLocationException;
+import nl.esciencecenter.xenon.UnknownPropertyException;
+import nl.esciencecenter.xenon.XenonException;
+import nl.esciencecenter.xenon.credentials.*;
+import nl.esciencecenter.xenon.filesystems.FileSystem;
+import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
+import nl.esciencecenter.xenon.schedulers.JobDescription;
+import nl.esciencecenter.xenon.schedulers.Scheduler;
+import nl.esciencecenter.xenon.schedulers.SchedulerAdaptorDescription;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import net.sourceforge.argparse4j.inf.Namespace;
-import nl.esciencecenter.xenon.AdaptorDescription;
-import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.credentials.CertificateCredential;
-import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.credentials.CredentialMap;
-import nl.esciencecenter.xenon.credentials.DefaultCredential;
-import nl.esciencecenter.xenon.credentials.PasswordCredential;
-import nl.esciencecenter.xenon.credentials.UserCredential;
-import nl.esciencecenter.xenon.filesystems.FileSystem;
-import nl.esciencecenter.xenon.schedulers.JobDescription;
-import nl.esciencecenter.xenon.schedulers.Scheduler;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedPropertiesHelp;
 
 /**
  * Helpers for Xenon.jobs based commands
@@ -99,6 +93,10 @@ public class Utils {
         int procsPerNode = res.getInt("procs_per_node");
         description.setProcessesPerNode(procsPerNode);
 
+        if (res.getBoolean("start_single_process")) {
+            description.setStartSingleProcess(true);
+        }
+
         String workingDirectory = res.getString("working_directory");
         if (workingDirectory != null) {
             description.setWorkingDirectory(workingDirectory);
@@ -118,6 +116,21 @@ public class Utils {
         if (stderr != null) {
             description.setStderr(stderr);
         }
+
+        String name = res.getString("name");
+        if (name != null) {
+            description.setName(name);
+        }
+        Integer maxMemory = res.getInt("max_memory");
+        if (maxMemory != null) {
+            description.setMaxMemory(maxMemory);
+        }
+
+        List<String> schedulerArgs = res.getList("scheduler_arguments");
+        if (schedulerArgs != null && !schedulerArgs.isEmpty()) {
+            description.setSchedulerArguments(schedulerArgs.toArray(new String[0]));
+        }
+
         return description;
     }
 
@@ -144,9 +157,14 @@ public class Utils {
         String location = res.getString("location");
         Credential credential = createCredential(res);
 
-        Set<String> allowedKeys = getAllowedSchedulerPropertyKeys(adaptor);
-        Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        return Scheduler.create(adaptor, location, credential, props);
+        Map<String, String> props = buildXenonProperties(res);
+        SchedulerAdaptorDescription adaptorDescription = Scheduler.getAdaptorDescription(adaptor);
+        try {
+            return Scheduler.create(adaptor, location, credential, props);
+        } catch (InvalidLocationException|UnknownPropertyException e) {
+            rethrowWithSupported(adaptorDescription, e);
+            return null;
+        }
     }
 
     public static FileSystem createFileSystem(Namespace res) throws XenonException {
@@ -154,9 +172,14 @@ public class Utils {
         String location = res.getString("location");
         Credential credential = createCredential(res);
 
-        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
-        Map<String, String> props = buildXenonProperties(res, allowedKeys);
-        return FileSystem.create(adaptor, location, credential, props);
+        Map<String, String> props = buildXenonProperties(res);
+        FileSystemAdaptorDescription adaptorDescription = FileSystem.getAdaptorDescription(adaptor);
+        try {
+            return FileSystem.create(adaptor, location, credential, props);
+        } catch (InvalidLocationException|UnknownPropertyException e) {
+            rethrowWithSupported(adaptorDescription, e);
+            return null;
+        }
     }
 
     static Credential createCredential(Namespace res) {
@@ -176,8 +199,12 @@ public class Utils {
         if (certfile == null && !"".equals(prefix)) {
             certfile = res.getString("certfile");
         }
-        Map<String, UserCredential> vias = createViaCredentials(res, username, passwordAsString, certfile);
-        UserCredential cred = createCredential(username, passwordAsString, certfile);
+        String keytabfile = res.getString(prefix + "keytabfile");
+        if (keytabfile == null && !"".equals(prefix)) {
+            keytabfile = res.getString("keytabfile");
+        }
+        Map<String, UserCredential> vias = createViaCredentials(res, username, passwordAsString, certfile, keytabfile);
+        UserCredential cred = createCredential(username, passwordAsString, certfile, keytabfile);
         if (!vias.isEmpty()) {
             CredentialMap credMap = new CredentialMap(cred);
             for (Map.Entry<String, UserCredential> entry : vias.entrySet()) {
@@ -188,30 +215,35 @@ public class Utils {
         return cred;
     }
 
-    private static Map<String,UserCredential> createViaCredentials(Namespace res, String defaultUsername, String defaultPasswordAsString, String defaultCertfile) {
+    private static Map<String,UserCredential> createViaCredentials(Namespace res, String defaultUsername, String defaultPasswordAsString, String defaultCertfile, String defaultKeytabfile) {
         Map<String, String> viaUsernames = parseArgumentListAsMap(res.getList("via_usernames"));
         Map<String, String> viaPasswords = parseArgumentListAsMap(res.getList("via_passwords"));
         Map<String, String> viaCertfiles = parseArgumentListAsMap(res.getList("via_certfiles"));
+        Map<String, String> viaKeytabfiles = parseArgumentListAsMap(res.getList("via_keytabfiles"));
         Set<String> hosts = new HashSet<>();
         hosts.addAll(viaUsernames.keySet());
         hosts.addAll(viaPasswords.keySet());
         hosts.addAll(viaCertfiles.keySet());
+        hosts.addAll(viaKeytabfiles.keySet());
         Map<String, UserCredential> creds = new HashMap<>();
         for (String host : hosts) {
             String username = viaUsernames.getOrDefault(host, defaultUsername);
             String password = viaPasswords.getOrDefault(host, defaultPasswordAsString);
             String certfile = viaCertfiles.getOrDefault(host, defaultCertfile);
-            creds.put(host, createCredential(username, password, certfile));
+            String keytabfile = viaKeytabfiles.getOrDefault(host, defaultKeytabfile);
+            creds.put(host, createCredential(username, password, certfile, keytabfile));
         }
         return creds;
     }
 
-    private static UserCredential createCredential(String username, String passwordAsString, String certfile) {
+    private static UserCredential createCredential(String username, String passwordAsString, String certfile, String keytabfile) {
         char[] password = null;
         if (passwordAsString != null) {
             password = passwordAsString.toCharArray();
         }
-        if (certfile != null) {
+        if (keytabfile != null) {
+            return new KeytabCredential(username, keytabfile);
+        } else if (certfile != null) {
             return new CertificateCredential(username, certfile, password);
         } else if (password != null) {
             return new PasswordCredential(username, password);
@@ -226,21 +258,35 @@ public class Utils {
         return adaptorDescription.getName().equals("file") || adaptorDescription.getName().equals("local");
     }
 
-    public static Map<String,String> buildXenonProperties(Namespace res, Set<String> allowedKeys) {
-        return buildXenonProperties(res.getList("props"), allowedKeys);
+    public static Map<String,String> buildXenonProperties(Namespace res) {
+        return buildXenonProperties(res.getList("props"));
     }
 
-    public static Map<String,String> buildTargetXenonProperties(Namespace res, Set<String> allowedKeys) {
-        return buildXenonProperties(res.getList("target_props"), allowedKeys);
+    public static Map<String,String> buildTargetXenonProperties(Namespace res) {
+        return buildXenonProperties(res.getList("target_props"));
     }
 
-    private static Map<String, String> buildXenonProperties(List<String> props,Set<String> allowedKeys) {
+    private static Map<String, String> buildXenonProperties(List<String> props) {
         return parseArgumentListAsMap(props).entrySet().stream()
-            .filter(p -> allowedKeys.contains(p.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     static boolean supportsVia(AdaptorDescription adaptorDescription) {
         return Arrays.stream(adaptorDescription.getSupportedLocations()).anyMatch(d -> d.contains("via:"));
+    }
+
+    private static void rethrowWithSupported(AdaptorDescription adaptorDescription, XenonException e) throws XenonException {
+        if (e instanceof InvalidLocationException) {
+            String message = e.getMessage();
+            String[] supportedLocations = adaptorDescription.getSupportedLocations();
+            message += " (" + getSupportedLocationHelp(supportedLocations) + ")";
+            throw new InvalidLocationException(adaptorDescription.getName(), message, e);
+        } else if (e instanceof UnknownPropertyException) {
+            String message = e.getMessage();
+            message += " (" + getSupportedPropertiesHelp(adaptorDescription.getSupportedProperties()) + ")";
+            throw new UnknownPropertyException(adaptorDescription.getName(), message, e);
+        } else {
+            throw e;
+        }
     }
 }

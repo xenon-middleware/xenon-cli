@@ -1,26 +1,20 @@
 package nl.esciencecenter.xenon.cli.copy;
 
-import static nl.esciencecenter.xenon.cli.Utils.buildTargetXenonProperties;
-import static nl.esciencecenter.xenon.cli.Utils.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Map;
-import java.util.Set;
-
 import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.XenonRuntimeException;
 import nl.esciencecenter.xenon.cli.Utils;
 import nl.esciencecenter.xenon.cli.XenonCommand;
 import nl.esciencecenter.xenon.credentials.Credential;
-import nl.esciencecenter.xenon.filesystems.CopyMode;
-import nl.esciencecenter.xenon.filesystems.CopyStatus;
-import nl.esciencecenter.xenon.filesystems.FileSystem;
-import nl.esciencecenter.xenon.filesystems.NoSuchCopyException;
-import nl.esciencecenter.xenon.filesystems.Path;
+import nl.esciencecenter.xenon.filesystems.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Map;
+
+import static nl.esciencecenter.xenon.cli.Utils.buildTargetXenonProperties;
+import static nl.esciencecenter.xenon.cli.Utils.buildXenonProperties;
 
 /**
  * Copy source file/directory to target location command
@@ -107,9 +101,8 @@ public class CopyCommand extends XenonCommand {
         CopyMode copymode = res.get("copymode");
         Boolean recursive = res.getBoolean("recursive");
 
-        Set<String> allowedKeys = getAllowedFileSystemPropertyKeys(adaptor);
-        Map<String, String> sourceProps = buildXenonProperties(res, allowedKeys);
-        Map<String, String> targetProps = buildTargetXenonProperties(res, allowedKeys);
+        Map<String, String> sourceProps = buildXenonProperties(res);
+        Map<String, String> targetProps = buildTargetXenonProperties(res);
         if (targetProps.isEmpty() && !sourceProps.isEmpty()) {
             targetProps = sourceProps;
         }

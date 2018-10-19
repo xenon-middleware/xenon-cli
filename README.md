@@ -5,6 +5,7 @@
 [![SonarQube Gate](https://sonarcloud.io/api/badges/gate?key=nl.esciencecenter.xenon.cli%3Axenon-cli)](https://sonarcloud.io/dashboard?id=nl.esciencecenter.xenon.cli%3Axenon-cli)
 [![SonarQube Coverage](https://sonarcloud.io/api/badges/measure?key=nl.esciencecenter.xenon.cli%3Axenon-cli&metric=coverage)](https://sonarcloud.io/component_measures?id=nl.esciencecenter.xenon.cli%3Axenon-cli&metric=Coverage)
 [![DOI](https://zenodo.org/badge/80642209.svg)](https://zenodo.org/badge/latestdoi/80642209)
+[![Anaconda-Server Badge](https://anaconda.org/nlesc/xenon-cli/badges/installer/conda.svg)](https://anaconda.org/NLeSC/xenon-cli)
 
 Command line interface which uses the [Xenon library](https://nlesc.github.io/Xenon) to perform job and file operations.
 
@@ -64,11 +65,12 @@ The unit and integration tests can be run with:
 
 # Release
 
-1. Bump version in `build.gradle`, add version to `CHANGELOG.md` and commit/push
+1. Bump version in `build.gradle`, `conda/xenon-cli/meta.yaml` files, add version to `CHANGELOG.md` and commit/push
 2. Create a new GitHub release
 3. Upload the files in `build/distributions/` directory to that release
 4. Publish release
-5. Edit [Zenodo entry](https://doi.org/10.5281/zenodo.597603), correct license, add [Xenon doi](https://doi.org/10.5281/zenodo.597993) as `is referenced by this upload`.
+5. Edit [Zenodo entry](https://doi.org/10.5281/zenodo.597603), add [Xenon doi](https://doi.org/10.5281/zenodo.597993) as `is referenced by this upload`.
+6. Create conda release, see [conda/README.md](conda/README.md)
 
 ## Docker
 
@@ -83,7 +85,7 @@ Generates a `nlesc/xenon-cli` Docker image.
 
 To use local files use volume mounting (watch out as the path should be relative to mount point):
 ```
-docker run -ti --rm nlesc/xenon-cli --user $USER -v $PWD:/work --adaptor ssh upload --source /work/somefile.txt --location localhost --path /tmp/copy-of-somefile.txt 
+docker run -ti --rm nlesc/xenon-cli --user $USER -v $PWD:/work --adaptor ssh upload --source /work/somefile.txt --location localhost --path /tmp/copy-of-somefile.txt
 ```
 
 ## Common Workflow Language

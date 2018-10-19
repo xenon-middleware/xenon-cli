@@ -24,6 +24,7 @@ public class ListJobsOutput {
         sb.append(String.join(
             sep,
             "Job identifier",
+            "Name",
             "State", "Running",
             "Done", "Error",
             "Exit code",
@@ -33,6 +34,7 @@ public class ListJobsOutput {
             sb.append(String.join(
                 sep,
                 status.getJobIdentifier(),
+                status.getName() != null ? status.getName() : "",
                 status.getState(),
                 String.valueOf(status.isRunning()),
                 String.valueOf(status.isDone()),

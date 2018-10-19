@@ -1,9 +1,11 @@
 package nl.esciencecenter.xenon.cli;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertTrue;
 
 import nl.esciencecenter.xenon.XenonException;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
@@ -27,7 +29,7 @@ public class MainExitTest {
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
-    public void mainRootHelp() throws XenonException {
+    public void mainRootHelp() {
         exit.expectSystemExitWithStatus(2);
         exit.checkAssertionAfterwards(() -> assertTrue("System out starts with 'usage: xenon'", systemOutRule.getLog().startsWith("usage: xenon")));
 
@@ -37,7 +39,7 @@ public class MainExitTest {
     }
 
     @Test
-    public void run_argumentparserexception_usageinstdout() throws XenonException {
+    public void run_argumentparserexception_usageinstdout() {
         exit.expectSystemExitWithStatus(2);
         exit.checkAssertionAfterwards(() -> {
             String expected = "error: invalid choice: 'badadaptorname'";
@@ -46,6 +48,32 @@ public class MainExitTest {
         Main main = new Main();
 
         String[] badCommands = new String[]{"filesystem", "badadaptorname"};
+        main.run(badCommands);
+    }
+
+    @Test
+    public void run_invalidlocationexception_listsupportedlocations() {
+        exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String log = systemErrRule.getLogWithNormalizedLineSeparator();
+            Assert.assertThat(log, containsString("slurm adaptor: Invalid location: foobar (supported locations"));
+        });
+        Main main = new Main();
+
+        String[] badCommands = new String[]{"scheduler", "slurm", "--location", "foobar", "list"};
+        main.run(badCommands);
+    }
+
+    @Test
+    public void run_UnknownPropertyException_listsupportedlocations() {
+        exit.expectSystemExitWithStatus(1);
+        exit.checkAssertionAfterwards(() -> {
+            String log = systemErrRule.getLogWithNormalizedLineSeparator();
+            Assert.assertThat(log, containsString("Unknown property foo (supported properties"));
+        });
+        Main main = new Main();
+
+        String[] badCommands = new String[]{"filesystem", "file", "--prop", "foo=bar", "list", "/"};
         main.run(badCommands);
     }
 }

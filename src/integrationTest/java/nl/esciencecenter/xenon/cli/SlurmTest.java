@@ -112,7 +112,7 @@ public class SlurmTest {
 
         String result = jobs.toString();
         String sep = System.getProperty("line.separator");
-        String expected = "Job identifier\tState\tRunning\tDone\tError\tExit code\tInformation" + sep;
+        String expected = "Job identifier\tName\tState\tRunning\tDone\tError\tExit code\tInformation" + sep;
         assertEquals(expected, result);
     }
 
@@ -123,7 +123,7 @@ public class SlurmTest {
 
         String result = jobs.toString();
         String sep = System.getProperty("line.separator");
-        String expected = "Job identifier\tState\tRunning\tDone\tError\tExit code\tInformation" + sep;
+        String expected = "Job identifier\tName\tState\tRunning\tDone\tError\tExit code\tInformation" + sep;
         assertEquals(expected, result);
     }
 }

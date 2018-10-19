@@ -1,16 +1,13 @@
 package nl.esciencecenter.xenon.cli.copy;
 
-import static nl.esciencecenter.xenon.cli.Utils.buildXenonProperties;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getAllowedFileSystemPropertyKeys;
-
-import java.util.Map;
-import java.util.Set;
-
+import net.sourceforge.argparse4j.inf.Namespace;
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
 import nl.esciencecenter.xenon.filesystems.CopyMode;
 
-import net.sourceforge.argparse4j.inf.Namespace;
+import java.util.Map;
+
+import static nl.esciencecenter.xenon.cli.Utils.buildXenonProperties;
 
 /**
  * Command to download source file to local file
@@ -25,8 +22,7 @@ public class DownloadCommand extends CopyCommand {
         String targetPath = res.getString("target");
         CopyMode copymode = res.get("copymode");
         Boolean recursive = res.getBoolean("recursive");
-        Set<String> sourceAllowedKeys = getAllowedFileSystemPropertyKeys(sourceAdaptorName);
-        Map<String, String> sourceProps = buildXenonProperties(res, sourceAllowedKeys);
+        Map<String, String> sourceProps = buildXenonProperties(res);
 
         CopyInput source = new CopyInput(sourceAdaptorName, sourceLocation, sourcePath, sourceCredential, sourceProps);
         CopyInput target = new CopyInput("file", null, targetPath, null);
