@@ -23,9 +23,8 @@ version = '3.0.0'
 group = 'nl.esciencecenter.xenon.cli'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
-def javaVersion = JavaVersion.VERSION_1_8
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 repositories {
     mavenLocal()
@@ -48,16 +47,22 @@ dependencies {
 
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'
-    compile("nl.esciencecenter.xenon:xenon-all:${xenonLibVersion}") {
-        exclude group: 'org.slf4j', module:'slf4j-log4j12'
-    }
+//    compile("nl.esciencecenter.xenon:xenon-all:${xenonLibVersion}") {
+//        exclude group: 'org.slf4j', module:'slf4j-log4j12'
+//    }
+    compile group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
+//    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonLibVersion
+
+    // To prevent Java 10 warning
+    compile 'javax.activation:activation:1.1.1'
+
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'
     testCompile 'com.github.stefanbirkner:system-rules:1.17.1'
     testCompile 'org.mockito:mockito-core:2.15.0'
 
-    integrationTestCompile 'org.apache.hadoop:hadoop-client:3.0.0'
+//    integrationTestCompile 'org.apache.hadoop:hadoop-client:3.0.0'
     integrationTestCompile 'com.github.geowarin:docker-junit-rule:1.2.0'
     integrationTestCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.33.0'
 }
@@ -138,15 +143,6 @@ buildConfig {
     appName = project.applicationName
     buildConfigField 'String', 'XENON_LIB_VERSION', "${xenonLibVersion}"
 }
-
-task enforceVersion << {
-    def foundVersion = JavaVersion.current();
-    if (foundVersion != javaVersion)
-        throw new IllegalStateException("Wrong Java version; required is "
-            + javaVersion + ", but found " + foundVersion)
-}
-
-compileJava.dependsOn(enforceVersion)
 
 shadowJar {
     mergeServiceFiles()
