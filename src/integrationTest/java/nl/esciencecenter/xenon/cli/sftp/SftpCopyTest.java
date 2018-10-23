@@ -5,9 +5,9 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.geowarin.junit.DockerRule;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.testcontainers.containers.GenericContainer;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.cli.Main;
@@ -17,27 +17,19 @@ import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
 
 public class SftpCopyTest {
-    private static final String PORT = "22/tcp";
+    private static final int PORT = 22;
 
     @ClassRule
-    public static final DockerRule serverA = DockerRule.builder()
-            .image("nlesc/xenon-ssh")
-            .ports("22")
-            .waitForPort(PORT)
-            .build();
-
+    public static final GenericContainer serverA = new GenericContainer("nlesc/xenon-ssh").withExposedPorts(PORT);
     @ClassRule
-    public static final DockerRule serverB = DockerRule.builder()
-            .image("nlesc/xenon-ssh")
-            .ports("22")
-            .waitForPort(PORT)
-            .build();
+    public static final GenericContainer serverB = new GenericContainer("nlesc/xenon-ssh").withExposedPorts(PORT);
 
     private static String getLocationA() {
-        return serverA.getDockerHost() + ":" + serverA.getHostPort(PORT);
+        return serverA.getContainerIpAddress() + ":" + serverA.getMappedPort(PORT);
     }
+
     private static String getLocationB() {
-        return serverB.getDockerHost() + ":" + serverB.getHostPort(PORT);
+        return serverB.getContainerIpAddress() + ":" + serverB.getMappedPort(PORT);
     }
 
     @Test

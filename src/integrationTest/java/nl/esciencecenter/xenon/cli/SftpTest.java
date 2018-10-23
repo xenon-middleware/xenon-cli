@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import com.github.geowarin.junit.DockerRule;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.testcontainers.containers.GenericContainer;
 
 import nl.esciencecenter.xenon.XenonException;
 import nl.esciencecenter.xenon.credentials.Credential;
@@ -21,20 +21,17 @@ import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.Path;
 
 public class SftpTest {
-    private static final String PORT = "22/tcp";
+    private static final int PORT = 22;
 
     @ClassRule
-    public static final DockerRule server = DockerRule.builder()
-        .image("nlesc/xenon-ssh")
-        .ports("22")
-        .waitForPort(PORT)
-        .build();
+    public static final GenericContainer server = new GenericContainer("nlesc/xenon-ssh").withExposedPorts(PORT);
+
 
     @Rule
     public TemporaryFolder myfolder = new TemporaryFolder();
 
     private static String getLocation() {
-        return server.getDockerHost() + ":" + server.getHostPort(PORT);
+        return server.getContainerIpAddress() + ":" + server.getMappedPort(PORT);
     }
 
     private static String[] argsBuilder(String... args) {

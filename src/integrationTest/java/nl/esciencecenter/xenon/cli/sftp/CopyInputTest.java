@@ -5,25 +5,21 @@ import static org.junit.Assert.assertFalse;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.geowarin.junit.DockerRule;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.testcontainers.containers.GenericContainer;
 
 import nl.esciencecenter.xenon.cli.copy.CopyInput;
 import nl.esciencecenter.xenon.credentials.PasswordCredential;
 
 public class CopyInputTest {
-    private static final String PORT = "22/tcp";
+    private static final int PORT = 22;
 
     @ClassRule
-    public static final DockerRule server = DockerRule.builder()
-            .image("nlesc/xenon-ssh")
-            .ports("22")
-            .waitForPort(PORT)
-            .build();
+    public static final GenericContainer server = new GenericContainer("nlesc/xenon-ssh").withExposedPorts(PORT);
 
     private static String getLocation() {
-        return server.getDockerHost() + ":" + server.getHostPort(PORT);
+        return server.getContainerIpAddress() + ":" + server.getMappedPort(PORT);
     }
 
     @Test

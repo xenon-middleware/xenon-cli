@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '2.0.2'
+    id 'com.github.johnrengelman.shadow' version '4.0.1'
     // ide
     id 'idea'
     id 'eclipse'
@@ -11,7 +11,7 @@ plugins {
     id 'org.sonarqube' version '2.6.2'
     // docker build & push
     id 'maven-publish'
-    id 'com.palantir.docker' version '0.19.2'
+    id 'com.palantir.docker' version '0.20.1'
     // integration tests
     id 'org.unbroken-dome.test-sets' version '1.4.2'
     // xenon --version reads version from this file
@@ -30,9 +30,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven {
-        url 'https://dl.bintray.com/palantir/releases' // docker-compose-rule is published on bintray, not jcenter
-    }
     maven { url 'https://jitpack.io' }
 }
 
@@ -50,8 +47,11 @@ dependencies {
 //    compile("nl.esciencecenter.xenon:xenon-all:${xenonLibVersion}") {
 //        exclude group: 'org.slf4j', module:'slf4j-log4j12'
 //    }
-    compile group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
+//    compile group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
+    compile group: 'nl.esciencecenter.xenon', name: 'xenon-all', version: xenonLibVersion
 //    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonLibVersion
+//    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-hadoop', version: xenonLibVersion
+//    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-grid', version: xenonLibVersion
 
     // To prevent Java 10 warning
     compile 'javax.activation:activation:1.1.1'
@@ -59,12 +59,11 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.25'
 
     testCompile 'junit:junit:4.12'
-    testCompile 'com.github.stefanbirkner:system-rules:1.17.1'
-    testCompile 'org.mockito:mockito-core:2.15.0'
+    testCompile 'com.github.stefanbirkner:system-rules:1.18.0'
+    testCompile 'org.mockito:mockito-core:2.23.0'
 
 //    integrationTestCompile 'org.apache.hadoop:hadoop-client:3.0.0'
-    integrationTestCompile 'com.github.geowarin:docker-junit-rule:1.2.0'
-    integrationTestCompile 'com.palantir.docker.compose:docker-compose-rule-junit4:0.33.0'
+    integrationTestCompile 'org.testcontainers:testcontainers:1.9.1'
 }
 
 docker {
@@ -80,8 +79,7 @@ distTar.enabled = false
 assemble.dependsOn shadowDistTar
 assemble.dependsOn shadowDistZip
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.5.1'
+wrapper {
 }
 
 jacocoTestReport {

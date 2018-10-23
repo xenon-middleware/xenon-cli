@@ -7,30 +7,26 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import com.palantir.docker.compose.DockerComposeRule;
-import com.palantir.docker.compose.connection.DockerPort;
-import com.palantir.docker.compose.connection.waiting.HealthChecks;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.testcontainers.containers.GenericContainer;
 
 import nl.esciencecenter.xenon.cli.listjobs.ListJobsOutput;
 import nl.esciencecenter.xenon.cli.queues.QueuesOutput;
 import nl.esciencecenter.xenon.cli.submit.SubmitOutput;
 
 public class SlurmTest {
-    private static final String ADAPTOR_NAME = "slurm";
-    @ClassRule
-    public static final DockerComposeRule docker = DockerComposeRule.builder()
-            .file("src/integrationTest/resources/slurm-docker-compose.yml")
-            .waitingForService(ADAPTOR_NAME, HealthChecks.toHaveAllPortsOpen())
-            .build();
-
     private Main main;
+    private static final String ADAPTOR_NAME = "slurm";
+
+    private static final int PORT = 22;
+
+    @ClassRule
+    public static final GenericContainer server = new GenericContainer("nlesc/xenon-slurm").withExposedPorts(PORT);
 
     private static String getLocation() {
-        DockerPort slurm = docker.containers().container(ADAPTOR_NAME).port(22);
-        return slurm.inFormat("ssh://$HOST:$EXTERNAL_PORT");
+        return "ssh://" + server.getContainerIpAddress() + ":" + server.getMappedPort(PORT);
     }
 
     private static String[] argsBuilder(String... args) {

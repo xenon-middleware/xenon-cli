@@ -5,22 +5,18 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import com.github.geowarin.junit.DockerRule;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import org.junit.contrib.java.lang.system.SystemOutRule;
+import org.testcontainers.containers.GenericContainer;
 
 public class SshTest {
-    private static final String PORT = "22/tcp";
+    private static final int PORT = 22;
 
     @ClassRule
-    public static final DockerRule server = DockerRule.builder()
-            .image("nlesc/xenon-ssh")
-            .ports("22")
-            .waitForPort(PORT)
-            .build();
+    public static final GenericContainer server = new GenericContainer("nlesc/xenon-ssh").withExposedPorts(PORT);
 
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
@@ -29,12 +25,13 @@ public class SshTest {
     public final SystemOutRule systemOutRule = new SystemOutRule().enableLog();
 
     private static String getLocation() {
-        return server.getDockerHost() + ":" + server.getHostPort(PORT);
+        return server.getContainerIpAddress() + ":" + server.getMappedPort(PORT);
     }
 
     private static String[] argsBuilder(String... args) {
         String location = getLocation();
         String[] myargs = {
+                "--stacktrace",
                 "scheduler",
                 "ssh",
                 "--location", location,
