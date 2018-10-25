@@ -15,7 +15,7 @@ conda-build -c conda-forge xenon-cli
 
 ```sh
 conda install anaconda-client
-anaconda upload <path to xenon-cli*.tar.bz2>
+anaconda upload --user nlesc <path to xenon-cli*.tar.bz2>
 ```
 
 # Install
