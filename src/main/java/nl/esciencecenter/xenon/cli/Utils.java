@@ -1,26 +1,38 @@
 package nl.esciencecenter.xenon.cli;
 
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
+import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedPropertiesHelp;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import net.sourceforge.argparse4j.inf.Namespace;
+
 import nl.esciencecenter.xenon.AdaptorDescription;
 import nl.esciencecenter.xenon.InvalidLocationException;
 import nl.esciencecenter.xenon.UnknownPropertyException;
 import nl.esciencecenter.xenon.XenonException;
-import nl.esciencecenter.xenon.credentials.*;
+import nl.esciencecenter.xenon.credentials.CertificateCredential;
+import nl.esciencecenter.xenon.credentials.Credential;
+import nl.esciencecenter.xenon.credentials.CredentialMap;
+import nl.esciencecenter.xenon.credentials.DefaultCredential;
+import nl.esciencecenter.xenon.credentials.KeytabCredential;
+import nl.esciencecenter.xenon.credentials.PasswordCredential;
+import nl.esciencecenter.xenon.credentials.UserCredential;
 import nl.esciencecenter.xenon.filesystems.FileSystem;
 import nl.esciencecenter.xenon.filesystems.FileSystemAdaptorDescription;
 import nl.esciencecenter.xenon.schedulers.JobDescription;
 import nl.esciencecenter.xenon.schedulers.Scheduler;
 import nl.esciencecenter.xenon.schedulers.SchedulerAdaptorDescription;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedLocationHelp;
-import static nl.esciencecenter.xenon.cli.ParserHelpers.getSupportedPropertiesHelp;
 
 /**
  * Helpers for Xenon.jobs based commands
@@ -84,8 +96,10 @@ public class Utils {
             description.setJobOptions(options);
         }
 
-        int maxTime = res.getInt("max_run_time");
-        description.setMaxRuntime(maxTime);
+        Integer maxTime = res.getInt("max_run_time");
+        if (maxTime != null) {
+            description.setMaxRuntime(maxTime);
+        }
 
         int nodeCount = res.getInt("node_count");
         description.setNodeCount(nodeCount);

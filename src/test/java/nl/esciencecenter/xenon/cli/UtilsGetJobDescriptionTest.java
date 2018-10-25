@@ -2,9 +2,12 @@ package nl.esciencecenter.xenon.cli;
 
 import static nl.esciencecenter.xenon.cli.Utils.getJobDescription;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Test;
@@ -198,7 +201,6 @@ public class UtilsGetJobDescriptionTest {
         Map<String, Object> attrs = new HashMap<>();
         attrs.put("executable", "sleep");
         attrs.put("inherit_env", false);
-        attrs.put("max_run_time", JobDescription.DEFAULT_MAX_RUN_TIME_IN_MINUTES);
         attrs.put("node_count", 1);
         attrs.put("procs_per_node", 1);
         attrs.put("start_single_process", false);

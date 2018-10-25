@@ -1,22 +1,22 @@
 package nl.esciencecenter.xenon.cli;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.MutuallyExclusiveGroup;
 import net.sourceforge.argparse4j.inf.Subparser;
+
 import nl.esciencecenter.xenon.XenonPropertyDescription;
 import nl.esciencecenter.xenon.credentials.CertificateCredential;
 import nl.esciencecenter.xenon.credentials.KeytabCredential;
 import nl.esciencecenter.xenon.credentials.PasswordCredential;
 import nl.esciencecenter.xenon.credentials.UserCredential;
 import nl.esciencecenter.xenon.filesystems.CopyMode;
-import nl.esciencecenter.xenon.schedulers.JobDescription;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Utilities to construct argument parser
@@ -140,7 +140,7 @@ public class ParserHelpers {
             .metavar(KEY_VAL)
             .action(Arguments.append())
             .dest("options");
-        subparser.addArgument("--max-run-time").help("Maximum job run time (in minutes)").type(Integer.class).setDefault(JobDescription.DEFAULT_MAX_RUN_TIME_IN_MINUTES);
+        subparser.addArgument("--max-run-time").help("Maximum job run time (in minutes)").type(Integer.class);
         subparser.addArgument("--node-count").type(Integer.class).help("Number of nodes to reserve").setDefault(1);
         subparser.addArgument("--procs-per-node").type(Integer.class).help("Number of processes started on each node").setDefault(1);
         subparser.addArgument("--start-single-process").action(Arguments.storeTrue())
