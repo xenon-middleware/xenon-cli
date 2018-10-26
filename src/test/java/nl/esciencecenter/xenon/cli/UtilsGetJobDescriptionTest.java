@@ -250,4 +250,15 @@ public class UtilsGetJobDescriptionTest {
 
         assertEquals(args, description.getSchedulerArguments());
     }
+
+    @Test
+    public void tempSpace() {
+        Map<String, Object> attrs = defaultArgs();
+        attrs.put("temp_space", 4096); // Job requires 4Gb of temp space
+        Namespace res = new Namespace(attrs);
+
+        JobDescription description = getJobDescription(res);
+
+        assertEquals(4096, description.getTempSpace());
+    }
 }

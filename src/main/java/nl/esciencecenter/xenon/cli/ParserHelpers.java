@@ -149,6 +149,7 @@ public class ParserHelpers {
             .help("Path at location where executable should be executed. If location is local system, default value is the current working directory. If location is remote, default value is remote system's entry path");
         subparser.addArgument("--max-memory").help("Maximum amount of memory needed for process (in MBytes)").type(Integer.class);
         subparser.addArgument("--scheduler-argument").dest("scheduler_arguments").action(Arguments.append()).help("Scheduler specific arguments for this job");
+        subparser.addArgument("--temp-space").type(Integer.class).help("Amount of temp space needed per node/process (in MBytes)");
     }
 
     public static String getSupportedPropertiesHelp(XenonPropertyDescription[] descriptions) {
