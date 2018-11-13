@@ -47,8 +47,8 @@ dependencies {
 //    compile("nl.esciencecenter.xenon:xenon-all:${xenonLibVersion}") {
 //        exclude group: 'org.slf4j', module:'slf4j-log4j12'
 //    }
-//    compile group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
-    compile group: 'nl.esciencecenter.xenon', name: 'xenon-all', version: xenonLibVersion
+    compile group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
+//    compile group: 'nl.esciencecenter.xenon', name: 'xenon-all', version: xenonLibVersion
 //    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonLibVersion
 //    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-hadoop', version: xenonLibVersion
 //    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-grid', version: xenonLibVersion
