@@ -56,7 +56,6 @@ Generates application tar/zip in `build/distributions/` directory.
 
 Requirements for the integration tests:
 * [docker](https://docs.docker.com/engine/installation/), v1.13 or greater
-* [docker-compose](https://docs.docker.com/compose/), v1.10 or greater
 
 The unit and integration tests can be run with:
 ```
