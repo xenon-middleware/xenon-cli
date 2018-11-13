@@ -145,6 +145,11 @@ public class Utils {
             description.setSchedulerArguments(schedulerArgs.toArray(new String[0]));
         }
 
+        Integer tempSpace = res.getInt("temp_space");
+        if (tempSpace != null) {
+            description.setTempSpace(tempSpace);
+        }
+
         return description;
     }
 
