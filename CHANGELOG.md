@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [2.4.1] - 2019-02-26
+
+### Fixed
+
+* s3 adaptor gives wrong error due to gson conflict
+
 ## [2.4.0] - 2018-03-14
 
 ### Added

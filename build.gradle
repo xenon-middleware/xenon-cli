@@ -19,7 +19,7 @@ plugins {
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
-version = '2.4.0'
+version = '2.4.1'
 group = 'nl.esciencecenter.xenon.cli'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
@@ -45,7 +45,7 @@ ext.xenonLibVersion = '2.6.0'
 dependencies {
     runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
-    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.google.code.gson:gson:2.5'
     compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'
     compile("nl.esciencecenter.xenon:xenon:${xenonLibVersion}") {
         exclude group: 'org.slf4j', module:'slf4j-log4j12'
