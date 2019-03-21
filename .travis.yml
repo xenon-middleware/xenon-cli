@@ -1,17 +1,10 @@
 language: java
-sudo: required
-dist: trusty
-jdk: oraclejdk8
-env:
-  DOCKER_COMPOSE_VERSION: 1.14.0
+jdk: openjdk11
 services:
   - docker
 addons:
   sonarcloud:
-    organization: nlesc
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y docker-ce
+    organization: xenon-middleware
 script:
   - ./gradlew check 
   - ./gradlew sonarqube -Dsonar.login=$SONAR_TOKEN

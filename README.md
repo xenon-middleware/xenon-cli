@@ -1,17 +1,17 @@
 # Xenon Command Line Interface
 
-[![Build Status](https://travis-ci.org/NLeSC/xenon-cli.svg?branch=master)](https://travis-ci.org/NLeSC/xenon-cli)
-[![Build status](https://ci.appveyor.com/api/projects/status/vki0xma8y7glpt09/branch/master?svg=true)](https://ci.appveyor.com/project/NLeSC/xenon-cli/branch/master)
-[![SonarQube Gate](https://sonarcloud.io/api/badges/gate?key=nl.esciencecenter.xenon.cli%3Axenon-cli)](https://sonarcloud.io/dashboard?id=nl.esciencecenter.xenon.cli%3Axenon-cli)
-[![SonarQube Coverage](https://sonarcloud.io/api/badges/measure?key=nl.esciencecenter.xenon.cli%3Axenon-cli&metric=coverage)](https://sonarcloud.io/component_measures?id=nl.esciencecenter.xenon.cli%3Axenon-cli&metric=Coverage)
+[![Build Status](https://travis-ci.org/xenon-middleware/xenon-cli.svg?branch=master)](https://travis-ci.org/xenon-middleware/xenon-cli)
+[![Build status](https://ci.appveyor.com/api/projects/status/vki0xma8y7glpt09/branch/master?svg=true)](https://ci.appveyor.com/project/xenon-middleware/xenon-cli/branch/master)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xenon-middleware_xenon-cli&metric=alert_status)](https://sonarcloud.io/dashboard?id=xenon-middleware_xenon-cli)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=xenon-middleware_xenon-cli&metric=coverage)](https://sonarcloud.io/dashboard?id=xenon-middleware_xenon-cli)
 [![DOI](https://zenodo.org/badge/80642209.svg)](https://zenodo.org/badge/latestdoi/80642209)
 [![Anaconda-Server Badge](https://anaconda.org/nlesc/xenon-cli/badges/installer/conda.svg)](https://anaconda.org/NLeSC/xenon-cli)
 
-Command line interface which uses the [Xenon library](https://nlesc.github.io/Xenon) to perform job and file operations.
+Command line interface which uses the [Xenon library](https://xenon-middleware.github.io/xenon) to perform job and file operations.
 
 # Install
 
-Goto https://github.com/NLeSC/xenon-cli/releases and download a tarball (or zipfile).
+Goto https://github.com/xenon-middleware/xenon-cli/releases and download a tarball (or zipfile).
 The tarball can be installed with:
 ```bash
 tar -xf build/distributions/xenon*.tar

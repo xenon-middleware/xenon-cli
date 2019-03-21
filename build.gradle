@@ -1,19 +1,19 @@
 plugins {
     id 'java'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '4.0.1'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
     // ide
     id 'idea'
     id 'eclipse'
     // test coverage
     id 'jacoco'
     // quality
-    id 'org.sonarqube' version '2.6.2'
+    id 'org.sonarqube' version '2.7'
     // docker build & push
     id 'maven-publish'
-    id 'com.palantir.docker' version '0.20.1'
+    id 'com.palantir.docker' version '0.21.0'
     // integration tests
-    id 'org.unbroken-dome.test-sets' version '1.4.2'
+    id 'org.unbroken-dome.test-sets' version '2.1.1'
     // xenon --version reads version from this file
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
@@ -23,8 +23,8 @@ version = '3.0.0'
 group = 'nl.esciencecenter.xenon.cli'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = JavaVersion.VERSION_1_9
+targetCompatibility = JavaVersion.VERSION_1_9
 
 repositories {
     mavenLocal()
@@ -40,30 +40,27 @@ testSets {
 ext.xenonLibVersion = '3.0.0'
 
 dependencies {
-    runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+//    runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
-    compile 'com.google.code.gson:gson:2.8.2'
-    compile 'net.sourceforge.argparse4j:argparse4j:0.8.1'
-//    compile("nl.esciencecenter.xenon:xenon-all:${xenonLibVersion}") {
-//        exclude group: 'org.slf4j', module:'slf4j-log4j12'
-//    }
-//    compile group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
-    compile group: 'nl.esciencecenter.xenon', name: 'xenon-all', version: xenonLibVersion
-//    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonLibVersion
-//    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-hadoop', version: xenonLibVersion
-//    compile group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-grid', version: xenonLibVersion
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'net.sourceforge.argparse4j:argparse4j:0.8.1'
 
-    // To prevent Java 10 warning
-    compile 'javax.activation:activation:1.1.1'
+    // TODO Grabbing xenon from jitpack, switch to jcenter after release
+    implementation 'com.github.xenon-middleware:xenon:821dd645a0'
+//    implementation group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
+    // implementation group: 'nl.esciencecenter.xenon', name: 'xenon-all', version: xenonLibVersion
+//    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonLibVersion
+//    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-hadoop', version: xenonLibVersion
+//    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-grid', version: xenonLibVersion
 
-    compile 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'org.slf4j:slf4j-api:1.7.26'
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'com.github.stefanbirkner:system-rules:1.18.0'
-    testCompile 'org.mockito:mockito-core:2.23.0'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'com.github.stefanbirkner:system-rules:1.18.0'
+    testImplementation 'org.mockito:mockito-core:2.25.1'
 
 //    integrationTestCompile 'org.apache.hadoop:hadoop-client:3.0.0'
-    integrationTestCompile 'org.testcontainers:testcontainers:1.9.1'
+    integrationTestImplementation 'org.testcontainers:testcontainers:1.10.7'
 }
 
 docker {
@@ -78,9 +75,6 @@ distZip.enabled = false
 distTar.enabled = false
 assemble.dependsOn shadowDistTar
 assemble.dependsOn shadowDistZip
-
-wrapper {
-}
 
 jacocoTestReport {
     description 'Generate coverage report of unit tests'
@@ -127,10 +121,11 @@ tasks.withType(Test) {
 
 sonarqube {
     properties {
-        property 'sonar.host.url', 'https://sonarqube.com'
-        property 'sonar.organization', "nlesc"
+        property 'sonar.projectKey', 'xenon-middleware_xenon-cli'
+        property 'sonar.host.url', 'https://sonarcloud.io'
+        property 'sonar.organization', "xenon-middleware"
         property 'sonar.language', 'java'
-        property 'sonar.links.homepage', 'https://github.com/NLeSC/xenon-cli'
+        property 'sonar.links.homepage', 'https://github.com/xenon-middleware/xenon-cli'
         properties["sonar.tests"] += sourceSets.integrationTest.allSource.srcDirs
         property 'sonar.jacoco.reportPaths', [jacocoTestReport.executionData, jacocoIntegrationTestReport.executionData]
     }

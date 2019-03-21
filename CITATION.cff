@@ -14,7 +14,7 @@ authors:
   affiliation: Netherlands eScience Center
 version: 2.3.0
 date-released: 2018-03-05
-repository-code: https://github.com/NLeSC/xenon-cli
+repository-code: https://github.com/xenon-middleware/xenon-cli
 license: Apache-2.0
 references:
 - type: software
