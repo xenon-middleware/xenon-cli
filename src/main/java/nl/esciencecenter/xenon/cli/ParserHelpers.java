@@ -135,16 +135,11 @@ public class ParserHelpers {
             .help("Use all local environment variables for the executable")
             .action(Arguments.storeTrue())
         ;
-        subparser.addArgument("--option")
-            .help("Option for job")
-            .metavar(KEY_VAL)
-            .action(Arguments.append())
-            .dest("options");
         subparser.addArgument("--max-run-time").help("Maximum job run time (in minutes)").type(Integer.class);
-        subparser.addArgument("--node-count").type(Integer.class).help("Number of nodes to reserve").setDefault(1);
-        subparser.addArgument("--procs-per-node").type(Integer.class).help("Number of processes started on each node").setDefault(1);
-        subparser.addArgument("--start-single-process").action(Arguments.storeTrue())
-            .help("Set if only a single process is started, instead of --node-count * --procs-per-node. Resources are still reserved, but it is up to the user to start all the processes");
+        subparser.addArgument("--tasks").type(Integer.class).help("Number of tasks in this job").setDefault(1);
+        subparser.addArgument("--cores-per-task").type(Integer.class).help("Number of cores needed for each task").setDefault(1);
+        subparser.addArgument("--tasks-per-node").type(Integer.class).help("Number of tasks allowed per node");
+        subparser.addArgument("--start-per-task").action(Arguments.storeTrue()).help("Executable must be started for each task instead of once per job");
         subparser.addArgument("--working-directory")
             .help("Path at location where executable should be executed. If location is local system, default value is the current working directory. If location is remote, default value is remote system's entry path");
         subparser.addArgument("--max-memory").help("Maximum amount of memory needed for process (in MBytes)").type(Integer.class);

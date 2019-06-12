@@ -91,24 +91,27 @@ public class Utils {
             description.setEnvironment(envs);
         }
 
-        Map<String, String> options = parseArgumentListAsMap(res.getList("options"));
-        if (!options.isEmpty()) {
-            description.setJobOptions(options);
-        }
-
         Integer maxTime = res.getInt("max_run_time");
         if (maxTime != null) {
             description.setMaxRuntime(maxTime);
         }
 
-        int nodeCount = res.getInt("node_count");
-        description.setNodeCount(nodeCount);
+        int tasks = res.getInt("tasks");
+        description.setTasks(tasks);
 
-        int procsPerNode = res.getInt("procs_per_node");
-        description.setProcessesPerNode(procsPerNode);
+        int coresPerTask = res.getInt("cores_per_task");
+        description.setCoresPerTask(coresPerTask);
 
-        if (res.getBoolean("start_single_process")) {
-            description.setStartSingleProcess(true);
+        Integer tasksPerNode = res.getInt("tasks_per_node");
+        if (tasksPerNode != null) {
+            description.setTasksPerNode(tasksPerNode);
+        }
+
+        Boolean startPerTask = res.getBoolean("start_per_task");
+        if (startPerTask) {
+            description.setStartPerTask();
+        } else {
+            description.setStartPerJob();
         }
 
         String workingDirectory = res.getString("working_directory");

@@ -70,20 +70,6 @@ public class UtilsGetJobDescriptionTest {
     }
 
     @Test
-    public void options() {
-        Map<String, Object> attrs = defaultArgs();
-        List<String> options = Collections.singletonList("KEY1=VAL1");
-        attrs.put("options", options);
-        Namespace res = new Namespace(attrs);
-        JobDescription description = getJobDescription(res);
-
-        JobDescription expected = new JobDescription();
-        expected.setExecutable("sleep");
-        expected.setJobOptions(Collections.singletonMap("KEY1", "VAL1"));
-        assertEquals(expected, description);
-    }
-
-    @Test
     public void max_run_time() {
         Map<String, Object> attrs = defaultArgs();
         attrs.put("max_run_time", 60);
@@ -99,9 +85,9 @@ public class UtilsGetJobDescriptionTest {
     }
 
     @Test
-    public void node_count() {
+    public void tasks() {
         Map<String, Object> attrs = defaultArgs();
-        attrs.put("node_count", 4);
+        attrs.put("tasks", 4);
 
         Namespace res = new Namespace(attrs);
 
@@ -109,14 +95,14 @@ public class UtilsGetJobDescriptionTest {
 
         JobDescription expected = new JobDescription();
         expected.setExecutable("sleep");
-        expected.setNodeCount(4);
+        expected.setTasks(4);
         assertEquals(expected, description);
     }
 
     @Test
-    public void procs_per_node() {
+    public void tasks_per_node() {
         Map<String, Object> attrs = defaultArgs();
-        attrs.put("procs_per_node", 16);
+        attrs.put("tasks_per_node", 16);
 
         Namespace res = new Namespace(attrs);
 
@@ -124,21 +110,36 @@ public class UtilsGetJobDescriptionTest {
 
         JobDescription expected = new JobDescription();
         expected.setExecutable("sleep");
-        expected.setProcessesPerNode(16);
+        expected.setTasksPerNode(16);
         assertEquals(expected, description);
     }
 
     @Test
-    public void start_single_process() {
+    public void cores_per_task() {
         Map<String, Object> attrs = defaultArgs();
-        attrs.put("start_single_process", true);
+        attrs.put("cores_per_task", 16);
+
         Namespace res = new Namespace(attrs);
 
         JobDescription description = getJobDescription(res);
 
         JobDescription expected = new JobDescription();
         expected.setExecutable("sleep");
-        expected.setStartSingleProcess(true);
+        expected.setCoresPerTask(16);
+        assertEquals(expected, description);
+    }
+
+    @Test
+    public void start_per_task() {
+        Map<String, Object> attrs = defaultArgs();
+        attrs.put("start_per_task", true);
+        Namespace res = new Namespace(attrs);
+
+        JobDescription description = getJobDescription(res);
+
+        JobDescription expected = new JobDescription();
+        expected.setExecutable("sleep");
+        expected.setStartPerTask();
         assertEquals(expected, description);
     }
 
@@ -201,9 +202,9 @@ public class UtilsGetJobDescriptionTest {
         Map<String, Object> attrs = new HashMap<>();
         attrs.put("executable", "sleep");
         attrs.put("inherit_env", false);
-        attrs.put("node_count", 1);
-        attrs.put("procs_per_node", 1);
-        attrs.put("start_single_process", false);
+        attrs.put("tasks", 1);
+        attrs.put("cores_per_task", 1);
+        attrs.put("start_per_task", false);
         return attrs;
     }
 

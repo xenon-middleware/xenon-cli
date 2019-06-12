@@ -46,7 +46,7 @@ dependencies {
     implementation 'net.sourceforge.argparse4j:argparse4j:0.8.1'
 
     // TODO Grabbing xenon from jitpack, switch to jcenter after release
-    implementation 'com.github.xenon-middleware:xenon:821dd645a0'
+    implementation 'com.github.xenon-middleware:xenon:badfccfa1ea8893cc9d1637ca9f83a65d418e77d'
 //    implementation group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
     // implementation group: 'nl.esciencecenter.xenon', name: 'xenon-all', version: xenonLibVersion
 //    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonLibVersion
