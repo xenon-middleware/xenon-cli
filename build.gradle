@@ -23,8 +23,8 @@ version = '3.0.0'
 group = 'nl.esciencecenter.xenon.cli'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
-sourceCompatibility = JavaVersion.VERSION_1_9
-targetCompatibility = JavaVersion.VERSION_1_9
+sourceCompatibility = JavaVersion.VERSION_1_11
+targetCompatibility = JavaVersion.VERSION_1_11
 
 repositories {
     mavenLocal()

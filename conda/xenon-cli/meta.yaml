@@ -5,7 +5,7 @@ source:
   path: ../../build/install/xenon-cli-shadow
 requirements:
   run:
-    - openjdk 8.*
+    - openjdk 11.*
 about:
   home: https://github.com/xenon-middleware/xenon
   license: Apache 2.0
