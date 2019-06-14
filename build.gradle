@@ -30,9 +30,6 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven {
-        url 'https://dl.bintray.com/nlesc/xenon' // xenon-* are published on bintray, not on jcenter
-    }
 }
 
 testSets {
