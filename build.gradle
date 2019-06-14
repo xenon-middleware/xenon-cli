@@ -30,7 +30,9 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven { url 'https://jitpack.io' }
+    maven {
+        url 'https://dl.bintray.com/nlesc/xenon' // xenon-* are published on bintray, not on jcenter
+    }
 }
 
 testSets {
@@ -45,11 +47,9 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.5'
     implementation 'net.sourceforge.argparse4j:argparse4j:0.8.1'
 
-    // TODO Grabbing xenon from jitpack, switch to jcenter after release
-    implementation 'com.github.xenon-middleware:xenon:de018e54d842c3fbf7f579e3975d41d2f5b598ee'
-//    implementation group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
+    implementation group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
     // implementation group: 'nl.esciencecenter.xenon', name: 'xenon-all', version: xenonLibVersion
-//    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonLibVersion
+    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonLibVersion
 //    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-hadoop', version: xenonLibVersion
 //    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-grid', version: xenonLibVersion
 
