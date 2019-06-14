@@ -66,11 +66,12 @@ The unit and integration tests can be run with:
 # Release
 
 1. Bump version in `build.gradle`, `conda/xenon-cli/meta.yaml` files, add version to `CHANGELOG.md` and commit/push
-2. Create a new GitHub release
-3. Upload the files in `build/distributions/` directory to that release
-4. Publish release
-5. Edit [Zenodo entry](https://doi.org/10.5281/zenodo.597603), add [Xenon doi](https://doi.org/10.5281/zenodo.597993) as `is referenced by this upload`.
-6. Create conda release, see [conda/README.md](conda/README.md)
+2. Run `./gradlew build` to build distributions
+3. Create a new GitHub release
+4. Upload the files in `build/distributions/` directory to that release
+5. Publish release
+6. Edit [Zenodo entry](https://doi.org/10.5281/zenodo.597603), add [Xenon doi](https://doi.org/10.5281/zenodo.597993) as `is referenced by this upload`.
+7. Create conda release, see [conda/README.md](conda/README.md)
 
 ## Docker
 
