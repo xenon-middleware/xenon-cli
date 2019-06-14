@@ -1,9 +1,9 @@
 # YAML 1.2
 # Metadata for citation of this software according to the CFF format (https://citation-file-format.github.io/)
-cff-version: 1.0.3
-message: Xenon command line interface
-title: xenon-cli
-doi: 10.5281/zenodo.1188618
+cff-version: "1.0.3"
+message: "If you use this software, please cite it as below."
+title: Xenon command line interface
+doi: 10.5281/zenodo.3246245
 authors:
 - given-names: Stefan
   family-names: Verhoeven
@@ -12,8 +12,8 @@ authors:
   family-names: Spaaks
   name-particle: H.
   affiliation: Netherlands eScience Center
-version: 2.3.0
-date-released: 2018-03-05
+version: "3.0.0"
+date-released: 2019-06-14
 repository-code: https://github.com/xenon-middleware/xenon-cli
 license: Apache-2.0
 references:
@@ -57,3 +57,4 @@ references:
   - given-names: Arnold
     family-names: Kuzniar
     affiliation: Netherlands eScience Center
+    orcid: "https://orcid.org/0000-0003-1711-7961"
