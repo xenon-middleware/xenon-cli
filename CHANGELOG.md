@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+* --temp-space argument ([#61](https://github.com/xenon-middleware/xenon-cli/issues/61))
+* [at](https://linux.die.net/man/1/at) scheduler 
+
+### Changed
+
+* submit and exec sub command use a tasks+cores+nodes arguments, instead of nodes+processes+thread ([#625](https://github.com/xenon-middleware/xenon/issues/625)).
+* Require Java 11 or greater, as enon package has same compatibility
+* Upgraded to Xenon 3.0.0
+* Switched to [testcontainers](https://www.testcontainers.org/) for testing against Docker containers
+
+### Removed
+
+* hdfs filesystem
+
 ## [2.4.1] - 2019-02-26
 
 ### Fixed
