@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [3.0.0] - 2019-06-14
+
 ### Added
 
 * --temp-space argument ([#61](https://github.com/xenon-middleware/xenon-cli/issues/61))
@@ -14,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 * submit and exec sub command use a tasks+cores+nodes arguments, instead of nodes+processes+thread ([#625](https://github.com/xenon-middleware/xenon/issues/625)).
-* Require Java 11 or greater, as enon package has same compatibility
+* Require Java 11 or greater, as xenon package has same compatibility
 * Upgraded to Xenon 3.0.0
 * Switched to [testcontainers](https://www.testcontainers.org/) for testing against Docker containers
 

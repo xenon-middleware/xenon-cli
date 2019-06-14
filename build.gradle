@@ -37,6 +37,7 @@ testSets {
 }
 
 ext.xenonLibVersion = '3.0.0'
+ext.xenonCloudLibVersion = '3.0.1'
 
 dependencies {
 //    runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
@@ -46,7 +47,7 @@ dependencies {
 
     implementation group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
     // implementation group: 'nl.esciencecenter.xenon', name: 'xenon-all', version: xenonLibVersion
-    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: '3.0.1'
+    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonCloudLibVersion
 //    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-hadoop', version: xenonLibVersion
 //    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-grid', version: xenonLibVersion
 
@@ -132,6 +133,7 @@ project.tasks["sonarqube"].dependsOn "check"
 buildConfig {
     appName = project.applicationName
     buildConfigField 'String', 'XENON_LIB_VERSION', "${xenonLibVersion}"
+    buildConfigField 'String', 'XENON_CLOUD_LIB_VERSION', "${xenonCloudLibVersion}"
 }
 
 shadowJar {

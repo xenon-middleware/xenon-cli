@@ -76,4 +76,14 @@ public class MainExitTest {
         String[] badCommands = new String[]{"filesystem", "file", "--prop", "foo=bar", "list", "/"};
         main.run(badCommands);
     }
+
+
+    @Test
+    public void run_version() {
+        exit.expectSystemExitWithStatus(0);
+        exit.checkAssertionAfterwards(() -> Assert.assertThat(systemOutRule.getLog(), containsString("Xenon CLI v")));
+
+        Main main = new Main();
+        main.run(new String[]{"--version"});
+    }
 }

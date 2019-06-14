@@ -125,7 +125,7 @@ public class Main {
                 .build()
                 .defaultHelp(true)
                 .description("Operations on filesystems and schedulers with Xenon")
-                .version("Xenon CLI v" + BuildConfig.VERSION + ", Xenon Library v" + BuildConfig.XENON_LIB_VERSION);
+                .version(getVersion());
         newParser.addArgument("--version").action(Arguments.version()).help("Prints version and exists");
         newParser.addArgument("--json").help("Output in JSON format").action(Arguments.storeTrue());
         newParser.addArgument("--stacktrace").help("Print out the stacktrace for all exceptions").action(Arguments.storeTrue());
@@ -142,6 +142,10 @@ public class Main {
         addAdaptorSubParsers(schedulerAdaptorParser, Scheduler.getAdaptorDescriptions());
 
         return newParser;
+    }
+
+    private String getVersion() {
+        return "Xenon CLI v" + BuildConfig.VERSION + ", Xenon library v" + BuildConfig.XENON_LIB_VERSION + ", Xenon cloud library v" + BuildConfig.XENON_CLOUD_LIB_VERSION;
     }
 
     private void addAdaptorSubParsers(Subparser parser, AdaptorDescription[] adaptorDescriptionArray) {
