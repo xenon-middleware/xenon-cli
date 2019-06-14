@@ -1,7 +1,7 @@
 # Xenon Command Line Interface
 
 [![Build Status](https://travis-ci.org/xenon-middleware/xenon-cli.svg?branch=master)](https://travis-ci.org/xenon-middleware/xenon-cli)
-[![Build status](https://ci.appveyor.com/api/projects/status/vki0xma8y7glpt09/branch/master?svg=true)](https://ci.appveyor.com/project/xenon-middleware/xenon-cli/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/vki0xma8y7glpt09/branch/master?svg=true)](https://ci.appveyor.com/project/NLeSC/xenon-cli/branch/master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xenon-middleware_xenon-cli&metric=alert_status)](https://sonarcloud.io/dashboard?id=xenon-middleware_xenon-cli)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=xenon-middleware_xenon-cli&metric=coverage)](https://sonarcloud.io/dashboard?id=xenon-middleware_xenon-cli)
 [![DOI](https://zenodo.org/badge/80642209.svg)](https://zenodo.org/badge/latestdoi/80642209)
