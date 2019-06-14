@@ -42,7 +42,7 @@ ext.xenonLibVersion = '3.0.0'
 dependencies {
 //    runtime group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
-    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.google.code.gson:gson:2.5'
     implementation 'net.sourceforge.argparse4j:argparse4j:0.8.1'
 
     // TODO Grabbing xenon from jitpack, switch to jcenter after release
