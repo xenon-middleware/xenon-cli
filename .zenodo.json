@@ -1,4 +1,12 @@
 {
   "license": "Apache-2.0",
-  "title": "Xenon command line interface"
+  "title": "Xenon command line interface",
+  "access_right": "open",
+  "related_identifiers": [
+    {
+      "scheme": "doi",
+      "identifier": "10.5281/zenodo.597993",
+      "relation": "isReferencedBy"
+    }
+  ]
 }
