@@ -49,7 +49,7 @@ dependencies {
 
     implementation group: 'nl.esciencecenter.xenon', name: 'xenon', version: xenonLibVersion
     // implementation group: 'nl.esciencecenter.xenon', name: 'xenon-all', version: xenonLibVersion
-    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: xenonLibVersion
+    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-cloud', version: '3.0.1'
 //    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-hadoop', version: xenonLibVersion
 //    implementation group: 'nl.esciencecenter.xenon.adaptors', name: 'xenon-adaptors-grid', version: xenonLibVersion
 
