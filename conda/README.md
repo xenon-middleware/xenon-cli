@@ -21,5 +21,5 @@ anaconda upload --user nlesc <path to xenon-cli*.tar.bz2>
 # Install
 
 ```sh
-conda install -c nlesc xenon-cli
+conda install -c conda-forge -c nlesc xenon-cli
 ```

@@ -11,6 +11,10 @@ Command line interface which uses the [Xenon library](https://xenon-middleware.g
 
 ## Install
 
+Dependencies:
+
+* Java runtime version 11 or greater
+
 Goto [releases](https://github.com/xenon-middleware/xenon-cli/releases) and download a tarball (or zipfile).
 The tarball can be installed with:
 
@@ -20,6 +24,12 @@ xenon*/bin/xenon --help
 ```
 
 Add `xenon*/bin` to your PATH environment variable for easy usage.
+
+Or install with [ananconda](https://anaconda.org/nlesc/xenon-cli):
+
+```bash
+conda install -c conda-forge -c nlesc xenon-cli
+```
 
 ## Usage
 
