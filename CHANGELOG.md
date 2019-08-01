@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [3.0.1] - 2019-08-01
+
 ### Changed
 
 * Upgraded to Xenon 3.0.1
@@ -17,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 * --temp-space argument ([#61](https://github.com/xenon-middleware/xenon-cli/issues/61))
-* [at](https://linux.die.net/man/1/at) scheduler 
+* [at](https://linux.die.net/man/1/at) scheduler
 
 ### Changed
 
