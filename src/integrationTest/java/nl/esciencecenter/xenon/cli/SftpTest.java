@@ -24,7 +24,7 @@ public class SftpTest {
     private static final int PORT = 22;
 
     @ClassRule
-    public static final GenericContainer server = new GenericContainer("nlesc/xenon-ssh").withExposedPorts(PORT);
+    public static final GenericContainer server = new GenericContainer("xenonmiddleware/ssh").withExposedPorts(PORT);
 
 
     @Rule

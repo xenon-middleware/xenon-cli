@@ -9,7 +9,7 @@ doc: Download file from remote storage
 hints:
 - class: DockerRequirement
   # xenon-cli Docker container needs to be manually build before
-  dockerImageId: nlesc/xenon-cli
+  dockerImageId: xenonmiddleware/xenon-cli
 baseCommand:
 - xenon
 - '--json'

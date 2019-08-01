@@ -1,6 +1,6 @@
 version: '3'
 services:
   slurm:
-    image: nlesc/xenon-slurm
+    image: xenonmiddleware/slurm
     ports:
     - 22 # ssh

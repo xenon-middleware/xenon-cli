@@ -16,7 +16,7 @@ public class CopyInputTest {
     private static final int PORT = 22;
 
     @ClassRule
-    public static final GenericContainer server = new GenericContainer("nlesc/xenon-ssh").withExposedPorts(PORT);
+    public static final GenericContainer server = new GenericContainer("xenonmiddleware/ssh").withExposedPorts(PORT);
 
     private static String getLocation() {
         return server.getContainerIpAddress() + ":" + server.getMappedPort(PORT);

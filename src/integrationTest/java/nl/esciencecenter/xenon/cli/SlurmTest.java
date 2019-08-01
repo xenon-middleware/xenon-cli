@@ -23,7 +23,7 @@ public class SlurmTest {
     private static final int PORT = 22;
 
     @ClassRule
-    public static final GenericContainer server = new GenericContainer("nlesc/xenon-slurm").withExposedPorts(PORT);
+    public static final GenericContainer server = new GenericContainer("xenonmiddleware/slurm").withExposedPorts(PORT);
 
     private static String getLocation() {
         return "ssh://" + server.getContainerIpAddress() + ":" + server.getMappedPort(PORT);

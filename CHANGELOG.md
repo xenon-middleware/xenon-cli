@@ -1,10 +1,16 @@
 # Change Log
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+
+### Changed
+
+* Upgraded to Xenon 3.0.1
+* Test against xenonmiddleware Docker images ([#42](https://github.com/xenon-middleware/xenon-docker-images/issues/42))
 
 ## [3.0.0] - 2019-06-14
 
@@ -28,7 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
- * s3 adaptor gives wrong error due to gson conflict
+* s3 adaptor gives wrong error due to gson conflict
 
 ## [2.4.0] - 2018-03-14
 
