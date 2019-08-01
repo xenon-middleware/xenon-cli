@@ -9,17 +9,19 @@
 
 Command line interface which uses the [Xenon library](https://xenon-middleware.github.io/xenon) to perform job and file operations.
 
-# Install
+## Install
 
-Goto https://github.com/xenon-middleware/xenon-cli/releases and download a tarball (or zipfile).
+Goto [releases](https://github.com/xenon-middleware/xenon-cli/releases) and download a tarball (or zipfile).
 The tarball can be installed with:
+
 ```bash
 tar -xf build/distributions/xenon*.tar
 xenon*/bin/xenon --help
 ```
+
 Add `xenon*/bin` to your PATH environment variable for easy usage.
 
-# Usage
+## Usage
 
 ```bash
 # List files on local filesystem
@@ -40,30 +42,33 @@ The above commands use your current username and keys from ~/.ssh.
 
 To keep password or passphrase invisible in process list put the password in a text file (eg. 'password.txt') and then use '@password.txt' as argument.
 For example:
-```
+
+```sh
 xenon filesystem sftp --location localhost --username $USER --password @password.txt list $PWD/src
 ```
 
-# Build
+## Build
 
-```
+```sh
 ./gradlew build
 ```
 
 Generates application tar/zip in `build/distributions/` directory.
 
-# Tests
+## Tests
 
 Requirements for the integration tests:
+
 * [docker](https://docs.docker.com/engine/installation/), v1.13 or greater
 * [docker-compose](https://docs.docker.com/compose/), v1.10 or greater
 
 The unit and integration tests can be run with:
-```
+
+```sh
 ./gradlew check
 ```
 
-# Release
+## Release
 
 1. Bump version in `build.gradle`, `conda/xenon-cli/meta.yaml` files, add version to `CHANGELOG.md` and commit/push
 2. Run `./gradlew build` to build distributions
@@ -78,29 +83,33 @@ The unit and integration tests can be run with:
 Run Xenon CLI as a Docker container.
 
 The Docker image can be build with
-```
+
+```sh
 ./gradlew docker
 ```
 
-Generates a `nlesc/xenon-cli` Docker image.
+Generates a `xenonmiddleware/xenon-cli` Docker image.
 
 To use local files use volume mounting (watch out as the path should be relative to mount point):
-```
-docker run -ti --rm nlesc/xenon-cli --user $USER -v $PWD:/work --adaptor ssh upload --source /work/somefile.txt --location localhost --path /tmp/copy-of-somefile.txt
+
+```sh
+docker run -ti --rm xenonmiddleware/xenon-cli --user $USER -v $PWD:/work --adaptor ssh upload --source /work/somefile.txt --location localhost --path /tmp/copy-of-somefile.txt
 ```
 
 ## Common Workflow Language
 
 Run Xenon CLI using a cwl-runner or as a tool in a [Common Workflow Language](http://www.commonwl.org/) workflow.
 
-Requires `nlesc/xenon-cli` Docker image to be available locally.
+Requires `xenonmiddleware/xenon-cli` Docker image to be available locally.
 
 Example to list contents of `/etc` directory via a ssh to localhost connection with cwl-runner:
-```
+
+```sh
 ./xenon-ls.cwl --adaptor sftp --location $USER@172.17.0.1 --certfile ~/.ssh/id_rsa --path /etc
 # Copy file from localhost to working directory inside Docker container
 ./xenon-upload.cwl --adaptor sftp --certfile ~/.ssh/id_rsa --location $USER@172.17.0.1 --source $PWD/README.md --target /tmp/copy-of-README.md
 # Copy file inside Docker container to localhost
 ./xenon-download.cwl --adaptor sftp --certfile ~/.ssh/id_rsa --location $USER@172.17.0.1 --source /etc/passwd --target $PWD/copy-of-passwd
 ```
+
 (Replace `<user>@<host>` with actual username and hostname + expects docker with default network range)

@@ -20,9 +20,9 @@ public class SftpCopyTest {
     private static final int PORT = 22;
 
     @ClassRule
-    public static final GenericContainer serverA = new GenericContainer("nlesc/xenon-ssh").withExposedPorts(PORT);
+    public static final GenericContainer serverA = new GenericContainer("xenonmiddleware/ssh").withExposedPorts(PORT);
     @ClassRule
-    public static final GenericContainer serverB = new GenericContainer("nlesc/xenon-ssh").withExposedPorts(PORT);
+    public static final GenericContainer serverB = new GenericContainer("xenonmiddleware/ssh").withExposedPorts(PORT);
 
     private static String getLocationA() {
         return serverA.getContainerIpAddress() + ":" + serverA.getMappedPort(PORT);
