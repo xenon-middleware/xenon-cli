@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [3.0.2] - 2019-08-07
+
+### Changed
+
+* Upgraded to Xenon cloud adaptors 3.0.2
+
 ## [3.0.1] - 2019-08-01
 
 ### Changed
