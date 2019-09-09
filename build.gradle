@@ -19,7 +19,7 @@ plugins {
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
-version = '3.0.2'
+version = '3.0.3'
 group = 'nl.esciencecenter.xenon.cli'
 mainClassName = 'nl.esciencecenter.xenon.cli.Main'
 applicationName = 'xenon'
@@ -36,7 +36,7 @@ testSets {
     integrationTest
 }
 
-ext.xenonLibVersion = '3.0.1'
+ext.xenonLibVersion = '3.0.3'
 ext.xenonCloudLibVersion = '3.0.2'
 
 dependencies {
