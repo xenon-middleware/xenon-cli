@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+* Conda package now noarch instead of just linux-64 ([#73](https://github.com/xenon-middleware/xenon-cli/issues/73))
+
 ## [3.0.4] - 2019-09-11
 
 ### Changed

@@ -1,6 +1,6 @@
 package:
   name: xenon-cli
-  version: 3.0.4
+  version: 3.0.5beta1
 source:
   path: ../../build/install/xenon-cli-shadow
 requirements:
@@ -10,3 +10,5 @@ about:
   home: https://github.com/xenon-middleware/xenon
   license: APACHE
   summary: If you are using remote machines to do your computations, and don’t feel like learning and implementing many different APIs and do no not want to program, Xenon Command Line Interface (CLI) is the tool for you.
+build:
+  noarch: generic
