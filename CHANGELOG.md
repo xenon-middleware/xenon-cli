@@ -7,9 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+## [3.0.5] - 2020-03-23
+
 ### Changed
 
 * Conda package now noarch instead of just linux-64 ([#73](https://github.com/xenon-middleware/xenon-cli/issues/73))
+* Upgraded to Xenon library 3.1.0
+
+### Fixed
+
+* Slurm 19 compliant ([#72](https://github.com/xenon-middleware/xenon-cli/issues/72))
 
 ## [3.0.4] - 2019-09-11
 
