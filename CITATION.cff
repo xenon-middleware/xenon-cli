@@ -12,8 +12,8 @@ authors:
   family-names: Spaaks
   name-particle: H.
   affiliation: Netherlands eScience Center
-version: "3.0.0"
-date-released: 2019-06-14
+version: "3.0.5"
+date-released: 2020-03-23
 repository-code: https://github.com/xenon-middleware/xenon-cli
 license: Apache-2.0
 references:

@@ -4,7 +4,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/vki0xma8y7glpt09/branch/master?svg=true)](https://ci.appveyor.com/project/NLeSC/xenon-cli/branch/master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=xenon-middleware_xenon-cli&metric=alert_status)](https://sonarcloud.io/dashboard?id=xenon-middleware_xenon-cli)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=xenon-middleware_xenon-cli&metric=coverage)](https://sonarcloud.io/dashboard?id=xenon-middleware_xenon-cli)
-[![DOI](https://zenodo.org/badge/80642209.svg)](https://zenodo.org/badge/latestdoi/80642209)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.597603.svg)](https://doi.org/10.5281/zenodo.597603)
 [![Anaconda-Server Badge](https://anaconda.org/nlesc/xenon-cli/badges/installer/conda.svg)](https://anaconda.org/NLeSC/xenon-cli)
 
 Command line interface which uses the [Xenon library](https://xenon-middleware.github.io/xenon) to perform job and file operations.
