@@ -8,10 +8,12 @@ authors:
 - given-names: Stefan
   family-names: Verhoeven
   affiliation: Nederlands eScience Center
+  orcid: https://orcid.org/0000-0002-5821-2060
 - given-names: Jurriaan
   family-names: Spaaks
   name-particle: H.
   affiliation: Netherlands eScience Center
+  orcid: "https://orcid.org/0000-0002-7064-4069"
 version: "3.0.5"
 date-released: 2020-03-23
 repository-code: https://github.com/xenon-middleware/xenon-cli
