@@ -7,7 +7,7 @@ Update version number in xenon-cli/meta.yaml.
 ```sh
 ./gradlew installShadowDist
 cd conda
-conda install conda-build
+conda install conda-build conda-verify
 conda-build -c conda-forge xenon-cli
 ```
 
