@@ -13,9 +13,10 @@ plugins {
     id 'maven-publish'
     id 'com.palantir.docker' version '0.21.0'
     // integration tests
-    id 'org.unbroken-dome.test-sets' version '2.1.1'
+    id 'org.unbroken-dome.test-sets' version '3.0.1'
     // xenon --version reads version from this file
     id 'de.fuerstenau.buildconfig' version '1.1.8'
+    id 'org.mikeneck.graalvm-native-image' version 'v0.8.0'
 }
 
 description = 'Perform files and jobs operations with Xenon library from command line'
@@ -86,12 +87,12 @@ jacocoTestReport.dependsOn test
 check.dependsOn integrationTest
 integrationTest.mustRunAfter test
 
-task jacocoIntegrationTestReport(type: JacocoReport) {
-    description 'Generate coverage report of integration tests'
-    group 'Code coverage reporting'
-    executionData integrationTest
-    sourceSets sourceSets.main
-}
+// task jacocoIntegrationTestReport(type: JacocoReport) {
+//     description 'Generate coverage report of integration tests'
+//     group 'Code coverage reporting'
+//     executionData integrationTest
+//     sourceSets sourceSets.main
+// }
 
 task jacocoMerge(type: JacocoMerge) {
     executionData test, integrationTest
@@ -139,3 +140,28 @@ buildConfig {
 shadowJar {
     mergeServiceFiles()
 }
+
+nativeImage {
+    graalVmHome = "/home/verhoes/downloads/graalvm-ce-java11-20.3.0"
+    mainClass ="nl.esciencecenter.xenon.cli.Main"
+    executableName = "xenon"
+    arguments(
+        '--no-fallback',
+        '--allow-incomplete-classpath',
+        '-H:IncludeResourceBundles=net.sourceforge.argparse4j.internal.ArgumentParserImpl',
+        '--initialize-at-build-time=org.slf4j.impl.StaticLoggerBinder',
+        '--initialize-at-build-time=org.slf4j.LoggerFactory',
+        '--initialize-at-build-time=ch.qos.logback.core.ContextBase,ch.qos.logback.classic.PatternLayout,org.slf4j.MDC',
+        '--initialize-at-build-time=ch.qos.logback.classic.Logger,ch.qos.logback.classic.Level,ch.qos.logback.core.status.InfoStatus,ch.qos.logback.core.spi.AppenderAttachableImpl,ch.qos.logback.core.status.StatusBase',
+        '--initialize-at-build-time=ch.qos.logback.classic.Level,ch.qos.logback.core.status.InfoStatus,ch.qos.logback.core.spi.AppenderAttachableImpl,ch.qos.logback.core.status.StatusBase',
+        '--initialize-at-build-time=org.apache.sshd.client.config.hosts.HostPatternsHolder,org.apache.sshd.client.SshClient,org.apache.sshd.client.subsystem.sftp.fs.SftpFileSystemProvider,org.apache.sshd.common.util.closeable.IoBaseCloseable,org.apache.sshd.common.session.Session,org.apache.sshd.common.Closeable,org.apache.sshd.common.BaseBuilder,org.apache.sshd.client.subsystem.sftp.SftpClient,org.apache.sshd.client.ClientBuilder,org.apache.sshd.common.util.closeable.AbstractInnerCloseable,org.apache.sshd.common.config.keys.FilePasswordProvider,ch.qos.logback.core.CoreConstants,org.apache.sshd.common.PropertyResolverUtils,org.apache.sshd.client.keyverifier.AcceptAllServerKeyVerifier,org.apache.sshd.common.random.JceRandomFactory,org.apache.sshd.client.config.hosts.DefaultConfigFileHostEntryResolver,org.apache.sshd.common.util.GenericUtils,org.apache.sshd.client.subsystem.sftp.SftpVersionSelector,org.apache.sshd.client.config.hosts.ConfigFileHostEntryResolver,org.apache.sshd.common.util.io.ModifiableFileWatcher,org.apache.sshd.common.util.io.IoUtils,org.apache.sshd.common.FactoryManager,org.apache.sshd.common.util.closeable.AbstractCloseable,org.apache.sshd.common.helpers.AbstractFactoryManager,org.apache.sshd.common.util.ReflectionUtils,org.apache.sshd.common.util.net.SshdSocketAddress,org.apache.sshd.common.NamedResource,org.apache.sshd.common.kex.AbstractKexFactoryManager',
+        '--initialize-at-build-time=org.apache.sshd.common.file.nativefs.NativeFileSystemFactory,org.apache.sshd.client.auth.keyboard.UserAuthKeyboardInteractiveFactory,org.apache.sshd.common.util.EventListenerUtils,org.apache.sshd.client.auth.password.UserAuthPasswordFactory,org.apache.sshd.common.global.AbstractOpenSshHostKeysHandler,org.apache.sshd.client.session.ClientUserAuthServiceFactory,org.apache.sshd.common.config.keys.IdentityUtils$LazyDefaultUserHomeFolderHolder,org.apache.sshd.common.keyprovider.AbstractKeyPairProvider,org.apache.sshd.client.config.keys.ClientIdentity,org.apache.sshd.client.auth.AuthenticationIdentitiesProvider,org.apache.sshd.client.auth.pubkey.UserAuthPublicKeyFactory$1,org.apache.sshd.common.io.DefaultIoServiceFactoryFactory,org.apache.sshd.client.config.keys.ClientIdentitiesWatcher,org.apache.sshd.common.util.NumberUtils,org.apache.sshd.client.session.ClientConnectionServiceFactory$1,org.apache.sshd.common.SyspropsMapWrapper,org.apache.sshd.client.config.keys.BuiltinClientIdentitiesWatcher,org.apache.sshd.client.config.keys.DefaultClientIdentitiesWatcher,org.apache.sshd.common.session.ConnectionServiceRequestHandler,org.apache.sshd.common.config.keys.PublicKeyEntry,org.apache.sshd.client.session.ClientConnectionServiceFactory,org.apache.sshd.common.io.DefaultIoServiceFactoryFactory$LazyDefaultIoServiceFactoryFactoryHolder,org.apache.sshd.common.config.keys.PublicKeyEntry$LazyDefaultKeysFolderHolder,org.apache.sshd.client.config.hosts.HostConfigEntry,org.apache.sshd.common.session.helpers.AbstractConnectionServiceRequestHandler,org.apache.sshd.client.global.OpenSshHostKeysHandler,org.apache.sshd.server.forward.ForwardedTcpipFactory,org.apache.sshd.common.keyprovider.KeyPairProvider,org.apache.sshd.client.auth.pubkey.UserAuthPublicKeyFactory',
+        '--initialize-at-build-time=org.apache.mina.core.polling.AbstractPollingIoProcessor,org.apache.mina.transport.socket.nio.NioProcessor,org.apache.mina.core.service.SimpleIoProcessorPool,org.apache.sshd.server.forward.RejectAllForwardingFilter,org.apache.sshd.common.forward.DefaultForwarderFactory$1,org.apache.sshd.common.forward.DefaultForwarderFactory,org.apache.sshd.common.session.helpers.DefaultUnknownChannelReferenceHandler',
+        // '--initialize-at-build-time=',
+    )
+}
+
+// generateNativeImageConfig {
+//   enabled = true
+//   byRunningApplicationWithoutArguments()
+// }
